@@ -4,7 +4,7 @@
 * Duka
 * Ironside
 * McGillion
-* Moore
+* Moore (Zahzou)
 * Osman (osozg)
 * Pantov
 * Rooney
