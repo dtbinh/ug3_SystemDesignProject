@@ -1,0 +1,3 @@
+[submodule "res/legacy/2011-group5"]
+	path = res/legacy/2011-group5
+	url = git://github.com/sdp-2011/sdp-5.git
