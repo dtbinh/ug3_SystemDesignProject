@@ -5,8 +5,8 @@
 * Ironside
 * McGillion
 * Moore
-* Osman
+* Osman (osozg)
 * Pantov
 * Rooney
-* Sutas
+* Sutas (eAndrius)
 * Wolff (c-w)
