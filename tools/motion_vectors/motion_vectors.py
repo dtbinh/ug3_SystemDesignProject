@@ -14,7 +14,8 @@
 
 
 import pygame
-from geometry import Circle, Line, Point
+from src.geometry import Circle, Line, Point
+from src.pygame_helpers import rotate_center
 
 
 # constants
@@ -25,7 +26,7 @@ HEIGHT = 600
 CENTRE = Point(WIDTH / 2, HEIGHT / 2)
 
 ROBOT_POS = CENTRE.copy()
-ROBOT_RADIUS = 20
+ROBOT_RADIUS = 40
 ROBOT_COLOR = (0, 0, 0)
 ROBOT_WIDTH = 0
 
@@ -45,6 +46,10 @@ COORDS_WIDTH = 1
 direction_vector_pos = Point(WIDTH / 2 - LIMIT_RADIUS, HEIGHT / 2)
 DIRECTION_VECTOR_COLOR = (255, 127, 0)
 DIRECTION_VECTOR_WIDTH = 2
+
+# resources
+robot_base = pygame.image.load('res/base.png')
+robot_top = pygame.image.load('res/top.png')
 
 # set up pygame
 pygame.init()
@@ -81,22 +86,11 @@ while not done:
         (screen, ROTATION_VECTOR_COLOR, ROTATION_VECTOR_WIDTH))
     direction_vector = Line(ROBOT_POS, direction_vector_pos,
         (screen, DIRECTION_VECTOR_COLOR, DIRECTION_VECTOR_WIDTH))
-    # redraw
-    screen.fill(BG_COLOR)
-    robot.draw()
-    limit.draw()
-    origin_line.draw()
-    rotation_vector.draw()
-    direction_vector.draw()
-    pygame.display.flip()
     # log values to stdout
-    angle_direction_rotation = int(direction_vector.angle_with_line(
-        rotation_vector))
-    if angle_direction_rotation < 0:
-        angle_direction_rotation += 360
-    angle_origin_direction = int(origin_line.angle_with_line(direction_vector))
-    if angle_origin_direction < 0:
-        angle_origin_direction += 360
+    _direction_rotation = direction_vector.angle_with_line(rotation_vector)
+    angle_direction_rotation = int(_direction_rotation) % 360
+    _origin_direction = origin_line.angle_with_line(direction_vector)
+    angle_origin_direction = int(_origin_direction) % 360
     rotation_speed = int(rotation_vector.length())
     movement_speed = int(direction_vector.length())
     print 'angle(direction, rotation) = %d' % angle_direction_rotation
@@ -104,3 +98,19 @@ while not done:
     print 'rotation speed = %d' % rotation_speed
     print 'movement speed = %d' % movement_speed
     print '-' * 80
+    # redraw
+    screen.fill(BG_COLOR)
+    robot.draw()
+    limit.draw()
+    origin_line.draw()
+    rotation_vector.draw()
+    direction_vector.draw()
+    (rot_robot_base, rot_robot_base_rect) = rotate_center(robot_base,
+        angle_origin_direction)
+    (rot_robot_top, rot_robot_top_rect) = rotate_center(robot_top,
+        (angle_direction_rotation + angle_origin_direction) % 360)
+    rot_robot_base_rect.center = CENTRE
+    rot_robot_top_rect.center = CENTRE
+    screen.blit(rot_robot_base, rot_robot_base_rect)
+    screen.blit(rot_robot_top, rot_robot_top_rect)
+    pygame.display.flip()
