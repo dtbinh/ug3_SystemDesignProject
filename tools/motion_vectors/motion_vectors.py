@@ -43,7 +43,7 @@ ORIGIN_POS = Point(0, HEIGHT / 2)
 COORDS_COLOR = (0, 0, 255)
 COORDS_WIDTH = 1
 
-direction_vector_pos = Point(WIDTH / 2 - LIMIT_RADIUS, HEIGHT / 2)
+movement_vector_pos = Point(WIDTH / 2 - LIMIT_RADIUS, HEIGHT / 2)
 DIRECTION_VECTOR_COLOR = (255, 127, 0)
 DIRECTION_VECTOR_WIDTH = 2
 
@@ -80,23 +80,23 @@ while not done:
             if event.button == 1:
                 rotation_vector_pos = mouse_pos
             elif event.button == 3:
-                direction_vector_pos = mouse_pos
+                movement_vector_pos = mouse_pos
     # recompute
     rotation_vector = Line(ROBOT_POS, rotation_vector_pos,
         (screen, ROTATION_VECTOR_COLOR, ROTATION_VECTOR_WIDTH))
-    direction_vector = Line(ROBOT_POS, direction_vector_pos,
+    movement_vector = Line(ROBOT_POS, movement_vector_pos,
         (screen, DIRECTION_VECTOR_COLOR, DIRECTION_VECTOR_WIDTH))
     # log values to stdout
-    _direction_rotation = direction_vector.angle_with_line(rotation_vector)
-    angle_direction_rotation = int(_direction_rotation) % 360
-    _origin_direction = origin_line.angle_with_line(direction_vector)
-    angle_origin_direction = int(_origin_direction) % 360
+    _movement_rotation = movement_vector.angle_with_line(rotation_vector)
+    angle_movement_rotation = int(_movement_rotation) % 360
+    _origin_movement = origin_line.angle_with_line(movement_vector)
+    angle_origin_movement = int(_origin_movement) % 360
     rotation_speed = int(rotation_vector.length())
-    movement_speed = int(direction_vector.length())
-    print 'angle(direction, rotation) = %d' % angle_direction_rotation
-    print 'angle(origin, direction) = %d' % angle_origin_direction
-    print 'rotation speed = %d' % rotation_speed
-    print 'movement speed = %d' % movement_speed
+    movement_speed = int(movement_vector.length())
+    print 'angle(movement, rotation) = %d' % angle_movement_rotation
+    print 'angle(origin, movement) = %d' % angle_origin_movement
+    print 'speed(rotation) = %d' % rotation_speed
+    print 'speed(movement) = %d' % movement_speed
     print '-' * 80
     # redraw
     screen.fill(BG_COLOR)
@@ -104,11 +104,11 @@ while not done:
     limit.draw()
     origin_line.draw()
     rotation_vector.draw()
-    direction_vector.draw()
+    movement_vector.draw()
     (rot_robot_base, rot_robot_base_rect) = rotate_center(robot_base,
-        angle_origin_direction)
+        angle_origin_movement)
     (rot_robot_top, rot_robot_top_rect) = rotate_center(robot_top,
-        (angle_direction_rotation + angle_origin_direction) % 360)
+        (angle_movement_rotation + angle_origin_movement) % 360)
     rot_robot_base_rect.center = CENTRE
     rot_robot_top_rect.center = CENTRE
     screen.blit(rot_robot_base, rot_robot_base_rect)
