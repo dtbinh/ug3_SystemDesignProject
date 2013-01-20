@@ -14,8 +14,8 @@
 
 
 import pygame
-from src.geometry import Circle, Line, Point
-from src.pygame_helpers import rotate_center
+from geometry import Circle, Line, Point
+from pygame_helpers import rotate_center
 
 
 # constants
@@ -48,13 +48,14 @@ DIRECTION_VECTOR_COLOR = (255, 127, 0)
 DIRECTION_VECTOR_WIDTH = 2
 
 # resources
-robot_base = pygame.image.load('res/base.png')
-robot_top = pygame.image.load('res/top.png')
+robot_base = pygame.image.load('../res/base.bmp')
+robot_top = pygame.image.load('../res/top.bmp')
 
 # set up pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
+pygame.display.set_caption('Motion Visualiser')
 
 # main loop
 robot = Circle(ROBOT_POS, ROBOT_RADIUS, (screen, ROBOT_COLOR, ROBOT_WIDTH))
