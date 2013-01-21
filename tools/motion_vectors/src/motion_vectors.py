@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 # Info:
-#     Blue line: origin
+#     Blue line: origin (move up/down with keys 'a'/'d')
 #     Red line: robot rotation-direction (follows mouse on left button down)
-#     Orange line: robot movement-direction (switch with right click)
+#     Orange line: robot movement-direction (change with right-click)
 #     Printed to stdout:
 #         Angle between rotation-/movement-direction
 #         Angle between origin/movement-direction
@@ -16,10 +16,6 @@
 import pygame
 from geometry import Circle, Line, Point
 from pygame_helpers import rotate_center
-
-
-# TODO: change origin line with keyboard (a/d)
-# TODO: mouse-release -> all speeds = 0
 
 
 # constants
@@ -43,7 +39,7 @@ rotation_vector_pos = Point(WIDTH / 2 + LIMIT_RADIUS, HEIGHT / 2)
 ROTATION_VECTOR_COLOR = (255, 0, 0)
 ROTATION_VECTOR_WIDTH = 2
 
-ORIGIN_POS = Point(0, HEIGHT / 2)
+origin_pos = Point(0, HEIGHT / 2)
 COORDS_COLOR = (0, 0, 255)
 COORDS_WIDTH = 1
 
@@ -64,16 +60,10 @@ pygame.display.set_caption('Motion Visualiser')
 # main loop
 robot = Circle(ROBOT_POS, ROBOT_RADIUS, (screen, ROBOT_COLOR, ROBOT_WIDTH))
 limit = Circle(LIMIT_POS, LIMIT_RADIUS, (screen, LIMIT_COLOR, LIMIT_WIDTH))
-origin_line = Line(ROBOT_POS, ORIGIN_POS, (screen, COORDS_COLOR, COORDS_WIDTH))
 done = False
-    # log values to stdout
-    _movement_rotation = movement_vector.angle_with_line(rotation_vector)
-    angle_movement_rotation = int(_movement_rotation) % 360
-    _origin_movement = origin_line.angle_with_line(movement_vector)
-    angle_origin_movement = int(_origin_movement) % 360
-    rotation_speed = int(rotation_vector.length())
-    movement_speed = int(movement_vector.length())
 left_mouse_pressed = False
+stop_rotation = False
+stop_movement = False
 while not done:
     mouse_pos = Point(*pygame.mouse.get_pos())
     if not limit.contains_point(mouse_pos):
@@ -84,26 +74,46 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN:
-            q_pressed = event.key == pygame.K_q
-            rctrl_pressed = pygame.key.get_mods() & pygame.KMOD_RCTRL
-            lctrl_pressed = pygame.key.get_mods() & pygame.KMOD_LCTRL
-            if q_pressed and (rctrl_pressed or lctrl_pressed):
-                done = True
+            # quit on ctrl-q
+            if event.key == pygame.K_q:
+                rctrl_pressed = pygame.key.get_mods() & pygame.KMOD_RCTRL
+                lctrl_pressed = pygame.key.get_mods() & pygame.KMOD_LCTRL
+                if rctrl_pressed or lctrl_pressed:
+                    done = True
+            # move origin up on press of 'a'
+            elif event.key == pygame.K_a:
+                origin_pos = Point(origin_pos.x, origin_pos.y - 1)
+            # move origin down on press of 'd'
+            elif event.key == pygame.K_d:
+                origin_pos = Point(origin_pos.x, origin_pos.y + 1)
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            # make direction-vector follow mouse if left button is held
             if event.button == 1:
                 left_mouse_pressed = True
+            # make movement-vector point to mouse on right-click
             elif event.button == 3:
                 movement_vector_pos = mouse_pos
         elif event.type == pygame.MOUSEBUTTONUP:
+            # stop rotation-vector following mouse on left-mouse up
             if event.button == 1:
                 left_mouse_pressed = False
+                stop_rotation = True
+                stop_movement = True
     if left_mouse_pressed:
         rotation_vector_pos = mouse_pos
+    if stop_rotation:
+        rotation_vector_pos = ROBOT_POS
+        stop_rotation = False
+    if stop_movement:
+        movement_vector_pos = ROBOT_POS
+        stop_movement = False
     # recompute
     rotation_vector = Line(ROBOT_POS, rotation_vector_pos,
         (screen, ROTATION_VECTOR_COLOR, ROTATION_VECTOR_WIDTH))
     movement_vector = Line(ROBOT_POS, movement_vector_pos,
         (screen, DIRECTION_VECTOR_COLOR, DIRECTION_VECTOR_WIDTH))
+    origin_line = Line(ROBOT_POS, origin_pos,
+        (screen, COORDS_COLOR, COORDS_WIDTH))
     # log values to stdout
     _movement_rotation = movement_vector.angle_with_line(rotation_vector)
     angle_movement_rotation = int(_movement_rotation) % 360
@@ -123,6 +133,7 @@ while not done:
     origin_line.draw()
     rotation_vector.draw()
     movement_vector.draw()
+    # FIXME: moving origin line rotates robot-sprite
     (rot_robot_base, rot_robot_base_rect) = rotate_center(robot_base,
         angle_origin_movement)
     (rot_robot_top, rot_robot_top_rect) = rotate_center(robot_top,
