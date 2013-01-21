@@ -2,7 +2,7 @@
 
 # Info:
 #     Blue line: origin
-#     Red line: robot rotation-direction (switch with left click)
+#     Red line: robot rotation-direction (follows mouse on left button down)
 #     Orange line: robot movement-direction (switch with right click)
 #     Printed to stdout:
 #         Angle between rotation-/movement-direction
@@ -16,6 +16,10 @@
 import pygame
 from geometry import Circle, Line, Point
 from pygame_helpers import rotate_center
+
+
+# TODO: change origin line with keyboard (a/d)
+# TODO: mouse-release -> all speeds = 0
 
 
 # constants
@@ -62,6 +66,14 @@ robot = Circle(ROBOT_POS, ROBOT_RADIUS, (screen, ROBOT_COLOR, ROBOT_WIDTH))
 limit = Circle(LIMIT_POS, LIMIT_RADIUS, (screen, LIMIT_COLOR, LIMIT_WIDTH))
 origin_line = Line(ROBOT_POS, ORIGIN_POS, (screen, COORDS_COLOR, COORDS_WIDTH))
 done = False
+    # log values to stdout
+    _movement_rotation = movement_vector.angle_with_line(rotation_vector)
+    angle_movement_rotation = int(_movement_rotation) % 360
+    _origin_movement = origin_line.angle_with_line(movement_vector)
+    angle_origin_movement = int(_origin_movement) % 360
+    rotation_speed = int(rotation_vector.length())
+    movement_speed = int(movement_vector.length())
+left_mouse_pressed = False
 while not done:
     mouse_pos = Point(*pygame.mouse.get_pos())
     if not limit.contains_point(mouse_pos):
@@ -79,9 +91,14 @@ while not done:
                 done = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                rotation_vector_pos = mouse_pos
+                left_mouse_pressed = True
             elif event.button == 3:
                 movement_vector_pos = mouse_pos
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                left_mouse_pressed = False
+    if left_mouse_pressed:
+        rotation_vector_pos = mouse_pos
     # recompute
     rotation_vector = Line(ROBOT_POS, rotation_vector_pos,
         (screen, ROTATION_VECTOR_COLOR, ROTATION_VECTOR_WIDTH))
