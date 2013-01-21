@@ -1,14 +1,14 @@
 SDP_HOME=`pwd`
 LIB="$SDP_HOME/lib"
 LD_LIBRARY_DIR="$LIB/lib"
+
 function add_to_bashrc {
     grep -Fxq "$*" ~/.bashrc || echo "$*" >> ~/.bashrc
 }
+
 function install_lejos {
     local lLOCATION="`mktemp /tmp/lejos_NXJ_0_9_1_beta_3.XXXXX.tar.gz`"
-
     echo "> Downloading lejos to $lLOCATION"
-
     wget -O "$lLOCATION" "http://downloads.sourceforge.net/project/lejos/lejos-NXJ/0.9.1beta/leJOS_NXJ_0.9.1beta-3.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Flejos%2Ffiles%2Flejos-NXJ%2F0.9.1beta%2FleJOS_NXJ_0.9.1beta-3.tar.gz%2Fdownload&ts=1358596966&use_mirror=garr" \
     && echo "> extracting $lLOCATION" \
     && cd $LIB \
@@ -22,9 +22,7 @@ function install_lejos {
 function install_jbullet {
     local lLOCATION="`mktemp /tmp/jbullet.XXXXXX.zip`"
     local lEXTRACT_DIR="`mktemp -d /tmp/jbullet_extracted.XXXXXX`"
-
     echo "> Downloading jbullet to $lLOCATION"
-
     wget -O "$lLOCATION" "http://jbullet.advel.cz/download/jbullet-20101010.zip" \
     && echo "> extracting $lLOCATION" \
     && cd $lEXTRACT_DIR \
@@ -37,9 +35,7 @@ function install_jbullet {
 function install_jbox2d {
     local lLOCATION="`mktemp /tmp/jbox2d.XXXXXX.zip`"
     local lEXTRACT_DIR="`mktemp -d /tmp/jbox2d_extracted.XXXXXX`"
-
     echo "> Downloading jbox2d to $lLOCATION"
-
     wget -O "$lLOCATION" "http://jbox2d.googlecode.com/files/jbox2d-2.1.2.1.zip" \
     && echo "> extracting $lLOCATION" \
     && cd $lEXTRACT_DIR \
@@ -53,7 +49,6 @@ function install_jbox2d {
 function install_slf4j {
    local lLOCATION="`mktemp /tmp/slf4j.XXXXXXX.tar.gz`"
    local lEXTRACT_DIR="`mktemp -d /tmp/slf4j_extracted.XXXXXX`"
-
    wget -O "$lLOCATION" "http://www.slf4j.org/dist/slf4j-1.6.4.tar.gz" \
    && echo "> extractiong $lLOCATION" \
    && cd $lEXTRACT_DIR \
