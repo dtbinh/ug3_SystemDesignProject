@@ -11,17 +11,20 @@ Explanation of GUI:
     Blue line: origin (move up/down with keys 'a'/'d')
     Red line: robot rotation-direction (follows mouse on left button down)
     Orange line: robot movement-direction (change with right-click)
-Printed to stdout:
+Pretty printed to stdout:
     Angle between rotation-/movement-direction
     Angle between origin/movement-direction
     Rotation speed
     Movement speed
+For easier communication with other scripts, these values are also printed to
+stderr without formatting.
 Angles are measured in counter-clockwise direction (in [0:360))
 Rotation/Movement speed is the rotation/movement vector norm (in [0:255])
 """
 
 
 import pygame
+import sys
 from geometry import Circle, Line, Point
 from pygame_helpers import rotate_center
 
@@ -123,6 +126,8 @@ def run_app():
         angle_origin_movement = int(_origin_movement) % 360
         rotation_speed = int(rotation_vector.length())
         movement_speed = int(movement_vector.length())
+        print >> sys.stderr, angle_movement_rotation, angle_origin_movement, \
+            rotation_speed, movement_speed
         print 'angle(movement, rotation) = %d' % angle_movement_rotation
         print 'angle(origin, movement) = %d' % angle_origin_movement
         print 'speed(rotation) = %d' % rotation_speed
