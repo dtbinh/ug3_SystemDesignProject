@@ -11,13 +11,13 @@ Explanation of GUI:
     Blue line: origin (move up/down with keys 'a'/'d')
     Red line: robot rotation-direction (follows mouse on left button down)
     Orange line: robot movement-direction (change with right-click)
-    Printed to stdout:
-        Angle between rotation-/movement-direction
-        Angle between origin/movement-direction
-        Rotation speed
-        Movement speed
-    Angles are measured in counter-clockwise direction (in [0:360))
-    Rotation/Movement speed is the rotation/movement vector norm (in [0:255])
+Printed to stdout:
+    Angle between rotation-/movement-direction
+    Angle between origin/movement-direction
+    Rotation speed
+    Movement speed
+Angles are measured in counter-clockwise direction (in [0:360))
+Rotation/Movement speed is the rotation/movement vector norm (in [0:255])
 """
 
 
