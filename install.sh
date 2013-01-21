@@ -19,6 +19,56 @@ function install_lejos {
     && add_to_bashrc $STR
 }
 
+function install_zmq {
+    local lLOCATION="`mktemp /tmp/zmq.XXXXXX.tar.gz`"
+    local lEXTRACT_DIR="`mktemp -d /tmp/zmq_extracted.XXXXXX`"
+    echo "> Downloading ZMQ to $lLOCATION"
+    wget -O "$lLOCATION" "http://download.zeromq.org/zeromq-3.2.2.tar.gz" \
+    && echo "> extracting $lLOCATION" \
+    && cd $lEXTRACT_DIR \
+    && tar xvf $lLOCATION \
+    && cd zeromq-3.2.2 \
+    && ./autogen.sh \
+    && ./configure --prefix=$LIB \
+    && make \
+   	&& make install \
+    && rm $lLOCATION \
+    && rm -rf $lEXTRACT_DIR
+}
+
+function install_jzmq {
+    local lEXTRACT_DIR="`mktemp -d /tmp/jzmq_extracted.XXXXXX`"
+    echo "> Downloading jZMQ to $lEXTRACT_DIR"
+    cd $lEXTRACT_DIR \
+    && git clone git://github.com/zeromq/jzmq.git \
+    && cd $lEXTRACT_DIR \
+    && cd jzmq \
+    && ./autogen.sh \
+    && ./configure --prefix=$LIB CXXFLAGS=-I$LIB/include LDFLAGS=-L$LD_LIBRARY_DIR \
+    && make \
+   	&& make install \
+    && rm $lLOCATION \
+    && rm -rf $lEXTRACT_DIR
+}
+
+function install_pyzmq {
+    local lLOCATION="`mktemp /tmp/pyzmq.XXXXXX.tar.gz`"
+    local lEXTRACT_DIR="`mktemp -d /tmp/pyzmq_extracted.XXXXXX`"
+    echo "> Downloading pyZMQ to $lLOCATION"
+    wget -O "$lLOCATION" "https://github.com/zeromq/pyzmq/downloads/pyzmq-2.2.0.1.tar.gz" \
+    && echo "> extracting $lLOCATION" \
+    && cd $lEXTRACT_DIR \
+    && tar xvf $lLOCATION \
+    && cd pyzmq-2.2.0.1 \
+    && python setup.py configure --zmq=$LIB \
+    && python setup.py install --prefix=$LIB\
+    && STR="export PYTHONPATH=\$PYTHONPATH:$LIB/lib64/python2.6/site-packages/"  \
+    && add_to_bashrc $STR \
+    && rm $lLOCATION \
+    && rm -rf $lEXTRACT_DIR
+}
+
+
 function install_jbullet {
     local lLOCATION="`mktemp /tmp/jbullet.XXXXXX.zip`"
     local lEXTRACT_DIR="`mktemp -d /tmp/jbullet_extracted.XXXXXX`"
@@ -103,6 +153,10 @@ function install_neuroph {
 cleanup
 install_lejos
 install_bluetooth
+install_zmq
+install_jzmq
+install_pyzmq
+
 #install_slf4j # Seems to be required for the physics demo and reflections
 #install_jbullet
 #install_jbox2d
