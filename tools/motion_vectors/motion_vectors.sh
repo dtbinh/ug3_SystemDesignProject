@@ -15,4 +15,4 @@ fi
 
 # run script
 cd $src_dir
-python $(basename $0 .sh).py
+python $(basename $0 .sh).py $@

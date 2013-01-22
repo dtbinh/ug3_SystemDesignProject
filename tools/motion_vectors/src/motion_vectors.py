@@ -12,30 +12,28 @@ Explanation of GUI:
     Red line: robot rotation-direction (follows mouse on left button down)
     Orange line: robot movement-direction (change with right-click)
 Pretty printed to stdout:
+    Holonomic motor speeds for current vectors
     Angle between rotation-/movement-direction
     Angle between origin/movement-direction
     Rotation speed
     Movement speed
-For easier communication with other scripts, these values are also printed to
-stderr without formatting.
+The motor speeds are also sent to nxt_bluetooth_robot via IPC. This can be
+disabled (e.g. for debugging purposes) via passing --no-ipc to the script.
 Angles are measured in counter-clockwise direction (in [0:360))
 Rotation/Movement speed is the rotation/movement vector norm (in [0:255])
 """
 
 
-import pygame
-import sys
-import time
-
 from math import cos, sin, radians
-
-import zmq
+import pygame
 
 from geometry import Circle, Line, Point
 from pygame_helpers import rotate_center
 
+# robot constants
+ROBOT_MAX_SPEED = 255
 
-# constants
+# pygame/app constants
 MAX_FPS = 50
 BG_COLOR = (0, 255, 0)
 WIDTH = 800
@@ -46,7 +44,7 @@ ROBOT_RADIUS = 40
 ROBOT_COLOR = (0, 0, 0)
 ROBOT_WIDTH = 0
 LIMIT_POS = ROBOT_POS.copy()
-LIMIT_RADIUS = 255
+LIMIT_RADIUS = ROBOT_MAX_SPEED
 LIMIT_COLOR = (0, 0, 0)
 LIMIT_WIDTH = 3
 ROTATION_VECTOR_COLOR = (255, 0, 0)
@@ -56,7 +54,7 @@ COORDS_WIDTH = 1
 DIRECTION_VECTOR_COLOR = (255, 127, 0)
 DIRECTION_VECTOR_WIDTH = 2
 
-def run_app():
+def run_app(enable_ipc=True):
     # set up pygame
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -64,30 +62,34 @@ def run_app():
     pygame.display.set_caption('Motion Visualiser')
     robot_base = pygame.image.load('../res/base.bmp')
     robot_top = pygame.image.load('../res/top.bmp')
+    
     # initial positions of movement-, rotation-vector, and origin
     origin_pos = Point(0, HEIGHT / 2)
     rotation_vector_pos = ROBOT_POS.copy()
     movement_vector_pos = ROBOT_POS.copy()
     robot = Circle(ROBOT_POS, ROBOT_RADIUS, (screen, ROBOT_COLOR, ROBOT_WIDTH))
     limit = Circle(LIMIT_POS, LIMIT_RADIUS, (screen, LIMIT_COLOR, LIMIT_WIDTH))
+    
+    # set up IPC
+    if enable_ipc:
+        import time
+        import zmq
+        context = zmq.Context()
+        print "Connecting to server..."
+        socket = context.socket(zmq.REQ)
+        socket.connect("ipc:///tmp/nxt_bluetooth_robot")
+    
     # main loop
     done = False
     left_mouse_pressed = False
     stop_rotation = False
     stop_movement = False
-    
-    
-    context = zmq.Context()
-
-    print "Connecting to server..."
-    socket = context.socket(zmq.REQ)
-    socket.connect ("ipc:///tmp/nxt_bluetooth_robot")
-    
     while not done:
+        time_passed = clock.tick(MAX_FPS)
         mouse_pos = Point(*pygame.mouse.get_pos())
+        # restrict vectors to a maximum length of ROBOT_MAX_SPEED
         if not limit.contains_point(mouse_pos):
             mouse_pos = mouse_pos.project_to_circle(limit)
-        time_passed = clock.tick(MAX_FPS)
         # handle user events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -134,8 +136,6 @@ def run_app():
             (screen, DIRECTION_VECTOR_COLOR, DIRECTION_VECTOR_WIDTH))
         origin_line = Line(ROBOT_POS, origin_pos,
             (screen, COORDS_COLOR, COORDS_WIDTH))
-        
-        # log values to stdout
         _movement_rotation = movement_vector.angle_with_line(rotation_vector)
         angle_movement_rotation = int(_movement_rotation) % 360
         _origin_movement = origin_line.angle_with_line(movement_vector)
@@ -143,34 +143,49 @@ def run_app():
         rotation_speed = int(rotation_vector.length())
         movement_speed = int(movement_vector.length())
         
+        # convert speeds/angles to holonomic motor instructions
+        # same idea as res/legacy/WPILib/RobotDrive.cpp:MecanumDrive_Polar
+        # TODO consider the main differences:
+        #  1) WPILib gets the cos/sin values from the movement angle
+        #     (here: |angle_origin_movement|) and adds the rotation angle on
+        #     top of that (here: |angle_movement_rotation|)
+        #     --> why is this not done here?
+        #  2) WPILib normalizes the motor speeds (see code below)
+        #     --> why would you want to/not want to do this?
+        dirInRad = radians(angle_movement_rotation)
+        sinD = sin(dirInRad)
+        cosD = cos(dirInRad)
+        m1 = rotation_speed * sinD
+        m2 = rotation_speed * cosD
+        m3 = -rotation_speed * cosD
+        m4 = -rotation_speed * sinD
+        motor_speeds = [m1, m2, m3, m4]
+        """
+        # normalize motor speeds if any one is higher than ROBOT_MAX_SPEED
+        max_speed = float(max([abs(speed) for speed in motor_speeds]))
+        if max_speed > ROBOT_MAX_SPEED:
+            m1, m2, m3, m4 = [speed / max_speed for speed in motor_speeds]
+        """
+        # convert to integers for communication
+        m1 = int(m1)
+        m2 = int(m2)
+        m3 = int(m3)
+        m4 = int(m4)
         
-        # DO MAGIC
-        #print >> sys.stderr, angle_movement_rotation, angle_origin_movement, rotation_speed, movement_speed
-        Vd = rotation_speed / 255.0;
+        # send to bluetooth server + consume/print reply
+        if enable_ipc:
+            socket_message = "1 %d %d %d %d" % (m1, m2, m3, m4)
+            socket.send(socket_message)
+            print socket.recv()
+            time.sleep(0.05)
         
-        m1 = Vd * sin(radians(angle_movement_rotation))
-        m2 = Vd * cos(radians(angle_movement_rotation))
-        m3 = Vd * cos(radians(angle_movement_rotation))
-        m4 = Vd * sin(radians(angle_movement_rotation)) 
-        
-        m1 *= 255
-        m2 *= 255
-        m3 *= -255
-        m4 *= -255
-        
-        # Send to bluetooth server
-        socket.send ("1 " + str(int(m1)) + " " + str(int(m2)) + " "+ str(int(m3)) + " "+ str(int(m4)) )
-        # Read reply
-        print socket.recv()
-        
-        time.sleep(0.05)
-        print int(m1), int(m2), int(m3), int(m4)
+        # log values to stdout
+        print m1, m2, m3, m4
         print 'angle(movement, rotation) = %d' % angle_movement_rotation
         print 'angle(origin, movement) = %d' % angle_origin_movement
         print 'speed(rotation) = %d' % rotation_speed
         print 'speed(movement) = %d' % movement_speed
         print '-' * 80
-        
         
         # redraw
         screen.fill(BG_COLOR)
@@ -192,4 +207,10 @@ def run_app():
         pygame.display.flip()
 
 if __name__ == '__main__':
-    run_app()
+    import sys
+    enable_ipc = True
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--no-ipc':
+            enable_ipc = False
+    
+    run_app(enable_ipc)
