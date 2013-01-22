@@ -25,6 +25,12 @@ Rotation/Movement speed is the rotation/movement vector norm (in [0:255])
 
 import pygame
 import sys
+import time
+
+from math import cos, sin, radians
+
+import zmq
+
 from geometry import Circle, Line, Point
 from pygame_helpers import rotate_center
 
@@ -69,6 +75,14 @@ def run_app():
     left_mouse_pressed = False
     stop_rotation = False
     stop_movement = False
+    
+    
+    context = zmq.Context()
+
+    print "Connecting to server..."
+    socket = context.socket(zmq.REQ)
+    socket.connect ("ipc:///tmp/nxt_bluetooth_robot")
+    
     while not done:
         mouse_pos = Point(*pygame.mouse.get_pos())
         if not limit.contains_point(mouse_pos):
@@ -112,6 +126,7 @@ def run_app():
         if stop_movement:
             movement_vector_pos = ROBOT_POS
             stop_movement = False
+        
         # recompute
         rotation_vector = Line(ROBOT_POS, rotation_vector_pos,
             (screen, ROTATION_VECTOR_COLOR, ROTATION_VECTOR_WIDTH))
@@ -119,6 +134,7 @@ def run_app():
             (screen, DIRECTION_VECTOR_COLOR, DIRECTION_VECTOR_WIDTH))
         origin_line = Line(ROBOT_POS, origin_pos,
             (screen, COORDS_COLOR, COORDS_WIDTH))
+        
         # log values to stdout
         _movement_rotation = movement_vector.angle_with_line(rotation_vector)
         angle_movement_rotation = int(_movement_rotation) % 360
@@ -126,13 +142,36 @@ def run_app():
         angle_origin_movement = int(_origin_movement) % 360
         rotation_speed = int(rotation_vector.length())
         movement_speed = int(movement_vector.length())
-        print >> sys.stderr, angle_movement_rotation, angle_origin_movement, \
-            rotation_speed, movement_speed
+        
+        
+        # DO MAGIC
+        #print >> sys.stderr, angle_movement_rotation, angle_origin_movement, rotation_speed, movement_speed
+        Vd = rotation_speed / 255.0;
+        
+        m1 = Vd * sin(radians(angle_movement_rotation))
+        m2 = Vd * cos(radians(angle_movement_rotation))
+        m3 = Vd * cos(radians(angle_movement_rotation))
+        m4 = Vd * sin(radians(angle_movement_rotation)) 
+        
+        m1 *= 255
+        m2 *= 255
+        m3 *= -255
+        m4 *= -255
+        
+        # Send to bluetooth server
+        socket.send ("1 " + str(int(m1)) + " " + str(int(m2)) + " "+ str(int(m3)) + " "+ str(int(m4)) )
+        # Read reply
+        print socket.recv()
+        
+        time.sleep(0.05)
+        print int(m1), int(m2), int(m3), int(m4)
         print 'angle(movement, rotation) = %d' % angle_movement_rotation
         print 'angle(origin, movement) = %d' % angle_origin_movement
         print 'speed(rotation) = %d' % rotation_speed
         print 'speed(movement) = %d' % movement_speed
         print '-' * 80
+        
+        
         # redraw
         screen.fill(BG_COLOR)
         robot.draw()
@@ -140,6 +179,7 @@ def run_app():
         origin_line.draw()
         rotation_vector.draw()
         movement_vector.draw()
+        
         # FIXME: moving origin line rotates robot-sprite
         (rot_robot_base, rot_robot_base_rect) = rotate_center(robot_base,
             angle_origin_movement)
