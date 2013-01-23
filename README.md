@@ -15,7 +15,7 @@ Alternatively, one could use USB cable, but DICE accounts do not have sufficient
 ## Collaborators ##
 * Duka
 * Ironside
-* McGillion
+* McGillion (samtmcg)
 * Moore (Zahzou)
 * Osman (osozg)
 * Pantov
