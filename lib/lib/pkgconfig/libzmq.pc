@@ -1,0 +1,10 @@
+prefix=/afs/inf.ed.ac.uk/user/s09/s0942284/Desktop/ug3_SDP/lib
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libzmq
+Description: 0MQ c++ library
+Version: 3.2.2
+Libs: -L${libdir} -lzmq
+Cflags: -I${includedir}
