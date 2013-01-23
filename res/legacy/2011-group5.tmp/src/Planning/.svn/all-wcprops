@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/sdp05/!svn/ver/442/FriendlyBranch/src/Planning
+END
+GridPoint.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/GridPoint.java
+END
+TestConnection.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/sdp05/!svn/ver/338/FriendlyBranch/src/Planning/TestConnection.java
+END
+PathSearch.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/PathSearch.java
+END
+SimulatorCommunication.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/SimulatorCommunication.java
+END
+CommunicationInterface.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/sdp05/!svn/ver/338/FriendlyBranch/src/Planning/CommunicationInterface.java
+END
+Main2.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/Main2.java
+END
+GridPointComparator.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/GridPointComparator.java
+END
+Robot2.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/Robot2.java
+END
+Ball.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/Ball.java
+END
+BluetoothCommunication.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/BluetoothCommunication.java
+END
+intercept.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/sdp05/!svn/ver/444/FriendlyBranch/src/Planning/intercept.java
+END

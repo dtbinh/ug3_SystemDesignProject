@@ -1,0 +1,60 @@
+___  ____ ____ ___  ____ ____    ___ _  _ ____ _  _    ___  _    _  _ ____ 
+|  \ |___ |___ |__] |___ |__/     |  |__| |__| |\ |    |__] |    |  | |___ 
+|__/ |___ |___ |    |___ |  \     |  |  | |  | | \|    |__] |___ |__| |___ 
+                                                                           
+				___  ____ ____ ____ ____ _  _ ___ ____ 
+				|__] |__/ |___ [__  |___ |\ |  |  [__  
+				|    |  \ |___ ___] |___ | \|  |  ___] 
+
+System Design Project 2011, Group 5. Licensed for free use and distribution under the GPL v3.
+
+Members, alphabetically: 
+ - Ivan Trendafilov
+ - Matthew Failes
+ - Michal Kot
+ - Moo Sin Yeong
+ - Murray Settle
+ - Oleg Filippov
+ - Sean Wilson
+ - William Ogilvie
+ - Yvonne Eichhorn
+Mentor: Jane Hillston
+
+
+This is the source code for our (award-winning) robot. The system is implemented entirely and Java and takes advantage of a number of freely available libraries. 
+
+1. Installation requirements
+ - LeJOS on the NXT brick 
+ - v4l4j 0.8.9 to capture images from the camera 
+ - bluecove for Bluetooth communication
+ - Phys2D for the simulator.
+ 
+2. How to use:
+	0. Flash the NXT brick, compile the included NXT code & upload it to the brick.
+	1. Import project into Eclipse.
+	2. Make sure that all the jars above are added to the path of the project, and ensure that v4l4j is pointed to the correct native library location (most likely to be /usr/bin/jni)
+	3. From Eclipse, launch Main2.
+	4. That's it. 
+
+3. Things done well:
+ - Fast & reliable Java Vision system. 24-25 frames per second.
+ - Communication between NXT and PC. A single, fixed-format packet contains all required information (through opcodes), and is up to 8 times faster than String or Integer-based communication.
+ - Curved motion algorithm, works by translating a target point into a set of motor commands.
+ - Penalty mode - the robot blocks the goal and adjusts its position, based on the orientation of the opponent.
+ - Powerful kicker, powered by two motors.
+ - A* path planning algorithm.
+ - GUI for robot control panel - allows adjusting constants, debugging, controlling game play.
+
+4. Things that could be improved:
+ - Introduce higher level goal planning. The system as it is lacks on overall goal. There is a high probability that the robot will score (and indeed, it has many times), however this is achieved through path planning heuristics and hacks in the Main class, not through systematic goal planning.
+ - Refactor the code. Keeping a 1000 lines of code in a single class might look cool, but it is difficult to maintain. Also, the penalty shooter should probably not be in the GUI class.
+ - Write a machine learning algorithm to teach the robot to play the ball off the wall only when profitable.
+ 
+ 5. Team 5 in Action (or carefully selected video material):
+ - SDP 2011 Group 5 (BLUE) vs. SDP 2011 Group 11 (YELLOW): http://www.youtube.com/watch?v=3LAxc0cIvJw
+ - SDP 2011 Group 5 (BLUE) vs. SDP 2010 Group 6 (YELLOW): http://www.youtube.com/watch?v=GWyYkO8CIgc
+ - SDP 2011 Group 5 (YELLOW) vs. SDP 2010 Group 3 (BLUE): http://www.youtube.com/watch?v=hIDEcPUKiTg
+ - SDP 2011 Group 5 (YELLOW) vs. SDP 2011 Group 2 (BLUE): http://www.youtube.com/watch?v=niLzIo9h6UM
+ - SDP 2011 Group 5 (BLUE) vs. SDP 2011 Group 6 (YELLOW): http://www.youtube.com/watch?v=mh2QQogU_yA
+ - SDP 2011 Group 5 (BLUE) vs. SDP 2011 Group 8 (YELLOW): http://www.youtube.com/watch?v=LWvO5PzFdTE
+... and many more on youtube.
