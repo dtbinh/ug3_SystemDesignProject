@@ -4,6 +4,7 @@
 git clone git://github.com/sdp-5-2012/sdp-5-2012.git
 group52012_dir=sdp-5-2012
 cd $group52012_dir
+rm -rf .git
 cp -r src/JavaVision/constants ..
 chmod +x compile.sh
 mkdir -p ./bin
