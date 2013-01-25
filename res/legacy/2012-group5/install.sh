@@ -26,8 +26,8 @@ echo '#!/bin/bash'
 echo "cd $container_dir/$group52012_dir"
 echo "./runVision.sh"
 } > runVision.sh
-{
 chmod +x runVision.sh
+{
 echo '#!/bin/bash'
 echo "cd $container_dir/$group52012_dir"
 echo "./compile.sh"
