@@ -116,8 +116,8 @@ public class PitchConstants {
 		
 		this.pitchNum = newPitchNum;
 		
-		//loadConstants(".constants/pitch" + pitchNum);
-		loadConstants("../constants/pitch" + pitchNum);
+		//loadConstants(".constants/newpitch" + pitchNum);
+		loadConstants("../constants/newpitch" + pitchNum);
 		
 	}
 	
