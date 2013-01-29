@@ -6,4 +6,4 @@
 
 * In case you need to reprogram NXT brick, edit `bluetooth_nxt.java` and use `./program_nxt.sh` to upload the program over bluetooth
 
-* To return to the main menu press <orange> and <down> (the one right below orange) buttons at the same time
+* To return to the main menu press `orange` and `down` (the one right below orange) buttons at the same time
