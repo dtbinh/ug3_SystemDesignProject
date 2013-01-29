@@ -37,6 +37,8 @@ public class bluetooth_pc
 	public static final int OP_CHANGE_ROBOT_DIRECTION = 2;
 	public static final int THIS_IS_SPARTAAA = 3; // kick
 	public static final int OP_ROTATE_RXT_MOTOR = 4;
+	public static final int OP_CHANGE_RXT_MOTOR_SPEED = 5;
+	public static final int OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
 
 	private static InputStream in;
 	private static OutputStream out;
@@ -173,9 +175,9 @@ public class bluetooth_pc
 			command = new byte[1];
 			command[0] = (byte)opcode;
 		}
-		else if (opcode == OP_ROTATE_RXT_MOTOR)
+		else if (opcode == OP_ROTATE_RXT_MOTOR || opcode == OP_CHANGE_RXT_MOTOR_SPEED || opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
 		{
-			// Params: [short short] - rotation in ticks
+			// Params: [short short]
 			short mA, mB;
 			try
 			{

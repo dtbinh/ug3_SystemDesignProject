@@ -31,6 +31,8 @@ public class bluetooth_nxt {
 	public static final byte OP_CHANGE_ROBOT_DIRECTION = 2;
 	public static final byte THIS_IS_SPARTAAA = 3; // kick
 	public static final byte OP_ROTATE_RXT_MOTOR = 4;
+	public static final byte OP_CHANGE_RXT_MOTOR_SPEED = 5;
+	public static final byte OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
 
 	// M1 - kick
 	public static final int KICK_ANGLE = 130; // in "ticks"
@@ -50,15 +52,15 @@ public class bluetooth_nxt {
 	public static void main(String[] args) {
 		Motormux robot = new Motormux(SensorPort.S4);
 		Sound.setVolume(50);
-		
+
 		// Max kicker speed
 		Motor.C.setSpeed(9999);
 		Motor.A.setSpeed(6000);
 		Motor.B.setSpeed(6000);
-		
+
 		Motor.A.setAcceleration(ACCELERATION);
 		Motor.B.setAcceleration(ACCELERATION);
-		
+
 		while (true) 
 		{
 			try 
@@ -75,24 +77,24 @@ public class bluetooth_nxt {
 				LCD.clear();
 				LCD.drawString("Connected!", 0, 0);
 				byte[] opcode = new byte[1];
-				
+
 				while (true) {
 					// Read opcode
 					dis.read(opcode);
-					
+
 					LCD.drawString("oc: " + opcode[0], 0, 5);
 
 					// End of connection
 					if (opcode[0] == 0)
 					{
 						Sound.twoBeeps();
-					    
+
 						dis.close();
-					    dos.close();
-						
-					    break;
+						dos.close();
+
+						break;
 					}
-					
+
 					handle_request(opcode[0]);
 
 
@@ -142,20 +144,33 @@ public class bluetooth_nxt {
 				// TODO: add to thread
 				kick();
 			}
-			else if (opcode == OP_ROTATE_RXT_MOTOR)
+			else if (opcode == OP_ROTATE_RXT_MOTOR || opcode == OP_CHANGE_RXT_MOTOR_SPEED || opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
 			{
-				byte[] motor_speeds = new byte[2 * 2];
-				dis.read(motor_speeds);
+				byte[] motor_params = new byte[2 * 2];
+				dis.read(motor_params);
 
-				short mA = (short) ((short)motor_speeds[1] << 8 | (255 & (short)motor_speeds[0]));
-				short mB = (short) ((short)motor_speeds[3] << 8 | (255 & (short)motor_speeds[2]));
-				
-				Motor.A.rotate(mA, true);
-				Motor.B.rotate(mB, true);
+				short mA = (short) ((short)motor_params[1] << 8 | (255 & (short)motor_params[0]));
+				short mB = (short) ((short)motor_params[3] << 8 | (255 & (short)motor_params[2]));
 
 				LCD.drawString("mA: " + mA + "   ", 0, 3);
 				LCD.drawString("mB: " + mB + "   ", 0, 4);
-				
+
+				if (opcode == OP_ROTATE_RXT_MOTOR)
+				{
+					Motor.A.rotate(mA, true);
+					Motor.B.rotate(mB, true);
+				}
+				else if (opcode == OP_CHANGE_RXT_MOTOR_SPEED)
+				{
+					Motor.A.setSpeed(mA);
+					Motor.B.setSpeed(mB);
+				}
+				else if (opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
+				{
+					Motor.A.setAcceleration(mA);
+					Motor.B.setAcceleration(mB);
+				}
+
 			}
 			else
 			{
@@ -170,14 +185,14 @@ public class bluetooth_nxt {
 		}
 
 	}
-	
+
 	static void kick()
 	{
 		// Kick
 		Motor.C.rotate(KICK_ANGLE * -KICK_DIRECTION, true);
-		
+
 		try{Thread.sleep(600);}catch(Exception e) {}
-		
+
 		// Reset kicker to original position
 		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
 	}
