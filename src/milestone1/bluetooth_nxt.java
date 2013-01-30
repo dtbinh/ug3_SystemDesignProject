@@ -52,12 +52,12 @@ public class bluetooth_nxt {
 		Sound.setVolume(50);
 		
 		// Max kicker speed
-		Motor.C.setSpeed(9999);
+		Motor.C.setSpeed(12000);
 		Motor.A.setSpeed(6000);
 		Motor.B.setSpeed(6000);
 		
-		Motor.A.setAcceleration(ACCELERATION);
-		Motor.B.setAcceleration(ACCELERATION);
+		Motor.A.setAcceleration(5000);
+		Motor.B.setAcceleration(4000);
 		
 		while (true) 
 		{
