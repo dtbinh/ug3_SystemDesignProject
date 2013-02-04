@@ -19,7 +19,7 @@ public class Runner extends Thread {
 	private static ControlGUI thresholdsGUI;
 	Vision vision;
 	static int maxballspeed = 0;
-	static int ballangle = 0;
+	static double ballangle = 0;
 	static int oldballx = 0;
 	static Ball oldball;
 	private static Context context;
@@ -56,13 +56,12 @@ public class Runner extends Thread {
 		startVision();
 		
 		do {
-		mainLoop();
-		try {
-			Thread.sleep(2000);
+		try{
+		sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
+		mainLoop();
 		}while(true);
 	}
 
@@ -134,30 +133,40 @@ public class Runner extends Thread {
 		maxballspeed = (maxballspeed > currspeed) ? maxballspeed : currspeed;
 		} catch (NullPointerException e) {
 		System.out.println("No value of oldball set");
-			
 		}
-		try{
-		ballangle = move.getAngleToBall(blueRobot, ball);
-		} catch (NullPointerException e) {
-		System.out.println("No value of oldball set");
-			
-		}
+//		
+//		try{
+//		ballangle = move.getAngleToBall(blueRobot, ball);
+//		} catch (NullPointerException e) {
+//		System.out.println("No value of oldball set");
+//			
+//		}
+//		
+		// get real theta that we can use for real math
+		double robotTheta = brD - Math.PI/2;
+		if (robotTheta > Math.PI) robotTheta -= Math.PI*2;
+	
+		// get theta of vector from robot to ball
+		double robToBallTheta = Math.atan2(bY - brY, bX - brX);
 		
-		ballangle = ((ballangle*(-1)) > ballangle) ? (360 + ballangle) : ballangle;
+		ballangle = robToBallTheta - robotTheta;
+		
+		//ballangle = ((ballangle*(-1)) > ballangle) ? (2*Math.PI + ballangle) : ballangle;
 		System.out.println("YRobotX: " + yrX +" YRobotY: " + yrY + " YDir: " + yrD);
 		System.out.println("BRobotX: " + brX + " BRobotY: " + brY + " BDir: " + brD );
 		System.out.println("BallX: " + bX + " BallY: " + bY + " maxspeed :" + maxballspeed);
-		System.out.println("Distance : " + dist + " angle: " + ballangle);
+		System.out.println("Distance : " + dist + " angle: " + ballangle + " " + ballangle*180/Math.PI);
 		int m1 = (int) (Math.sin(ballangle)*255);
 		int m2 = (int) (Math.cos(ballangle)*255);
-		int m3 = (int) (Math.cos(ballangle)*255);
-		int m4 = (int) (Math.sin(ballangle)*255);
-		String sig = "1" + " " + m1 + " "+ m2 + " " + m3 + " " + m4;
-		System.out.println("I math ok daddy");
-		socket.send(sig, 0);
-		System.out.println("I snet ok daddy");
-		socket.recv(0);
+		int m3 = (int) -(Math.cos(ballangle)*255);
+		int m4 = (int) -(Math.sin(ballangle)*255);
+		String sig = (dist > 52) ? ("1" + " " + m1 + " "+ m2 + " " + m3 + " " + m4) : ("1 0 0 0 0");
 		
+		System.out.println("I math ok daddy " + sig);
+//		socket.send(sig, 0);
+		System.out.println("Sending OK");
+//		socket.recv(0);
+		System.out.println("Recieving OK");
 		
 	   
 	}

@@ -49,7 +49,7 @@ public class bluetooth_pc
 
 		//  Socket to talk to clients over IPC
 		Socket socket = context.socket(ZMQ.REP);
-		socket.bind("ipc:///tmp/nxt_bluetooth_robott");
+		socket.bind("ipc:///tmp/nxt_bluetooth_robot");
 
 
 		int reply_error_code;
