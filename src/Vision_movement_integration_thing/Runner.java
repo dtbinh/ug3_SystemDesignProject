@@ -56,11 +56,13 @@ public class Runner extends Thread {
 		startVision();
 		
 		do {
-		try{
-		sleep(1000);
+		try {
+			sleep(100);
 		} catch (InterruptedException e) {
-			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		mainLoop();
 		}while(true);
 	}
@@ -116,7 +118,7 @@ public class Runner extends Thread {
 			    }
 		getPitchInfo();
 		
-		int dist = move.getDist(yellowRobot, ball);
+		int dist = move.getDist(blueRobot, ball);
 		
 		int yrX = yellowRobot.getCoors().getX();
 		int yrY = yellowRobot.getCoors().getY();
@@ -156,16 +158,16 @@ public class Runner extends Thread {
 		System.out.println("BRobotX: " + brX + " BRobotY: " + brY + " BDir: " + brD );
 		System.out.println("BallX: " + bX + " BallY: " + bY + " maxspeed :" + maxballspeed);
 		System.out.println("Distance : " + dist + " angle: " + ballangle + " " + ballangle*180/Math.PI);
-		int m1 = (int) (Math.sin(ballangle)*255);
-		int m2 = (int) (Math.cos(ballangle)*255);
-		int m3 = (int) -(Math.cos(ballangle)*255);
-		int m4 = (int) -(Math.sin(ballangle)*255);
+		int m2 = (int) (Math.sin(ballangle)*255);
+		int m1 = (int) -(Math.cos(ballangle)*255);
+		int m4 = (int) (Math.cos(ballangle)*255);
+		int m3 = (int) -(Math.sin(ballangle)*255);
 		String sig = (dist > 52) ? ("1" + " " + m1 + " "+ m2 + " " + m3 + " " + m4) : ("1 0 0 0 0");
 		
 		System.out.println("I math ok daddy " + sig);
-//		socket.send(sig, 0);
+		//socket.send(sig, 0);
 		System.out.println("Sending OK");
-//		socket.recv(0);
+		//socket.recv(0);
 		System.out.println("Recieving OK");
 		
 	   
