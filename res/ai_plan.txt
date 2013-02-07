@@ -1,0 +1,22 @@
+Do we have the ball?
+    (yes) Position good enough to score?
+        (yes) Shoot
+        (no) Move to better position
+    (no) Does the opponent have the ball?
+        (yes) Is the opponent closer to our goal than us?
+            (yes) Move at maximum speed to our goal
+            (no) Mirror movement of opponent and reduce distance
+        (no) Move towards predicted location of ball
+
+Penalty defense
+    Draw a line following orientation of other robot and a line parallel to the
+    goal - move to intersection of these two lines.
+    Execute random short movements left/right of this position.
+
+Determine if robot should shoot
+    score = [0..1] = weighted sum of:
+        distance to goal
+        magnitude of angle between robot and goal posts
+        opponent is in way
+    add a bit of non determinism to be harder to predict:
+        if score > uniform(0, 1): shoot
