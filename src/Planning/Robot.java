@@ -178,6 +178,9 @@ public class Robot extends ObjectDetails {
 
 	/**
 	 * Commands the robot to move backward slightly
+	 * Might adapt this to reverse slightly by inverting the vector of travel for a small (~1 second) period
+	 * Use code from the run() method of https://github.com/c-w/ug3_SDP/blob/master/res/legacy/2012-group5/src/NXT/NXT_class.java
+	 * to detect when the sensors have been pressed
 	 */
 	public void backwardsSlightly(){
 		addCommand(TRAVEL_BACKWARDS_SLIGHRLY);
