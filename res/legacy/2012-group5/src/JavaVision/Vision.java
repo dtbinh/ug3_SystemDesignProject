@@ -171,6 +171,112 @@ public class Vision extends WindowAdapter {
 		System.exit(0);
 	}
 
+    private static BufferedImage simpleWhiteBalance(BufferedImage image,
+        float s1, float s2) {
+        // http://www.ipol.im/pub/art/2011/llmps-scb/
+        int N = image.getHeight() * image.getWidth();
+        // build cumulative histogram
+        int[] redHisto = new int[256];
+        int[] greenHisto = new int[256];
+        int[] blueHisto = new int[256];
+        for (int row = 0; row < image.getHeight(); row++) {
+            for (int column = 0; column < image.getWidth(); column++) {
+				Color c = new Color(image.getRGB(column, row));
+                int red = c.getRed();
+                int green = c.getGreen();
+                int blue = c.getBlue();
+                redHisto[red]++;
+                greenHisto[green]++;
+                blueHisto[blue]++;
+            }
+        }
+        for (int i = 1; i < 256; i++) {
+            redHisto[i] += redHisto[i - 1];
+            greenHisto[i] += greenHisto[i - 1];
+            blueHisto[i] += blueHisto[i - 1];
+        }
+        // search vmin and vmax
+        int redVMin = 0;
+        int greenVMin = 0;
+        int blueVMin = 0;
+        while (redHisto[redVMin + 1] <= N * s1 / 100.0) {
+            redVMin++;
+        }
+        while (greenHisto[greenVMin + 1] <= N * s1 / 100.0) {
+            greenVMin++;
+        }
+        while (blueHisto[blueVMin + 1] <= N * s1 / 100.0) {
+            blueVMin++;
+        }
+        int redVMax = 255 - 1;
+        int greenVMax = 255 - 1;
+        int blueVMax = 255 - 1;
+        while (redHisto[redVMax - 1] > N * (1 - s2 / 100.0)) {
+            redVMax--;
+        }
+        while (greenHisto[greenVMax - 1] > N * (1 - s2 / 100.0)) {
+            greenVMax--;
+        }
+        while (blueHisto[blueVMax - 1] > N * (1 - s2 / 100.0)) {
+            blueVMax--;
+        }
+        if (redVMax < 255 - 1) {
+            redVMax++;
+        }
+        if (greenVMax < 255 - 1) {
+            greenVMax++;
+        }
+        if (blueVMax < 255 - 1) {
+            blueVMax++;
+        }
+        // saturate the pixels
+        for (int row = 0; row < image.getHeight(); row++) {
+            for (int column = 0; column < image.getWidth(); column++) {
+				Color c = new Color(image.getRGB(column, row));
+                int red = c.getRed();
+                int green = c.getGreen();
+                int blue = c.getBlue();
+                if (red < redVMin) {
+                    red = redVMin;
+                }
+                else if (red > redVMax) {
+                    red = redVMax;
+                }
+                if (green < greenVMin) {
+                    green = greenVMin;
+                }
+                else if (green > greenVMax) {
+                    green = greenVMax;
+                }
+                if (blue < blueVMin) {
+                    blue = blueVMin;
+                }
+                else if (blue > blueVMax) {
+                    blue = blueVMax;
+                }
+                Color cc = new Color(red, green, blue);
+                int rgb = cc.getRGB();
+                image.setRGB(column, row, rgb);
+            }
+        }
+        // rescale the pixels
+        for (int row = 0; row < image.getHeight(); row++) {
+            for (int column = 0; column < image.getWidth(); column++) {
+		Color c = new Color(image.getRGB(column, row));
+                int red = c.getRed();
+                int green = c.getGreen();
+                int blue = c.getBlue();
+                red = (red - redVMin) * 255 / (redVMax - redVMin);
+                green = (green - greenVMin) * 255 / (greenVMax - greenVMin);
+                blue = (blue - blueVMin) * 255 / (blueVMax - blueVMin);
+                Color cc = new Color(red, green, blue);
+                int rgb = cc.getRGB();
+                image.setRGB(column, row, rgb);
+            }
+        }
+        return image;
+    }
+
 	/**
 	 * Processes an input image, extracting the ball and robot positions and
 	 * robot orientations from it, and then displays the image (with some
@@ -184,6 +290,7 @@ public class Vision extends WindowAdapter {
 			int counter) {
 
 
+		// image = simpleWhiteBalance(image, 1.0f, 1.5f);
 		int ballX = 0;
 		int ballY = 0;
 		int numBallPos = 0;
