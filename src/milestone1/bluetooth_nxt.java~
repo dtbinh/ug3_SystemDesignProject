@@ -50,7 +50,7 @@ public class bluetooth_nxt {
 	private static OutputStream dos;
 
 	public static void main(String[] args) {
-		Motormux robot = new Motormux(SensorPort.S4)                                                      );
+		Motormux robot = new Motormux(SensorPort.S1);
 		Sound.setVolume(50);
 
 		// Max kicker speed

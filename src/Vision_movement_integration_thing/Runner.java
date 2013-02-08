@@ -18,12 +18,10 @@ public class Runner extends Thread {
 	static Robot yellowRobot;
 	private static ControlGUI thresholdsGUI;
 	Vision vision;
-	static int maxballspeed = 0;
-	static int ballangle = 0;
-	static int oldballx = 0;
-	static Ball oldball;
+	static double ballangle = 0;
 	private static Context context;
 	private static Socket socket;
+
 	
 	public static void main(String args[]) {
 		context = ZMQ.context(1);
@@ -44,7 +42,6 @@ public class Runner extends Thread {
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
 		ball = new Ball();
-		oldball = new Ball();
 		move = new Move();
 		start();
 	}
@@ -56,13 +53,14 @@ public class Runner extends Thread {
 		startVision();
 		
 		do {
-		mainLoop();
 		try {
-			Thread.sleep(2000);
+			sleep(40);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		mainLoop();
 		}while(true);
 	}
 
@@ -108,20 +106,15 @@ public class Runner extends Thread {
 
 
 	private void mainLoop() {
-		 try {
-			    if (ball.getCoors().getX() > 0) {
-				oldball.setCoors(ball.getCoors());
-			    }
-		 		}catch (NullPointerException e){
-			    System.out.println("Oldball not set again");
-			    }
+
 		getPitchInfo();
 		
-		int dist = move.getDist(yellowRobot, ball);
+		int dist = move.getDist(blueRobot, ball);
 		
 		int yrX = yellowRobot.getCoors().getX();
 		int yrY = yellowRobot.getCoors().getY();
 		int yrD = (int) yellowRobot.getAngle();
+				
 		
 		int brX = blueRobot.getCoors().getX();
 		int brY = blueRobot.getCoors().getY();
@@ -129,35 +122,84 @@ public class Runner extends Thread {
 		
 		int bX = ball.getCoors().getX();
 		int bY = ball.getCoors().getY();
-		try {
-		int currspeed = move.getBallDist(ball, oldball);
-		maxballspeed = (maxballspeed > currspeed) ? maxballspeed : currspeed;
-		} catch (NullPointerException e) {
-		System.out.println("No value of oldball set");
-			
-		}
-		try{
-		ballangle = move.getAngleToBall(blueRobot, ball);
-		} catch (NullPointerException e) {
-		System.out.println("No value of oldball set");
-			
-		}
 		
-		ballangle = ((ballangle*(-1)) > ballangle) ? (360 + ballangle) : ballangle;
+					
+		// get real theta that we can use for real math
+		double robotTheta = brD - Math.PI/2;
+		if (robotTheta > Math.PI) robotTheta -= Math.PI*2;
+	
+		
+	
+		// get theta of vector from robot to ball
+		double robToBallTheta = Math.atan2(bY - brY, bX - brX);
+		
+		ballangle = robToBallTheta - robotTheta;
+		
 		System.out.println("YRobotX: " + yrX +" YRobotY: " + yrY + " YDir: " + yrD);
 		System.out.println("BRobotX: " + brX + " BRobotY: " + brY + " BDir: " + brD );
-		System.out.println("BallX: " + bX + " BallY: " + bY + " maxspeed :" + maxballspeed);
-		System.out.println("Distance : " + dist + " angle: " + ballangle);
-		int m1 = (int) (Math.sin(ballangle)*255);
-		int m2 = (int) (Math.cos(ballangle)*255);
-		int m3 = (int) (Math.cos(ballangle)*255);
-		int m4 = (int) (Math.sin(ballangle)*255);
-		String sig = "1" + " " + m1 + " "+ m2 + " " + m3 + " " + m4;
-		System.out.println("I math ok daddy");
-		socket.send(sig, 0);
-		System.out.println("I snet ok daddy");
-		socket.recv(0);
+		System.out.println("BallX: " + bX + " BallY: " + bY );
+		System.out.println("Distance : " + dist + " angle: " + ballangle + " " + ballangle*180/Math.PI);
+	
+		double m2 = (Math.sin(ballangle));
+		double m1 = -(Math.cos(ballangle));
+		double m4 = (Math.cos(ballangle));
+		double m3 = -(Math.sin(ballangle));
+	
 		
+		
+		boolean wantsToStop = false;
+		if (dist < 52) { 
+			m1 = 0;
+			m2 = 0;
+			m3 = 0;
+			m4 = 0;
+			wantsToStop = true;
+		}
+		
+		boolean wantsToRotate = false;
+		if (ballangle < 0 ){
+			if ((-1*ballangle) > (Math.PI/9)) {
+			m1 += 0.2;
+			m2 += 0.2;
+			m3 += 0.2;
+			m4 += 0.2;	
+			wantsToRotate = true;
+			}
+			
+		} else if (ballangle > Math.PI/9) {
+			m1 -= 0.2;
+			m2 -= 0.2;
+			m3 -= 0.2;
+			m4 -= 0.2;
+			wantsToRotate = true;
+		}
+		
+		
+		double[] motors = {m1,m2,m3,m4};
+		double motormax = 0.01;
+		for (int i = 0; i < 4; i++){
+			motormax =  ((Math.pow(motors[i], 2))>(Math.pow(motormax,2))) ? motors[i] : motormax;
+		}
+		
+		motormax = (motormax > 0) ? motormax : motormax*-1;
+		double multfactor = 255/motormax;
+		
+		multfactor =  (wantsToRotate && wantsToStop) ? multfactor/4 : multfactor;
+		int mot1 = (int) (m1 * multfactor);
+		int mot2 = (int) (m2 * multfactor);
+		int mot3 = (int) (m3 * multfactor);
+		int mot4 = (int) (m4 * multfactor);	
+		
+		
+		String sig = ("1 " + mot1 + " " + mot2 + " " + mot3 + " " + mot4);
+		
+		//sig = ("1 0 0 0 0");
+		
+		System.out.println("I math ok daddy " + sig);
+		//socket.send(sig, 0);
+		System.out.println("Sending OK");
+		//socket.recv(0);
+		System.out.println("Recieving OK");
 		
 	   
 	}
@@ -180,9 +222,16 @@ public class Runner extends Thread {
 			
 		
 		}
-	
-
+	public String shimmy(){
+		
+		return "1 0 0 0 0";
+		
 	}
+}
+
+
+	
+	
 
 	
 
