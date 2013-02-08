@@ -10,13 +10,13 @@ socket = context.socket(zmq.REQ)
 socket.connect ("ipc:///tmp/nxt_bluetooth_robot")
 
 # Change acceleration [motorA motorB], default [2500 2500]
-socket.send("6 2500 2500")
-socket.recv()
-time.sleep(0.01) # Not sure if needed, just in case at the moment
+# socket.send("6 2500 2500")
+# socket.recv()
+# time.sleep(0.01) # Not sure if needed, just in case at the moment
 
 
 # Change speed [motorA motorB], default [6000 6000]
-socket.send("5 6000 6000")
+socket.send("5 100 100")
 socket.recv()
 time.sleep(0.01) # Not sure if needed, just in case at the moment
 
