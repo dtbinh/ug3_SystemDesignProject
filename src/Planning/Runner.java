@@ -9,6 +9,7 @@ import org.zeromq.ZMQ.*;
 
 public class Runner extends Thread {
 	public static final double TWOPI = Math.PI * 2;
+	public static final double TENPI = Math.PI * 10;
 	// Objects
 	public static Ball ball;
 	static WorldState state;
@@ -23,10 +24,8 @@ public class Runner extends Thread {
 	private static Socket socket;
 	boolean wantsToRotate = false;
 	boolean wantsToStop = false;
-	boolean visitedBall = false;
-	Position dribblepoint;
-	boolean hasSet = false;
-	
+	static String colour;
+	static Robot ourRobot;
 	
 	public static void main(String args[]) {
 		context = ZMQ.context(1);
@@ -34,6 +33,7 @@ public class Runner extends Thread {
 		//  Socket to talk to clients over IPC
 		socket = context.socket(ZMQ.REQ);
 		socket.connect("ipc:///tmp/nxt_bluetooth_robott");
+		colour = args[0];
 		
 		instance = new Runner();
 
@@ -114,51 +114,26 @@ public class Runner extends Thread {
 		getPitchInfo();
 		wantsToRotate = false;
 		wantsToStop = false;
-		visitedBall =false;
 		
-		int dist = 0;
-		dist = move.getDist(blueRobot, ball);
-		System.out.println(ball.getCoors().getX() + " "+ ball.getCoors().getY());
-		visitedBall = (dist < 80 && dist > 0 && isFacing(blueRobot, ball.getCoors())) ? true : false; 
-		System.out.println("Output :" +isFacing(blueRobot, ball.getCoors()));
-		//set first time only
-		if (!(hasSet)) {
-			if(blueRobot.getCoors().getX() < ball.getCoors().getX()){
-				dribblepoint = new Position ((ball.getCoors().getX() + 100), ball.getCoors().getY());
-			}else{
-				dribblepoint = new Position ((ball.getCoors().getX() - 100), ball.getCoors().getY());
-			}
+		if (colour.equals("yellow")	){
+			ourRobot = yellowRobot;
+		} else{
+			ourRobot = blueRobot;
 		}
 		
-		String sig;
-		if (visitedBall) {
-			sig = getSigToPoint(blueRobot, dribblepoint, dribblepoint);
-			System.out.println("Goal is dribble");
-		} else { 
-			sig = getSigToPoint(blueRobot, ball.getCoors(), ball.getCoors());
+		
+		
+		int balldist = move.getDist(ourRobot, ball);
+		String sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
+		
+		
+		if (balldist < 52 && isFacing(ourRobot, ball.coors)){
+			sig = ("1 0 0 0 0");
 			
-			if(blueRobot.getCoors().getX() < ball.getCoors().getX()){
-				dribblepoint = new Position ((ball.getCoors().getX() + 100), ball.getCoors().getY());
-				hasSet = true;
-			}else{
-				dribblepoint = new Position ((ball.getCoors().getX() - 100), ball.getCoors().getY());
-				hasSet = true;
-			}
-			
-			System.out.println("Goal is ball");
 		}
-		Ball dribbleBall = new Ball();
-		dribbleBall.setCoors(dribblepoint);
-		
-		int pointdist = move.getDist(blueRobot, dribbleBall);
-		if (pointdist < 52) sig = ("1 0 0 0 0");
 		
 		
 		
-		sig = ("1 255 255 255 255");
-	
-		
-				
 		//socket.send(sig, 0);
 		System.out.println("Sending OK");
 		//socket.recv(0);
@@ -212,12 +187,9 @@ public class Runner extends Thread {
 		// the top left corner of the screen
 		// remember: top left corner of screen = (0, 0)
 		robAngle = robAngle - Math.PI/2;
-		if (robAngle < 0) {
-			robAngle += TWOPI;
-		}
-		if (robAngle > TWOPI) {
-			robAngle -= TWOPI;
-		}
+		robAngle += TENPI;
+		robAngle = robAngle % TWOPI;
+		
 		
 		return robAngle;
 		
@@ -227,22 +199,20 @@ public class Runner extends Thread {
 		// angleToPoint is the angle between the top left corner of the pitch and the point
 		// angleToRobot is the angle between the top left corner of the pitch and the robot
 		// angleBetweenRobotAndPoint is the clockwise angle between the robot and the point
-		double angleToPoint = Math.atan2(point.getY(), point.getX());
+		double angleToPoint = Math.atan2( point.getY() - robot.getCoors().getY(), point.getX()-robot.getCoors().getX());
 		double angleToRobot = getRobotAngle(robot);
 		double angleBetweenRobotAndPoint = angleToPoint - angleToRobot;
-		if (angleBetweenRobotAndPoint < 0) {
-			angleBetweenRobotAndPoint += TWOPI;
-		}
-		if (angleBetweenRobotAndPoint > TWOPI) {
-			angleBetweenRobotAndPoint -= TWOPI;
-		}
+		//it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved.
+		angleBetweenRobotAndPoint += TENPI;
+		angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % TWOPI;
+
 		return angleBetweenRobotAndPoint;
 	}
 	
 	public double getRotationValue(double angle){
 		double value = 0;;
-		if (angle > (Math.PI/2) ){
-			if ((360-angle) > (Math.PI/9)) {
+		if (angle > (Math.PI) ){
+			if (((Math.PI*2) - angle) > (Math.PI/9)) {
 				value = 0.2; 
 				System.out.println("CCW rotation");
 			}
