@@ -116,10 +116,10 @@ public class Dribble extends Thread {
 
 
 	private void mainLoop() {
+		
 		getPitchInfo();
 		wantsToRotate = false;
 		wantsToStop = false;
-		visitedBall =false;
 		if (colour.equals("yellow")	){
 			ourRobot = yellowRobot;
 		} else{
@@ -129,11 +129,15 @@ public class Dribble extends Thread {
 		
 		
 		dist = move.getDist(ourRobot, ball);
+		wantsToStop = (dist<80);
+		System.out.println("wantstostop " + wantsToStop);
 		System.out.println(ball.getCoors().getX() + " "+ ball.getCoors().getY());
-		visitedBall = (dist < 80 && dist > 0 && isFacing(ourRobot, ball.getCoors())) ? true : false; 
+		
+		if (dist < 80 && its > 30 && isFacing(ourRobot, ball.getCoors())) visitedBall =true;  
 		System.out.println("Output :" +isFacing(ourRobot, ball.getCoors()));
 		//set first time only
-		if (!(hasSet)) {
+		//the "its" variable is to give the vision system some time to initialise.
+		if ((!hasSet)&&(its>25)) {
 			if(ourRobot.getCoors().getX() < ball.getCoors().getX()){
 				dribblepoint = new Position ((ball.getCoors().getX() + 100), ball.getCoors().getY());
 			}else{
@@ -144,7 +148,6 @@ public class Dribble extends Thread {
 		String sig;
 		if (visitedBall) {
 			sig = getSigToPoint(ourRobot, dribblepoint, dribblepoint);
-			System.out.println("Goal is dribble");
 		} else { 
 			sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
 			
@@ -156,13 +159,14 @@ public class Dribble extends Thread {
 				hasSet = true;
 			}
 			
-			System.out.println("Goal is ball");
 		}
+		System.out.println(dribblepoint.getX() + " " + dribblepoint.getY());
 		Ball dribbleBall = new Ball();
 		dribbleBall.setCoors(dribblepoint);
 		
-		int pointdist = move.getDist(ourRobot, dribbleBall);
-		if (pointdist < 52 || its < 30){
+		//I theorised that we didn't actually care about the Y co-ordinate, so I just compared X's - more reliable stopping achieved.
+		if (dribblepoint.getX() < ourRobot.getCoors().getX() || its < 30){
+			System.out.println("sperm" + ourRobot.getCoors().getX());
 			sig = ("1 0 0 0 0");
 		}
 		
@@ -197,22 +201,13 @@ public class Dribble extends Thread {
 			
 		
 		}
+	//TODO See if this is even possible - I think motors suck too hard to implement this.
 	public String shimmy(){
 		
 		return "1 0 0 0 0";
 		
 	}
 	
-	public String goStraight (){
-		
-		
-		return "";
-	}
-	
-	//TODO - generalise the rotation part so it can rotate to a point and move to a different one.
-	//Can't remember maths, someone can fix this.
-	//TODO - replace the old code with basically just the last method here. 
-	//GLHF
 	//ALSO TODO - move this to a dedicated planning class, will need to mess about with bools. 
 	
 	
@@ -250,16 +245,16 @@ public class Dribble extends Thread {
 	public double getRotationValue(double angle){
 		double value = 0;;
 		if (angle > (Math.PI) ){
-			if (((Math.PI*2) - angle) > (Math.PI/9)) {
+			if (((Math.PI*2) - angle) > (Math.PI/8)) {
 				value = 0.1; 
 				System.out.println("CCW rotation");
 			}
 			
-		} else if (angle > Math.PI/9) {
+		} else if (angle > Math.PI/8) {
 			value = -0.1;
 			System.out.println("CW rotation");
 		}
-		if (!(value == 0)) wantsToRotate = true;
+		wantsToRotate = (!(value == 0)) ;
 	
 		return value;
 	}
@@ -274,7 +269,8 @@ public class Dribble extends Thread {
 				motors[i] += rotationfactor;
 			}
 		}
-		if ((!wantsToStop) || (dist<80) && isFacing(ourRobot, ball.getCoors())) {
+		if (( !(wantsToStop) && !(visitedBall)) || ((dist<100) && isFacing(ourRobot, ball.getCoors()))) {
+			System.out.println(dist);
 			motors[0] -= (Math.cos(angle));
 			motors[1] += (Math.sin(angle));
 			motors[2] -= (Math.sin(angle));
@@ -283,7 +279,10 @@ public class Dribble extends Thread {
 		
 		if (wantsToStop && wantsToRotate){
 			multfactor = (multfactor/Math.abs(rotationfactor))/4;
-		} else {
+		} else if (visitedBall) {
+			
+			multfactor = multfactor/2;
+		}	else {
 			for (int i = 0; i<4;i++){
 				if (Math.abs(motors[i]) > maxval) maxval = Math.abs(motors[i]); 
 			}
@@ -316,7 +315,7 @@ public class Dribble extends Thread {
 		double angle = getAngleFromRobotToPoint(robot,point);
 		double value = getRotationValue(angle);
 		
-		if (!(value == 0)) return true; else return false;
+		return (value == 0);
 	}
 	
 }
