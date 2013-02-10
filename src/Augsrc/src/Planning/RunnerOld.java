@@ -107,6 +107,7 @@ public class RunnerOld extends Thread {
 
 	private void mainLoop() {
 
+		
 		getPitchInfo();
 		
 		int dist = move.getDist(blueRobot, ball);
@@ -132,7 +133,7 @@ public class RunnerOld extends Thread {
 	
 		// get theta of vector from robot to ball
 		double robToBallTheta = Math.atan2(bY - brY, bX - brX);
-		
+		System.out.println(" Ball x = :" + ball.getCoors().getX() + " Ball y = : " + ball.getCoors().getY());
 		ballangle = robToBallTheta - robotTheta;
 		
 		System.out.println(ballangle);
@@ -202,7 +203,6 @@ public class RunnerOld extends Thread {
 		//socket.recv(0);
 		System.out.println("Recieving OK");
 		
-	   
 	}
 
 

@@ -147,7 +147,7 @@ public class Dribble extends Thread {
 		
 		String sig;
 		if (visitedBall) {
-			sig = getSigToPoint(ourRobot, dribblepoint, dribblepoint);
+			sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
 		} else { 
 			sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
 			
@@ -166,7 +166,6 @@ public class Dribble extends Thread {
 		
 		//I theorised that we didn't actually care about the Y co-ordinate, so I just compared X's - more reliable stopping achieved.
 		if (dribblepoint.getX() < ourRobot.getCoors().getX() || its < 30){
-			System.out.println("sperm" + ourRobot.getCoors().getX());
 			sig = ("1 0 0 0 0");
 		}
 		
@@ -270,7 +269,7 @@ public class Dribble extends Thread {
 			}
 		}
 		if (( !(wantsToStop) && !(visitedBall)) || ((dist<100) && isFacing(ourRobot, ball.getCoors()))) {
-			System.out.println(dist);
+			System.out.println("Fanny");
 			motors[0] -= (Math.cos(angle));
 			motors[1] += (Math.sin(angle));
 			motors[2] -= (Math.sin(angle));
