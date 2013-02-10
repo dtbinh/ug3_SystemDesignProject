@@ -26,6 +26,8 @@ public class Runner extends Thread {
 	boolean wantsToStop = false;
 	static String colour;
 	static Robot ourRobot;
+	static Robot goalL;
+	static Robot goalR;
 	
 	public static void main(String args[]) {
 		context = ZMQ.context(1);
@@ -33,7 +35,7 @@ public class Runner extends Thread {
 		//  Socket to talk to clients over IPC
 		socket = context.socket(ZMQ.REQ);
 		socket.connect("ipc:///tmp/nxt_bluetooth_robott");
-		colour = args[0];
+		//colour = args[0];
 		
 		instance = new Runner();
 
@@ -46,8 +48,16 @@ public class Runner extends Thread {
 		
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
+		goalL = new Robot();
+		goalR = new Robot();
 		ball = new Ball();
 		move = new Move();
+		
+		//Defining goals as robots
+		goalL.setAngle((float)Math.PI);
+		goalL.setCoors(new Position(35,240));
+		goalR.setAngle(0);
+		goalR.setCoors(new Position(603,240));
 		start();
 	}
 
@@ -111,11 +121,22 @@ public class Runner extends Thread {
 
 
 	private void mainLoop() {
+
+		//Defining goals as robots
+		//goalL.setAngle((float)Math.PI);
+		//goalL.setCoors(new Position(35,240));
+		//goalR.setAngle(0);
+		//goalR.setCoors(new Position(603,240));
+				
 		getPitchInfo();
+		System.out.println("New point behind ball X: " + pointBehindBall(goalL,ball.getCoors()).getX() + "Y: " + pointBehindBall(goalR,ball.getCoors()).getY());
+		System.out.println("Actual ball coordinates X: " + ball.getCoors().getX() + " Y: " + ball.getCoors().getY());
+		
+		
 		wantsToRotate = false;
 		wantsToStop = false;
 		
-		if (colour.equals("yellow")	){
+		if (false){
 			ourRobot = yellowRobot;
 		} else{
 			ourRobot = blueRobot;
@@ -125,6 +146,7 @@ public class Runner extends Thread {
 		
 		int balldist = move.getDist(ourRobot, ball);
 		String sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
+			
 		
 		
 		if (balldist < 70 && isFacing(ourRobot, ball.coors)){
@@ -133,12 +155,12 @@ public class Runner extends Thread {
 		}
 		
 		
-		
+		/*
 		socket.send(sig, 0);
 		System.out.println("Sending OK");
 		socket.recv(0);
 		System.out.println("Recieving OK");
-		
+		*/
 	   
 	}
 
@@ -148,6 +170,7 @@ public class Runner extends Thread {
 	 */
 	public void getPitchInfo() {
 
+		
 		// Get pitch information from vision
 		state = vision.getWorldState();
 		ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
@@ -157,7 +180,6 @@ public class Runner extends Thread {
 		
 		blueRobot.setAngle(state.getBlueOrientation());
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
-			
 		
 		}
 	public String shimmy(){
@@ -179,7 +201,7 @@ public class Runner extends Thread {
 	//ALSO TODO - move this to a dedicated planning class, will need to mess about with bools. 
 	
 	
-	public double getRobotAngle(Robot robot){
+	public static double getRobotAngle(Robot robot){
 		// robot.getAngle() returns the angle between the robot and the left bottom
 		// corner of the screen
 		double robAngle = robot.getAngle();
@@ -195,7 +217,7 @@ public class Runner extends Thread {
 		
 	}
 	
-	public double getAngleFromRobotToPoint(Robot robot, Position point) {
+	public static double getAngleFromRobotToPoint(Robot robot, Position point) {
 		// angleToPoint is the angle between the top left corner of the pitch and the point
 		// angleToRobot is the angle between the top left corner of the pitch and the robot
 		// angleBetweenRobotAndPoint is the clockwise angle between the robot and the point
@@ -279,6 +301,40 @@ public class Runner extends Thread {
 		double value = getRotationValue(angle);
 		
 		if (!(value == 0)) return true; else return false;
+	}
+	
+	public Position pointBehindBall(Robot goal, Position ball){
+	
+		double goalBallAng = getAngleFromRobotToPoint(goal,ball);
+		
+		double rvrsBallToGoal = Math.PI - goalBallAng;
+		
+		Position goPoint;
+		
+		if(goal == goalL){
+			int newX = (int) (ball.getX() - (30*Math.sin(rvrsBallToGoal)));
+			int newY = (int) (ball.getY() - (30*Math.cos(rvrsBallToGoal)));
+			goPoint = new Position(newX,newY);
+		}else{
+			int newX = (int) (ball.getX() + (30*Math.sin(rvrsBallToGoal)));
+			int newY = (int) (ball.getY() + (30*Math.cos(rvrsBallToGoal)));
+			goPoint = new Position(newX,newY);
+		}
+		
+		if (!withinPitch(goPoint)){
+			goPoint.setX((ball.getX()));
+			goPoint.setY((ball.getY()));
+		}
+		return goPoint;
+		
+	}
+	
+	public static boolean withinPitch(Position coors){
+		int coorX = coors.getX();
+		int coorY = coors.getY();
+		
+		if(coorX > 39 && coorX < 602 && coorY > 100 && coorY < 389) return true;
+		return false;
 	}
 	
 }
