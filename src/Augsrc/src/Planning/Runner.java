@@ -26,8 +26,12 @@ public class Runner extends Thread {
 	boolean wantsToStop = false;
 	static String colour;
 	static Robot ourRobot;
+
+	static int its = 0;
+
 	static Robot goalL;
 	static Robot goalR;
+
 	
 	public static void main(String args[]) {
 		context = ZMQ.context(1);
@@ -35,8 +39,10 @@ public class Runner extends Thread {
 		//  Socket to talk to clients over IPC
 		socket = context.socket(ZMQ.REQ);
 		socket.connect("ipc:///tmp/nxt_bluetooth_robott");
-		//colour = args[0];
-		
+
+		//args[0] has been passed from the GUI - yellow or blue
+		colour = args[0];
+
 		instance = new Runner();
 
 	}
@@ -71,7 +77,7 @@ public class Runner extends Thread {
 		try {
 			sleep(40);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Sleep interrupted");
 			e.printStackTrace();
 		}
 		
@@ -122,12 +128,6 @@ public class Runner extends Thread {
 
 	private void mainLoop() {
 
-		//Defining goals as robots
-		//goalL.setAngle((float)Math.PI);
-		//goalL.setCoors(new Position(35,240));
-		//goalR.setAngle(0);
-		//goalR.setCoors(new Position(603,240));
-				
 		getPitchInfo();
 		System.out.println("New point behind ball X: " + pointBehindBall(goalL,ball.getCoors()).getX() + "Y: " + pointBehindBall(goalR,ball.getCoors()).getY());
 		System.out.println("Actual ball coordinates X: " + ball.getCoors().getX() + " Y: " + ball.getCoors().getY());
@@ -136,31 +136,37 @@ public class Runner extends Thread {
 		wantsToRotate = false;
 		wantsToStop = false;
 		
-		if (false){
+		if (colour.equals("yellow")){
 			ourRobot = yellowRobot;
 		} else{
 			ourRobot = blueRobot;
 		}
-		
-		
-		
 		int balldist = move.getDist(ourRobot, ball);
+	
+		wantsToStop = (balldist < 70);
+		System.out.println(balldist);
+		
+		
 		String sig = getSigToPoint(ourRobot, ball.getCoors(), ball.getCoors());
 			
 		
 		
-		if (balldist < 70 && isFacing(ourRobot, ball.coors)){
+		if ((wantsToStop && isFacing(ourRobot, ball.coors))||(its < 30)){
 			sig = ("1 0 0 0 0");
 			
 		}
 		
 		
-		/*
+		
 		socket.send(sig, 0);
 		System.out.println("Sending OK");
 		socket.recv(0);
 		System.out.println("Recieving OK");
-		*/
+
+		
+		its++;
+
+
 	   
 	}
 
@@ -182,22 +188,13 @@ public class Runner extends Thread {
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
 		
 		}
+	//TODO See if this is even possible - I think motors suck too hard to implement this.
 	public String shimmy(){
 		
 		return "1 0 0 0 0";
 		
 	}
 	
-	public String goStraight (){
-		
-		
-		return "";
-	}
-	
-	//TODO - generalise the rotation part so it can rotate to a point and move to a different one.
-	//Can't remember maths, someone can fix this.
-	//TODO - replace the old code with basically just the last method here. 
-	//GLHF
 	//ALSO TODO - move this to a dedicated planning class, will need to mess about with bools. 
 	
 	
@@ -224,7 +221,7 @@ public class Runner extends Thread {
 		double angleToPoint = Math.atan2( point.getY() - robot.getCoors().getY(), point.getX()-robot.getCoors().getX());
 		double angleToRobot = getRobotAngle(robot);
 		double angleBetweenRobotAndPoint = angleToPoint - angleToRobot;
-		//it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved.
+		//it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved with TENPI.
 		angleBetweenRobotAndPoint += TENPI;
 		angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % TWOPI;
 
@@ -232,19 +229,17 @@ public class Runner extends Thread {
 	}
 	
 	public double getRotationValue(double angle){
+		// +tive value == counterclockwise rotations
 		double value = 0;;
 		if (angle > (Math.PI) ){
 			if (((Math.PI*2) - angle) > (Math.PI/9)) {
 				value = 0.1; 
-				System.out.println("CCW rotation");
 			}
 			
 		} else if (angle > Math.PI/9) {
 			value = -0.1;
-			System.out.println("CW rotation");
 		}
-		if (!(value == 0)) wantsToRotate = true;
-	
+		wantsToRotate = (!(value == 0));	
 		return value;
 	}
 	
@@ -300,7 +295,8 @@ public class Runner extends Thread {
 		double angle = getAngleFromRobotToPoint(robot,point);
 		double value = getRotationValue(angle);
 		
-		if (!(value == 0)) return true; else return false;
+		return (value==0);
+		
 	}
 	
 	public Position pointBehindBall(Robot goal, Position ball){
