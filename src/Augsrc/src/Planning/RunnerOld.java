@@ -4,8 +4,7 @@ import au.edu.jcu.v4l4j.V4L4JConstants;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import JavaVision.*;
 
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.*;
+
 
 public class RunnerOld extends Thread {
  
@@ -19,17 +18,14 @@ public class RunnerOld extends Thread {
 	private static ControlGUI thresholdsGUI;
 	Vision vision;
 	static double ballangle = 0;
-	private static Context context;
-	private static Socket socket;
+	static Ball oldBall;
+	static Ball olderBall;
+	static Ball oldestBall;
+
 
 	
 	public static void main(String args[]) {
-		context = ZMQ.context(1);
-
-		//  Socket to talk to clients over IPC
-		socket = context.socket(ZMQ.REQ);
-		socket.connect("ipc:///tmp/nxt_bluetooth_robott");
-			
+				
 		instance = new RunnerOld();
 
 	}
@@ -42,7 +38,15 @@ public class RunnerOld extends Thread {
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
 		ball = new Ball();
+		oldBall = new Ball();
+		olderBall = new Ball();
+		oldestBall = new Ball();
 		move = new Move();
+		ball.setCoors(new Position(0, 0));
+		oldBall.setCoors(new Position (0,0));
+		olderBall.setCoors(new Position(0, 0));
+		oldestBall.setCoors(new Position (0,0));
+		//BallCalculator ballCalculator = new BallCalculator();
 		start();
 	}
 
@@ -54,7 +58,7 @@ public class RunnerOld extends Thread {
 		
 		do {
 		try {
-			sleep(40);
+			sleep(0);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,107 +114,35 @@ public class RunnerOld extends Thread {
 		
 		getPitchInfo();
 		
-		int dist = move.getDist(blueRobot, ball);
-		
-		int yrX = yellowRobot.getCoors().getX();
-		int yrY = yellowRobot.getCoors().getY();
-		int yrD = (int) yellowRobot.getAngle();
-				
-		
-		int brX = blueRobot.getCoors().getX();
-		int brY = blueRobot.getCoors().getY();
-		float brD = blueRobot.getAngle();
-		
-		int bX = ball.getCoors().getX();
-		int bY = ball.getCoors().getY();
-		
-					
-		// get real theta that we can use for real math
-		double robotTheta = brD - Math.PI/2;
-		if (robotTheta > Math.PI) robotTheta -= Math.PI*2;
-	
-		
-	
-		// get theta of vector from robot to ball
-		double robToBallTheta = Math.atan2(bY - brY, bX - brX);
-		System.out.println(" Ball x = :" + ball.getCoors().getX() + " Ball y = : " + ball.getCoors().getY());
-		ballangle = robToBallTheta - robotTheta;
-		
-		System.out.println(ballangle);
-//		System.out.println("YRobotX: " + yrX +" YRobotY: " + yrY + " YDir: " + yrD);
-//		System.out.println("BRobotX: " + brX + " BRobotY: " + brY + " BDir: " + brD );
-//		System.out.println("BallX: " + bX + " BallY: " + bY );
-//		System.out.println("Distance : " + dist + " angle: " + ballangle + " " + ballangle*180/Math.PI);
-//	
-		double m2 = (Math.sin(ballangle));
-		double m1 = -(Math.cos(ballangle));
-		double m4 = (Math.cos(ballangle));
-		double m3 = -(Math.sin(ballangle));
-	
-		
-		
-		boolean wantsToStop = false;
-		if (dist < 52) { 
-			m1 = 0;
-			m2 = 0;
-			m3 = 0;
-			m4 = 0;
-			wantsToStop = true;
-		}
-		
-		boolean wantsToRotate = false;
-		if (ballangle < 0 ){
-			if ((-1*ballangle) > (Math.PI/9)) {
-			m1 += 0.2;
-			m2 += 0.2;
-			m3 += 0.2;
-			m4 += 0.2;	
-			wantsToRotate = true;
-			}
-			
-		} else if (ballangle > Math.PI/9) {
-			m1 -= 0.2;
-			m2 -= 0.2;
-			m3 -= 0.2;
-			m4 -= 0.2;
-			wantsToRotate = true;
-		}
-		
-		
-		double[] motors = {m1,m2,m3,m4};
-		double motormax = 0.01;
-		for (int i = 0; i < 4; i++){
-			motormax =  ((Math.pow(motors[i], 2))>(Math.pow(motormax,2))) ? motors[i] : motormax;
-		}
-		
-		motormax = (motormax > 0) ? motormax : motormax*-1;
-		double multfactor = 255/motormax;
-		
-		multfactor =  (wantsToRotate && wantsToStop) ? multfactor/4 : multfactor;
-		int mot1 = (int) (m1 * multfactor);
-		int mot2 = (int) (m2 * multfactor);
-		int mot3 = (int) (m3 * multfactor);
-		int mot4 = (int) (m4 * multfactor);	
-		
-		
-		String sig = ("1 " + mot1 + " " + mot2 + " " + mot3 + " " + mot4);
-		
-		//sig = ("1 0 0 0 0");
-		
-		System.out.println("I math ok daddy " + sig);
-		//socket.send(sig, 0);
-		System.out.println("Sending OK");
-		//socket.recv(0);
-		System.out.println("Recieving OK");
 		
 	}
-
 
 	/**
 	 * Get the most recent information from vision
 	 */
 	public void getPitchInfo() {
-
+		oldestBall.setCoors(ball.getCoors());
+		try {
+			sleep(39);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		olderBall.setCoors(ball.getCoors());
+		try {
+			sleep(39);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		oldBall.setCoors(ball.getCoors());
+		try {
+			sleep(39);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Get pitch information from vision
 		state = vision.getWorldState();
 		ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
@@ -220,6 +152,13 @@ public class RunnerOld extends Thread {
 		
 		blueRobot.setAngle(state.getBlueOrientation());
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
+		//double speed = BallCalculator.getBallSpeed(oldBall, ball);
+		//System.out.println("Speed of Ball: " + speed);
+		
+		double acceleration = BallCalculator.getBallAcceleration(oldestBall, olderBall, oldBall, ball);
+		System.out.println("Acceleration of Ball: " + acceleration);
+			
+			
 			
 		
 		}
