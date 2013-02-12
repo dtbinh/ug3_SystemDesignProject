@@ -182,14 +182,17 @@ import org.zeromq.ZMQ.*;
                             sig = getSigToPoint(ourRobot, behindBall, ball.getCoors());
                            
                             if(ourRobot.getCoors().getX() < ball.getCoors().getX()){
-                                    dribblepoint = new Position ((ball.getCoors().getX() + 100), ball.getCoors().getY());
+                                    //dribblepoint = new Position ((ball.getCoors().getX() + 100), ball.getCoors().getY());
+                            		dribblepoint = projectPoint(ball.getCoors(), ((Math.PI)/2), 100 );
                                     hasSet = true;
                             }else{
-                                    dribblepoint = new Position ((ball.getCoors().getX() - 100), ball.getCoors().getY());
+                                    //dribblepoint = new Position ((ball.getCoors().getX() - 100), ball.getCoors().getY());
+                            		dribblepoint = projectPoint(ball.getCoors(), ((Math.PI)/2), -100 );
                                     hasSet = true;
                             }
                            
                     }
+                    System.out.println(behindBall.getX() + " " + behindBall.getY());
                     System.out.println(dribblepoint.getX() + " " + dribblepoint.getY());
                     Ball dribbleBall = new Ball();
                     dribbleBall.setCoors(dribblepoint);
@@ -273,13 +276,13 @@ import org.zeromq.ZMQ.*;
            
             public double getRotationValue(double angle){
                     double value = 0;;
-                    if (angle > (Math.PI/15) ){
-                            if (((Math.PI*2) - angle) > (Math.PI/8)) {
+                    if (angle > (Math.PI) ){
+                            if (((Math.PI*2) - angle) > (Math.PI/10)) {
                                     value = 0.1;
                                     System.out.println("CCW rotation");
                             }
                            
-                    } else if (angle > Math.PI/11) {
+                    } else if (angle > Math.PI/10) {
                             value = -0.1;
                             System.out.println("CW rotation");
                     }
@@ -308,8 +311,8 @@ import org.zeromq.ZMQ.*;
                     System.out.println(visitedBehindPoint+ " "+ wantsToStop);
                    
                     if (wantsToStop && wantsToRotate){
-                            multfactor = (multfactor/Math.abs(rotationfactor))/3;
-//                    } else if (visitedBehindPoint) {
+                            multfactor = (multfactor/Math.abs(rotationfactor))/2;
+//                   }  else if (visitedBehindPoint) {
 //                           
 //                            multfactor = multfactor/1.5;
                     }       else {
@@ -351,10 +354,10 @@ import org.zeromq.ZMQ.*;
            
             public Position pointBehindBall(Robot goal, Position ball){
                    
-                    double goalBallAng = getAngleFromRobotToPoint(goal,ball);
+                    //double goalBallAng = getAngleFromRobotToPoint(goal,ball);
                    
-                    double rvrsBallToGoal = Math.PI - goalBallAng;
-                   
+                    //double rvrsBallToGoal = Math.PI - goalBallAng;
+            	    double rvrsBallToGoal = (3*Math.PI)/2;
                     Position goPoint;
                    
                     if(goal == goalL){
