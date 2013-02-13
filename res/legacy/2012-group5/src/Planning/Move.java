@@ -5,20 +5,15 @@ public class Move {
 
 	private int POS;
 
-	// returns the distance between the robot and the ball
-	public int getDist(Robot robot, Ball ball){
+	/** returns the distance between the robot and the ball **/
+	public int getDist(Robot robot, Ball ball) {
 		int robotX = robot.getCoors().getX();
 		int robotY = robot.getCoors().getY();
 		int ballX = ball.getCoors().getX();
 		int ballY = ball.getCoors().getY();
-		
 		int x = (int) Math.abs(robotX - ballX);
 		int y = (int) Math.abs(robotY - ballY);
-
-
-		//int x = (int) Math.abs(robot.getCoors().getX() - ball.getCoors().getX());
-		//int y = (int) Math.abs(robot.getCoors().getY() - ball.getCoors().getY());
-		int dist = (int) Math.sqrt(x*x + y*y);
+		int dist = (int) Math.sqrt(x * x + y * y);
 		return dist;
 	}
 
@@ -39,29 +34,37 @@ public class Move {
 	}
 
 	public Position translatePoint(Robot robot, ObjectDetails o) {
-
 		int x = o.getCoors().getX() - robot.getCoors().getX();
 		int y = -(o.getCoors().getY()) - (-(robot.getCoors().getY())); // negative y to convert into normal cordinate system
-		o.setCoors(new Position(x,y));
+		o.setCoors(new Position(x, y));
 		return o.coors;
 	}
 
-	public int getBallPosition(Ball ball){ 		
 
-		//find the position of the ball with respect to the robot
-		if(ball.getCoors().getX() > 0) {// ball is on the right side of the robot
-			if(ball.getCoors().getY() > 0) { // ball is in top right square
-				POS = 0; // top right
+    /** find the position of the ball with respect to the robot **/
+	public int getBallPosition(Ball ball) { 		
+        // ball is on the right side of the robot
+		if(ball.getCoors().getX() > 0) {
+            // ball is in top right square
+			if(ball.getCoors().getY() > 0) {
+				POS = 0;
 			}
-			else { POS = 1;} // bottom right
+            // ball is in bottom right square
+			else {
+                POS = 1;
+            }
 		}
-		else { // ball is on the left side of the robot
-			if(ball.getCoors().getY() < 0) {
-				POS = 2; // bottom left
+        // ball is on the left side of the robot
+		else {
+            // ball is in top left square
+			if(ball.getCoors().getY() > 0) {
+				POS = 3;
 			}
-			else { POS = 3;} // top left
+            // ball is in botom left square
+			else { 
+                POS = 2;
+            }
 		}
-
 		return POS;
 	}
 
