@@ -10,24 +10,40 @@ import JavaVision.Position;
  *
   */
 public class RobotMath {
-	
-	Robot goalL = new Robot();
-    Robot goalR = new Robot();
-    double TENPI = Math.PI*10;
-    double TWOPI = Math.PI*2;
+	static Robot goalL = new Robot();
+    static Robot goalR = new Robot();
+    static Robot goalL_top = new Robot();
+    static Robot goalL_bottom = new Robot();
+    static Robot goalR_top = new Robot();
+    static Robot goalR_bottom = new Robot();
+    static double TENPI = Math.PI*10;
+    static double TWOPI = Math.PI*2;
     private boolean wantsToRotate;
     private boolean wantsToStop;
        
     //Set the values of the goals, init must be called just after we make a new instance
-    public void init(){ 
+    public void init() {
     	goalR.setAngle(0);
     	goalR.setCoors(new Position(603,240));
     	goalL.setAngle((float) Math.PI);
     	goalL.setCoors(new Position(35,240));
+    	
+    	goalR_top.setAngle(0);
+    	goalR_top.setCoors(new Position(35,171));
+    	goalR_bottom.setAngle(0);
+    	goalR_bottom.setCoors(new Position(35, 325));
+    	
+    	goalL_top.setAngle((float) Math.PI);
+    	goalL_top.setCoors(new Position(603,166));
+    	goalL_bottom.setAngle((float) Math.PI);
+    	goalL_bottom.setCoors(new Position(603, 312));
+     }
+    
+    public void initLoop() {
        	wantsToRotate = false;
         wantsToStop = false;
-     
-     }
+    }
+    
     /**
      * getRobotAngle gives a normalised (between 0 and 2PI) angle 
      * of the robot to the lab doors.
@@ -42,7 +58,7 @@ public class RobotMath {
      * 
       */
 	
-    public double getRobotAngle(Robot robot){
+    public static double getRobotAngle(Robot robot){
          // robot.getAngle() returns the angle between the robot and the left bottom
          // corner of the screen
          double robAngle = robot.getAngle();
@@ -71,7 +87,7 @@ public class RobotMath {
      * @author      Ozgur Osman
      * @author		Clemens Wolff
      */
-    public double getAngleFromRobotToPoint(Robot robot, Position point) {
+    public static double getAngleFromRobotToPoint(Robot robot, Position point) {
          // angleToPoint is the angle between the top left corner of the pitch and the point
          // angleToRobot is the angle between the top left corner of the pitch and the robot
          // angleBetweenRobotAndPoint is the clockwise angle between the robot and the point
@@ -250,8 +266,7 @@ public class RobotMath {
 	     * @author      Caithan Moore - S1024940
 	     *
 	     */
-	 public boolean isFacing(Robot robot, Position point){
-	 	
+	 public boolean isFacing(Robot robot, Position point) {
 	         double angle = getAngleFromRobotToPoint(robot,point);
 	         double value = getRotationValue(angle);
 	        
@@ -275,9 +290,7 @@ public class RobotMath {
 	     *
 	     */
 	
-	 public Position pointBehindBall(Robot goal, Position ball){
-	        
-	        
+	 public static Position pointBehindBall(Robot goal, Position ball){
 	 	    double rvrsBallToGoal = (3*Math.PI)/2;
 	         Position goPoint;
 	        
@@ -344,5 +357,160 @@ public class RobotMath {
 		wantsToStop = true;
 	}
 	
-
+	/**
+     *Gets the euclidean distance of two positions
+     *   
+     * 
+     * @param a, b			two positions.
+     * 
+     * @return the euclidean distance between the points.
+     * 
+     * 
+     * @author Caithan Moore - s1024940
+     * @author Clemens Wolff
+     *
+     */
+	
+	public double euclidDist(Position a, Position b ){
+		double ans = Math.sqrt(squared(a.getX()- b.getX())+ squared(a.getY() - b.getY()));
+		return ans;
+	}
+	
+	/**
+     *Gets the maximum angle the robot could make with the goal
+     * <pre>
+     *   -------------------------------------
+     *   |                                           |
+     *   |                                           |
+     *   +...........                              +
+     *   |    angle ......robot              |
+     *   |   ......                                  |
+     *   +...                                      +
+     *   |                                           |
+     *   |                                           |
+     *   -------------------------------------
+     *   figure: return value when shootingRight is true
+     *   // looks wonky in the actual javadoc string because eclipse uses non-monospace fonts when displaying the javadoc tooltip =(
+     *   </pre>
+     * @param robot			The position of the robot.
+     * @param shootingRight <code>true</code> iff you are shooting right. 
+     * 
+     * @return the maximum angle that the robot could make with the goal (angle in diagram above)
+     * 
+     * 
+     * @author Caithan Moore - s1024940
+     * @author Clemens Wolff
+     *
+     */
+	public double getAngleToGoal(Position robot, boolean shootingRight){
+		Position topOfGoal;
+		Position bottomOfGoal;
+		
+		if (shootingRight){
+			topOfGoal = goalR_top.getCoors();
+			bottomOfGoal = goalR_bottom.getCoors();
+		} else {
+			topOfGoal = goalL_top.getCoors();
+			bottomOfGoal = goalL_bottom.getCoors();
+		}
+		double a = euclidDist(topOfGoal, robot);
+		double c = euclidDist(bottomOfGoal, robot);
+		double b = euclidDist(topOfGoal, bottomOfGoal);
+		double angle = Math.acos((squared(a)+squared(c)-squared(b))/(2*a*c));
+		return angle;
+	}
+	
+	public double squared(double x){
+		return Math.pow(x, 2);
+	}
+	public double squared(int x){
+		return Math.pow(x, 2);
+	}
+	
+	/**
+	 * Returns a number in [0..1] that is proportional to how likely
+	 * the robot is to score from his current angle to the goal
+	 * 
+     * @param robot			The position of the robot.
+     * @param shootingRight <code>true</code> iff you are shooting right.
+     * 
+	 * @return The score of the current angle to the goal (1 = best, 0 = worst)
+	 *
+	 * @see RobotMath#getAngleToGoal
+	 * @see RobotMath#getDistanceScore
+	 * @see RobotMath#getPositionScore
+	 * 
+     * @author Caithan Moore - s1024940
+     * @author Clemens Wolff
+	 */
+	public double getAngleScore(Position robot, boolean shootingRight){
+		double angle = getAngleToGoal(robot, shootingRight);
+		
+		double maxangle = getAngleToGoal(shootingRight ? goalR.getCoors() : goalL.getCoors(), shootingRight);
+		double maxa = Math.max(maxangle, angle);
+		double mina = Math.min(maxangle, angle);
+		
+		return 1 - (mina / maxa);
+	}
+	
+	/**
+	 * Returns a number in [0..1] that is proportional to how likely
+	 * the robot is to score from his current distance to the goal
+	 * NB: the score is non-linear (follows cos(x))
+	 * 
+     * @param robot			The position of the robot.
+     * @param shootingRight <code>true</code> iff you are shooting right.
+     * 
+	 * @return The score of the current distance to the goal (1 = best, 0 = worst)
+	 * 
+	 * @see RobotMath#getAngleScore
+	 * @see RobotMath#getPositionScore
+	 * 
+	 * @author Caithan Moore - s1024940
+     * @author Clemens Wolff
+	 */
+	public double getDistanceScore(Position robot, boolean shootingRight) {
+		int xR = goalR.getCoors().getX();
+		int xL = goalL.getCoors().getX();
+		int pitchLen = Math.abs(xR - xL);
+		
+		int goalX = shootingRight ? xR : xL;
+		int dist = Math.abs(goalX - robot.getX());
+		
+		double distRatio = (double) dist / pitchLen;
+		double score = Math.cos(distRatio * Math.PI / 2);
+		return score;
+	}
+	
+	public double getPositionScore(Position robot, boolean shootingRight) {
+		// TODO: find good default value
+		return getPositionScore(robot, shootingRight, 0.25);
+	}
+	
+	/**
+	 * Returns a number in [0..1] that is proportional to how likely
+	 * the robot is to score from his current position
+	 * This number is a linear combination of the likelihood to score from
+	 * the current distance to the goal and the current angle to the goal
+	 * The parameter |preferDistanceBy| gives more weight to the distance score
+	 * 
+     * @param robot			The position of the robot.
+     * @param shootingRight <code>true</code> iff you are shooting right.
+	 * @param preferDistanceBy Multiplier for distance score (in [0..1]) - angle score will be multiplied by one minus this
+	 * 
+	 * @return The score of the current position of the robot (1 = best, 0 = worst)
+	 * 
+	 * @see RobotMath#getAngleScore
+	 * @see RobotMath#getPositionScore
+	 * 
+	 * @author Caithan Moore - s1024940
+     * @author Clemens Wolff
+	 */
+	public double getPositionScore(Position robot, boolean shootingRight, double preferDistanceBy) {
+		double distanceScore = getDistanceScore(robot, shootingRight);
+		double angleScore = getAngleScore(robot, shootingRight);
+		double weightedScore = distanceScore * preferDistanceBy + angleScore * (1 - preferDistanceBy);
+		System.out.println("weightedScore = " + weightedScore);
+		return weightedScore;
+	}
 }
