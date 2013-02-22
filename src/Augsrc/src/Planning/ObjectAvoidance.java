@@ -9,7 +9,6 @@ public class ObjectAvoidance{
 	 * if distance is less than 2*(max robot radius) then obstacle in path
 	 * otherwise false
 	 */
-	static CommandStack plannedCommands = new CommandStack();
 	public static boolean obstacleDetection(Position ourcoors, Position theirCoors, Position ball){
 		int ourX = ourcoors.getX();
 		int ourY = ourcoors.getY();
@@ -47,7 +46,9 @@ public class ObjectAvoidance{
 //Dont know why this takes an angle ask Caithan
 //Caithan says for later implementations we might want a more refined circle around the obstacle. 
 //but we can see what happens eh.
-	public static CommandStack planAvoidance(Robot robot, Robot opposition, double angle, boolean endBall, Robot goal,Ball ball) {
+	public static CommandStack planAvoidance(Robot robot, Robot opposition, double angle, 
+												boolean endBall, Robot goal, Ball ball,
+												CommandStack plannedCommands) {
 		int obsX = opposition.getCoors().getX();
 		int obsY = opposition.getCoors().getY();
 		int ballX = ball.getCoors().getX();
@@ -66,7 +67,7 @@ public class ObjectAvoidance{
 			initial = null;
 		}
 		
-		double alpha = Runner.getAngleFromRobotToPoint(robot,opposition.getCoors());
+		double alpha = RobotMath.getAngleFromRobotToPoint(robot,opposition.getCoors());
 		
 		//Perpendicular angle to the point from them to us
 		double usObsAngle = Math.PI/2 + ((alpha + angle) % 2*Math.PI);
@@ -104,12 +105,12 @@ public class ObjectAvoidance{
 		int totalPoint2 = getDist(robot.getCoors(),newPoint2) + getDist(endPoint, newPoint2);
 		
 		//Takes shortest path to ball
-		if(((totalPoint2 > totalPoint) || (totalPoint == totalPoint2))  && Runner.withinPitch(newPoint)){
+		if(((totalPoint2 > totalPoint) || (totalPoint == totalPoint2))  && RobotMath.withinPitch(newPoint)){
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
 			plannedCommands.pushMoveCommand(newPoint, endPoint, false);
 			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
 			return plannedCommands;
-		}else if((totalPoint >= totalPoint2) && Runner.withinPitch(newPoint2)){
+		}else if((totalPoint >= totalPoint2) && RobotMath.withinPitch(newPoint2)){
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
 			plannedCommands.pushMoveCommand(newPoint2, endPoint, false);
 			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;

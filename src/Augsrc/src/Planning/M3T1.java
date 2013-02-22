@@ -5,33 +5,26 @@ import org.zeromq.ZMQ.*;
 public class M3T1 {
 	private static Context context;
     private static Socket socket;
-	static VisionReader vision;
+	static VisionReader vision = new VisionReader();
 	static RobotMath rmaths = new RobotMath();
 	private static boolean hasCommands = false;
 	private static boolean visitedCurrent = false;
 	
-	private static boolean shootingRight = vision.getDirection() == 0;
+	private static boolean shootingRight;
 	private static Robot ourGoal; 
 	static Robot ourRobot;
 	static Robot theirRobot;
 	static Ball ball;
 	
-	static CommandStack plannedCommands = new CommandStack()
-	;
+	static CommandStack plannedCommands = new CommandStack();
 	
 	public static void main(String[] args){
-		vision = new VisionReader();
 		rmaths.init(); // THOU SHALT NOT NOT DO THIS!
+		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
         socket.connect("ipc:///tmp/nxt_bluetooth_robott");
-        context = ZMQ.context(1);
-		if (shootingRight) {
-				ourGoal.setCoors(RobotMath.goalR.getCoors()) ;
-				ourGoal.setAngle(0) ;
-		} else {
-				RobotMath.goalL.getCoors();
-				ourGoal.setAngle((float) Math.PI);
-				}
+        
+        
 		while(true) {
 			try {	
 				Thread.sleep(40);
@@ -40,6 +33,14 @@ public class M3T1 {
 				e.printStackTrace();
 			}
 			if (vision.readable()) {
+				shootingRight = vision.getDirection() == 0;
+		
+				if (shootingRight) {
+				ourGoal = rmaths.goalR;
+		
+				} else {
+				ourGoal = rmaths.goalL;
+				}
 				doStuff();
 			}
 		}
@@ -53,8 +54,14 @@ public class M3T1 {
 		rmaths.initLoop();
 		
 		if (!hasCommands) {
-			ObjectAvoidance.planAvoidance(ourRobot, theirRobot, 0, true, ourGoal, ball);
+			plannedCommands = ObjectAvoidance.planAvoidance(ourRobot, theirRobot, 
+								0, true, ourGoal, ball,
+								plannedCommands);
+			
+			hasCommands = true;
+			
 		}
+		
 		
 		
 		
@@ -74,9 +81,11 @@ public class M3T1 {
 			if (dist < 20.0) {
 				visitedCurrent = true;				
 			}
-			else {
+			else{
 				sendMoveCommand(moveCommand);
 			}
+		} else {
+			sendZeros();
 		}
 		
 		// !!!! execution phase !!!!
@@ -86,6 +95,11 @@ public class M3T1 {
 		}
 	}
 	
+	static void sendZeros() {
+		sendrecieve("1 0 0 0 0");
+		
+	}
+
 	static boolean opponentIsCloserToOurGoal() {
 		// TODO: implement
 		return false;
@@ -106,13 +120,18 @@ public class M3T1 {
 		String signal = rmaths.getSigToPoint(ourRobot, moveCommand.moveTowardsPoint,
 				moveCommand.rotateTowardsPoint,
 				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
+		sendrecieve(signal);
+		
+	}
+	
+	static void sendrecieve(String signal) {
 		socket.send(signal, 0);
         System.out.println("Sending OK");
         socket.recv(0);
         System.out.println("Recieving OK");
 		
 	}
-	
+
 	static void sendKickCommand() {
 		// TODO: implement
 	}
