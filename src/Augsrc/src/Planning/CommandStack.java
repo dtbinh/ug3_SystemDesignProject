@@ -31,8 +31,9 @@ public class CommandStack {
 		stack.push(new MoveCommand(kickPoint, ballPoint, true));
 	}
 	
-	public void pushMoveCommand(Position movePoint) {
+	public void pushMoveCommand(Position movePoint, Position rotatePoint, 
+								boolean hardRotate) {
 		// TODO: object avoidance
-		stack.push(new MoveCommand(movePoint, movePoint, true));
+		stack.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
 	}
 }
