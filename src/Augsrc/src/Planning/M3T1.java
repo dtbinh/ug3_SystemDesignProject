@@ -1,6 +1,10 @@
 package Planning;
+import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.*;
 
 public class M3T1 {
+	private static Context context;
+    private static Socket socket;
 	static VisionReader vision;
 	static RobotMath rmaths = new RobotMath();
 	private static boolean hasCommands = false;
@@ -12,11 +16,15 @@ public class M3T1 {
 	static Robot theirRobot;
 	static Ball ball;
 	
-	static CommandStack plannedCommands = new CommandStack();
+	static CommandStack plannedCommands = new CommandStack()
+	;
 	
 	public static void main(String[] args){
 		vision = new VisionReader();
 		rmaths.init(); // THOU SHALT NOT NOT DO THIS!
+		socket = context.socket(ZMQ.REQ);
+        socket.connect("ipc:///tmp/nxt_bluetooth_robott");
+        context = ZMQ.context(1);
 		if (shootingRight) {
 				ourGoal.setCoors(RobotMath.goalR.getCoors()) ;
 				ourGoal.setAngle(0) ;
@@ -57,9 +65,9 @@ public class M3T1 {
 		}
 		else if (commandContainer instanceof MoveCommand) {
 			MoveCommand moveCommand = (MoveCommand) commandContainer;
-			double dist = rmaths.euclidDist(ourRobot.getCoors(), 
+			double dist = RobotMath.euclidDist(ourRobot.getCoors(), 
 					  					    moveCommand.moveTowardsPoint);
-			if (rmaths.euclidDist(ourRobot.getCoors(), ball.getCoors())
+			if (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors())
 												< 100){
 				rmaths.toggleWantsToStop();
 			}
@@ -95,7 +103,14 @@ public class M3T1 {
 	}
 	
 	static void sendMoveCommand(MoveCommand moveCommand) {
-		//TODO: implement
+		String signal = rmaths.getSigToPoint(ourRobot, moveCommand.moveTowardsPoint,
+				moveCommand.rotateTowardsPoint,
+				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
+		socket.send(signal, 0);
+        System.out.println("Sending OK");
+        socket.recv(0);
+        System.out.println("Recieving OK");
+		
 	}
 	
 	static void sendKickCommand() {

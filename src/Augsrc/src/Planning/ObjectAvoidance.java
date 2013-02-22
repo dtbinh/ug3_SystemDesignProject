@@ -1,7 +1,6 @@
 package Planning;
 
 import JavaVision.Position;
-import java.util.LinkedList;
 
 public class ObjectAvoidance{
 	/*
@@ -46,6 +45,8 @@ public class ObjectAvoidance{
 		}	
 	}
 //Dont know why this takes an angle ask Caithan
+//Caithan says for later implementations we might want a more refined circle around the obstacle. 
+//but we can see what happens eh.
 	public static CommandStack planAvoidance(Robot robot, Robot opposition, double angle, boolean endBall, Robot goal,Ball ball) {
 		int obsX = opposition.getCoors().getX();
 		int obsY = opposition.getCoors().getY();
@@ -53,7 +54,6 @@ public class ObjectAvoidance{
 		int ballY = ball.getCoors().getY();
 		//ArrayList<Position> pointList = new ArrayList<Position>();
 
-		LinkedList<Command> pointList = new LinkedList<Command>();
 		int dist = 50; //Variable distance 
 		Position ballPoint;
 
@@ -61,7 +61,7 @@ public class ObjectAvoidance{
 		Position initial;
 		
 		if(getDist(robot.getCoors(),opposition.getCoors()) < 60){
-			initial =  Runner.pointBehindBall(opposition, robot.getCoors());
+			initial =  RobotMath.pointBehindBall(opposition, robot.getCoors());
 		}else{
 			initial = null;
 		}
@@ -80,7 +80,7 @@ public class ObjectAvoidance{
 			int endX = ballX;
 			int endY = ballY;
 			ballPoint = new Position(endX,endY);
-			endPoint = Runner.pointBehindBall(goal, ballPoint);
+			endPoint = RobotMath.pointBehindBall(goal, ballPoint);
 		}else{
 			int endX = (int) (2 * (dist*Math.sin(usObsAngle)));
 			int endY = (int) (2 * (dist*Math.cos(usObsAngle)));
@@ -105,14 +105,14 @@ public class ObjectAvoidance{
 		
 		//Takes shortest path to ball
 		if(((totalPoint2 > totalPoint) || (totalPoint == totalPoint2))  && Runner.withinPitch(newPoint)){
-			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
-			plannedCommands.pushMoveCommand(newPoint, endPoint, false);
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
+			plannedCommands.pushMoveCommand(newPoint, endPoint, false);
+			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
 			return plannedCommands;
 		}else if((totalPoint >= totalPoint2) && Runner.withinPitch(newPoint2)){
-			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
-			plannedCommands.pushMoveCommand(newPoint2, endPoint, false);
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
+			plannedCommands.pushMoveCommand(newPoint2, endPoint, false);
+			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
 			return plannedCommands;
 		}else{
 			plannedCommands.pushMoveCommand(opposition.getCoors(), endPoint, false);

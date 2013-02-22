@@ -115,7 +115,6 @@ public class VisionReader extends Thread {
 			ourRobot = blueRobot;
 			theirRobot = yellowRobot;
 		}
-		
 	}
 	//getters for planning thread.
 	public Robot getOurRobot(){
@@ -133,7 +132,10 @@ public class VisionReader extends Thread {
 	public boolean readable(){
 		return (its>30);
 	}
-	
+	public int getDirection(){
+		return state.getDirection();
+		// 0 = right, 1 = left.
+	}
 }
 
 
