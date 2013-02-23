@@ -49,6 +49,8 @@ public class ObjectAvoidance{
 	public static CommandStack planAvoidance(Robot robot, Robot opposition, double angle, 
 												boolean endBall, Robot goal, Ball ball,
 												CommandStack plannedCommands) {
+		RobotMath rmaths = new RobotMath();
+		rmaths.init();
 		int obsX = opposition.getCoors().getX();
 		int obsY = opposition.getCoors().getY();
 		int ballX = ball.getCoors().getX();
@@ -62,7 +64,7 @@ public class ObjectAvoidance{
 		Position initial;
 		
 		if(getDist(robot.getCoors(),opposition.getCoors()) < 60){
-			initial =  RobotMath.pointBehindBall(opposition, robot.getCoors());
+			initial =  rmaths.pointBehindBall(opposition, robot.getCoors());
 		}else{
 			initial = null;
 		}
@@ -81,7 +83,7 @@ public class ObjectAvoidance{
 			int endX = ballX;
 			int endY = ballY;
 			ballPoint = new Position(endX,endY);
-			endPoint = RobotMath.pointBehindBall(goal, ballPoint);
+			endPoint = rmaths.pointBehindBall(goal, ballPoint);
 		}else{
 			int endX = (int) (2 * (dist*Math.sin(usObsAngle)));
 			int endY = (int) (2 * (dist*Math.cos(usObsAngle)));

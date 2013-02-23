@@ -2,10 +2,10 @@ package Planning;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.*;
 
-public class M3T1 {
+public class M3T1 extends Thread {
 	private static Context context;
     private static Socket socket;
-	static VisionReader vision = new VisionReader();
+	static VisionReader vision = new VisionReader("blue");
 	static RobotMath rmaths = new RobotMath();
 	private static boolean hasCommands = false;
 	private static boolean visitedCurrent = false;
@@ -15,23 +15,19 @@ public class M3T1 {
 	static Robot ourRobot;
 	static Robot theirRobot;
 	static Ball ball;
-	
 	static CommandStack plannedCommands = new CommandStack();
 	
-	public static void main(String[] args){
+	
+	public static void main(String args[]) throws InterruptedException{
+		
 		rmaths.init(); // THOU SHALT NOT NOT DO THIS!
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
         socket.connect("ipc:///tmp/nxt_bluetooth_robott");
         
-        
+     
 		while(true) {
-			try {	
-				Thread.sleep(40);
-			} catch (InterruptedException e) {
-				System.out.println("Sleep interruption in Planning script");
-				e.printStackTrace();
-			}
+			Thread.sleep(40);
 			if (vision.readable()) {
 				shootingRight = vision.getDirection() == 0;
 		
@@ -41,12 +37,12 @@ public class M3T1 {
 				} else {
 				ourGoal = rmaths.goalL;
 				}
-				doStuff();
+				doStuff();				
 			}
 		}
 	}
 	
-	static void doStuff() {
+	static  void doStuff() {
 		// AGAIN: THOU SHALT NOT NOT DO THESE
 		ourRobot = vision.getOurRobot(); 
 		theirRobot = vision.getTheirRobot(); 
@@ -65,6 +61,7 @@ public class M3T1 {
 		
 		
 		
+		
 		Command commandContainer = plannedCommands.getFirst();
 		if (commandContainer instanceof KickCommand) {
 			sendKickCommand();
@@ -76,7 +73,7 @@ public class M3T1 {
 					  					    moveCommand.moveTowardsPoint);
 			if (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors())
 												< 100){
-				rmaths.toggleWantsToStop();
+				sendMoveCommand(moveCommand);
 			}
 			if (dist < 20.0) {
 				visitedCurrent = true;				
@@ -84,17 +81,23 @@ public class M3T1 {
 			else{
 				sendMoveCommand(moveCommand);
 			}
-		} else {
+		}
+		else {
 			sendZeros();
 		}
-		
 		// !!!! execution phase !!!!
 		if (visitedCurrent) {
 			visitedCurrent = false;
 			plannedCommands.pop();
 		}
+		//cleanOutput();
 	}
 	
+	private static boolean weRecievedSomeSensorInput() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	static void sendZeros() {
 		sendrecieve("1 0 0 0 0");
 		
@@ -125,10 +128,10 @@ public class M3T1 {
 	}
 	
 	static void sendrecieve(String signal) {
-		socket.send(signal, 0);
-        System.out.println("Sending OK");
-        socket.recv(0);
-        System.out.println("Recieving OK");
+		//socket.send(signal, 0);
+        //System.out.println("Sending OK");
+        //socket.recv(0);
+        //System.out.println("Recieving OK");
 		
 	}
 
@@ -139,6 +142,17 @@ public class M3T1 {
 	static boolean haveBall() {
 		//TODO: implement
 		return false;
+	}
+	
+	static void cleanOutput(){
+		for (int i = 0; i<9; i++){
+			System.out.println("");
+		}
+	}
+	
+	
+	static Float invert(Float angle){
+		return (float) ((float) (angle+Math.PI) % (2*Math.PI)); //reverse that stuff!!!
 	}
 	
 }
