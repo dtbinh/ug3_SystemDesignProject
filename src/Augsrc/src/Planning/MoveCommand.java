@@ -14,4 +14,7 @@ public class MoveCommand extends Command {
 		// call it smefrtp for short ^^
 		this.shouldMovementEndFacingRotateTowardsPoint = shouldMovementEndFacingRotateTowardsPoint;
 	}
+	public Position getMoveTowardspoint() {
+		return this.moveTowardsPoint;
+	}
 }

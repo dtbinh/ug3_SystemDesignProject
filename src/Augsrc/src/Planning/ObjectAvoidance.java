@@ -57,7 +57,7 @@ public class ObjectAvoidance{
 		int ballY = ball.getCoors().getY();
 		//ArrayList<Position> pointList = new ArrayList<Position>();
 
-		int dist = 50; //Variable distance 
+		int dist = 75; //Variable distance 
 		Position ballPoint;
 
 		Position endPoint; //Uses the point behind the ball method
@@ -111,11 +111,13 @@ public class ObjectAvoidance{
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
 			plannedCommands.pushMoveCommand(newPoint, endPoint, false);
 			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
+			System.out.println("X : "+ newPoint.getX()+ " Y: " + newPoint.getY());
 			return plannedCommands;
 		}else if((totalPoint >= totalPoint2) && RobotMath.withinPitch(newPoint2)){
 			plannedCommands.pushMoveCommand(endPoint, endPoint, true);
 			plannedCommands.pushMoveCommand(newPoint2, endPoint, false);
 			if (initial != null) plannedCommands.pushMoveCommand(initial, endPoint, false);;
+			System.out.println("X : "+ newPoint2.getX()+ " Y: " + newPoint2.getY());
 			return plannedCommands;
 		}else{
 			plannedCommands.pushMoveCommand(opposition.getCoors(), endPoint, false);

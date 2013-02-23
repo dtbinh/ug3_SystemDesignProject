@@ -10,12 +10,12 @@ import JavaVision.Position;
  *
   */
 public class RobotMath {
-	static Robot goalL = new Robot();
-    static Robot goalR = new Robot();
-    static Robot goalL_top = new Robot();
-    static Robot goalL_bottom = new Robot();
-    static Robot goalR_top = new Robot();
-    static Robot goalR_bottom = new Robot();
+	Robot goalL = new Robot();
+    Robot goalR = new Robot();
+    Robot goalL_top = new Robot();
+    Robot goalL_bottom = new Robot();
+    Robot goalR_top = new Robot();
+    Robot goalR_bottom = new Robot();
     static double TENPI = Math.PI*10;
     static double TWOPI = Math.PI*2;
     private boolean wantsToRotate;
@@ -290,7 +290,7 @@ public class RobotMath {
 	     *
 	     */
 	
-	 public static Position pointBehindBall(Robot goal, Position ball){
+	 public Position pointBehindBall(Robot goal, Position ball){
 	 	    double rvrsBallToGoal = (3*Math.PI)/2;
 	         Position goPoint;
 	        
@@ -371,7 +371,7 @@ public class RobotMath {
      *
      */
 	
-	public double euclidDist(Position a, Position b ){
+	public static double euclidDist(Position a, Position b ){
 		double ans = Math.sqrt(squared(a.getX()- b.getX())+ squared(a.getY() - b.getY()));
 		return ans;
 	}
@@ -420,10 +420,10 @@ public class RobotMath {
 		return angle;
 	}
 	
-	public double squared(double x){
+	public static double squared(double x){
 		return Math.pow(x, 2);
 	}
-	public double squared(int x){
+	public static double squared(int x){
 		return Math.pow(x, 2);
 	}
 	
