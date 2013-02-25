@@ -22,16 +22,17 @@ public class VisionReader extends Thread {
 	
 	public static void main(String args[]) {
 		
-		colour = "blue";//args[0], need to find a way to pass this from GPS
-		instance = new VisionReader();
+		colour = "blue"; //do I need to do this a different way?
+		instance = new VisionReader(colour);
 
 	}
 
 	/**
 	 * Instantiate objects and start the planning thread
+	 * @param string 
 	 */
-	public VisionReader() {
-		colour = "blue";
+	public VisionReader(String string) {
+		colour = string;
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
 		ball = new Ball();
@@ -85,7 +86,7 @@ public class VisionReader extends Thread {
 			/* Create the Control GUI for threshold setting/etc. */
 			thresholdsGUI = new ControlGUI(thresholdsState, worldState, pitchConstants);
 			thresholdsGUI.initGUI();
-
+			
 		} catch (V4L4JException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -118,11 +119,19 @@ public class VisionReader extends Thread {
 	}
 	//getters for planning thread.
 	public Robot getOurRobot(){
-		return this.ourRobot;
+		if (colour.equals("yellow")){
+			return yellowRobot;
+		} else{
+			return blueRobot;
+		}
 	}
 	
 	public Robot getTheirRobot(){
-		return this.theirRobot;
+		if (colour.equals("yellow")){
+			return blueRobot;
+		} else{
+			return yellowRobot;
+		}
 	}
 	
 	public Ball getBall(){
@@ -136,6 +145,7 @@ public class VisionReader extends Thread {
 		return state.getDirection();
 		// 0 = right, 1 = left.
 	}
+	
 }
 
 

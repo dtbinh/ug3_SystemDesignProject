@@ -97,7 +97,7 @@ public class RobotMath {
          //it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved.
          angleBetweenRobotAndPoint += TENPI;
          angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % TWOPI;
-
+         System.out.println(angleBetweenRobotAndPoint);
          return angleBetweenRobotAndPoint;
     }
     
@@ -326,7 +326,7 @@ public class RobotMath {
 	     * @author Sarah McGillion
 	     *
 	     */
-	 public static Position projectPoint(Position pos, double ang, int dist){
+	 public Position projectPoint(Position pos, double ang, int dist){
 	 	int newX = (int) (pos.getX() + (dist*Math.sin(ang)));
 	     int newY = (int) (pos.getY() + (dist*Math.cos(ang)));
 	     Position goPoint = new Position(newX,newY);

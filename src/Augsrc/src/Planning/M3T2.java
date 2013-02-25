@@ -8,7 +8,7 @@ import org.zeromq.ZMQ.*;
 import JavaVision.Position;
 
 
-public class M3T1 extends Thread {
+public class M3T2 {
 	private static Context context;
     private static Socket socket;
 	static VisionReader vision = new VisionReader("blue");
@@ -22,6 +22,7 @@ public class M3T1 extends Thread {
 	static CommandStack plannedCommands = new CommandStack();
 	static PathSearch ps = new PathSearch();
 	private static boolean finished = false;
+	private static Robot ourGoal = new Robot();
 	
 	
 	public static void main(String args[]) throws InterruptedException{
@@ -36,6 +37,12 @@ public class M3T1 extends Thread {
 			Thread.sleep(70);
 			if (vision.readable()) {
 				shootingRight = vision.getDirection() ==0;
+				ourGoal.setCoors(shootingRight ?
+						rmaths.goalR.getCoors() :
+						rmaths.goalL.getCoors());
+				ourGoal.setAngle(shootingRight ?
+						rmaths.goalR.getAngle() :
+						rmaths.goalL.getAngle());
 				doStuff();				
 			}
 			
@@ -49,10 +56,10 @@ public class M3T1 extends Thread {
 		ball = vision.getBall();
 		rmaths.initLoop();
 		
+		
 		if (plannedCommands.isEmpty()) {
-			//plannedCommands = ObjectAvoidance.planAvoidance(ourRobot, theirRobot, 
-								//0, true, ourGoal, ball,
-								//plannedCommands);
+			if (!haveBall()){
+				
 			ArrayList<Point> parsed = PathSearchHolly.getPath2(
 					new Point (ball.getCoors().getX(),ball.getCoors().getY()), 
 					new Point (ourRobot.getCoors().getX(),ourRobot.getCoors().getY()) , 
@@ -63,12 +70,28 @@ public class M3T1 extends Thread {
 			Position movePos = new Position(parsed.get(1).x, parsed.get(1).y);
 			Position rotatePos = new Position (parsed.get(parsed.size()-1).x, parsed.get(parsed.size()-1).y) ;
 			plannedCommands.pushMoveCommand(movePos, rotatePos, (RobotMath.euclidDist(movePos, ball.getCoors()) < 150) );
-		
+			System.out.println("Have Command");
+			}
+			else {
+				Ball shootPoint = new Ball();
+				shootPoint.setCoors(RobotMath.projectPoint(ball.getCoors(), 
+				invert((float) RobotMath.getAngleFromRobotToPoint(ourGoal, ball.getCoors())),(int) (RobotMath.euclidDist(ourGoal.getCoors(), ball.getCoors())/2)));
+				ArrayList<Point> parsed = PathSearchHolly.getPath2(
+						new Point (shootPoint.getCoors().getX(), shootPoint.getCoors().getY()), 
+						new Point (ourRobot.getCoors().getX(),ourRobot.getCoors().getY()) , 
+						(int) Math.toDegrees(ourRobot.getAngle()), 
+						new Point (theirRobot.getCoors().getX(),theirRobot.getCoors().getY()),
+						(int) Math.toDegrees(theirRobot.getAngle()),
+						vision.getDirection());
+				Position movePos = new Position(parsed.get(1).x, parsed.get(1).y);
+				Position rotatePos = new Position (parsed.get(parsed.size()-1).x, parsed.get(parsed.size()-1).y) ;
+				plannedCommands.pushMoveCommand(movePos, rotatePos, (RobotMath.euclidDist(movePos, ball.getCoors()) < 150) );
+			}
 		}
-		
-		//MoveCommand moveCommandlol = (MoveCommand) plannedCommands.getFirst();
-		//System.out.println("GOODX: " +moveCommandlol.getMoveTowardspoint().getX() + " GOODY: " + moveCommandlol.getMoveTowardspoint().getY());
-		
+		if (haveBall() && RobotMath.euclidDist(ourRobot.getCoors(), ourGoal.getCoors())< 100){
+			sendKickCommand();
+			finished = true;
+		}
 		
 		Command commandContainer = plannedCommands.getFirst();
 		if (commandContainer instanceof KickCommand) {
@@ -81,16 +104,10 @@ public class M3T1 extends Thread {
 					  					    moveCommand.moveTowardsPoint);
 			if (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors())
 												< 100){
-				if ((RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors())
-						< 40 && rmaths.isFacing(ourRobot, ball.getCoors()))) {
-					sendZeros();
-					finished = true;
-				}else {
-					
-				sendMoveCommand(moveCommand);
 				rmaths.toggleWantsToStop();
+				sendMoveCommand(moveCommand);
+				
 				}
-			}
 			if (dist < 20.0) {
 				visitedCurrent = true;				
 			}
@@ -120,7 +137,7 @@ public class M3T1 extends Thread {
 	}
 
 	static boolean opponentIsCloserToOurGoal() {
-		// TODO: implement
+		
 		return false;
 	}
 	
@@ -156,8 +173,8 @@ public class M3T1 extends Thread {
 	}
 	
 	static boolean haveBall() {
-		//TODO: implement
-		return false;
+	
+		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 30 && rmaths.isFacing(ourRobot, ball.getCoors()));
 	}
 	
 	static void cleanOutput(){
@@ -172,5 +189,8 @@ public class M3T1 extends Thread {
 	}
 	
 }
+
+
+
 
 
