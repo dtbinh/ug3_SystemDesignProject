@@ -130,8 +130,8 @@ public class PathSearchHolly {
 		for (int j = 0; j < 3; j++) {
 			for (int i = 0; i < newPath.size() - 2; i++) {
 				//remove points that hardly change in gradient
-				if (Math.abs(  (PathSearch.getAngle(newPath.get(i), newPath.get(i+1))) -
-						(PathSearch.getAngle(newPath.get(i+1), newPath.get(i+2)))) < 30)
+				if (Math.abs(  (PathSearchHolly.getAngle(newPath.get(i), newPath.get(i+1))) -
+						(PathSearchHolly.getAngle(newPath.get(i+1), newPath.get(i+2)))) < 30)
 					newPath.remove(i+2);
 			}
 		}
@@ -337,6 +337,10 @@ Point ourPosition = new Point(400,325);
 			
 			//ourPosition = commands.get(1);
 		} 
+	}
+	
+	public static double getAngle(GridPoint a, GridPoint b) {
+		return Math.toDegrees(Math.atan2((a.getY() - b.getY()), (b.getX() - a.getX())));
 	}
 				
 	

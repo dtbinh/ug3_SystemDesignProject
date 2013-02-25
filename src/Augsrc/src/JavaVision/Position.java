@@ -25,6 +25,12 @@ public class Position {
 		this.y = y;
 	}
 	
+	public Position(Point point) {
+		super();
+		this.x = point.x;
+		this.y = point.y;
+	}
+	
 	/**
 	 * Return the x-coordinate.
 	 * 
