@@ -20,7 +20,6 @@ public class M3T2 {
 	static Robot theirRobot;
 	static Ball ball;
 	static CommandStack plannedCommands = new CommandStack();
-	static PathSearch ps = new PathSearch();
 	private static boolean finished = false;
 	private static Robot ourGoal = new Robot();
 	
@@ -74,7 +73,7 @@ public class M3T2 {
 			}
 			else {
 				Ball shootPoint = new Ball();
-				shootPoint.setCoors(RobotMath.projectPoint(ball.getCoors(), 
+				shootPoint.setCoors(rmaths.projectPoint(ball.getCoors(), 
 				invert((float) RobotMath.getAngleFromRobotToPoint(ourGoal, ball.getCoors())),(int) (RobotMath.euclidDist(ourGoal.getCoors(), ball.getCoors())/2)));
 				ArrayList<Point> parsed = PathSearchHolly.getPath2(
 						new Point (shootPoint.getCoors().getX(), shootPoint.getCoors().getY()), 

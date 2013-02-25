@@ -20,7 +20,6 @@ public class M3T1 extends Thread {
 	static Robot theirRobot;
 	static Ball ball;
 	static CommandStack plannedCommands = new CommandStack();
-	static PathSearch ps = new PathSearch();
 	private static boolean finished = false;
 	
 	
