@@ -1,9 +1,15 @@
 package Planning;
 
 import JavaVision.Position;
+import java.awt.Point;
+import java.util.List;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
+/**
+ * Holds the actions the robot wants to perform
+ * 
+ * @author c-w
+ */
 public class CommandStack {
 	private LinkedList<Command> stack;
 
@@ -12,7 +18,7 @@ public class CommandStack {
 	}
 
 	public Command getFirst() {
-		if (stack.isEmpty()){
+		if (stack.isEmpty()) {
 			return null ;
 		} else {
 			return stack.getFirst();
@@ -26,20 +32,27 @@ public class CommandStack {
 	public void clear() {
 		stack.clear();
 	}
-
-	public void push(Command command) {
-		stack.push(command);
-	}
-
-	public void pushKickCommand(Position kickPoint, Position ballPoint) {
-		stack.push(new KickCommand());
-		stack.push(new MoveCommand(kickPoint, ballPoint, true));
+	
+	public void pushMoveCommand(List<Point> points) {
+		int numel = points.size();
+		Position lastPosition = new Position(points.get(numel - 1));
+		// Skip first element of list (current robot coordinates) - we're there already
+		for (int i = numel - 1; i > 0; i--) {
+			pushMoveCommand(new Position(points.get(i)), lastPosition, i == 1);
+		}
 	}
 
 	public void pushMoveCommand(Position movePoint, Position rotatePoint,
-			boolean hardRotate) {
-		// TODO: object avoidance
+								boolean hardRotate) {
 		stack.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
+	}
+	
+	public void pushKickCommand(Position kickPoint, Position ballPoint) {
+		KickCommand kickCommand = new KickCommand();
+		if (!stack.contains(kickCommand)) {
+			stack.push(kickCommand);
+			stack.push(new MoveCommand(kickPoint, ballPoint, true));
+		}
 	}
 
 	public boolean isEmpty() {
