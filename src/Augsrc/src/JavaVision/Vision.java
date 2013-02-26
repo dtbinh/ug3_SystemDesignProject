@@ -1312,7 +1312,13 @@ public class Vision extends WindowAdapter {
 	public WorldState getWorldState() {
 		return worldState;
 	}
-
+	
+	// TODO: test these values!
+	public int getMinX() { return pitchConstants.leftBuffer; }
+	public int getMaxX() { return frameImage.getWidth() - pitchConstants.rightBuffer; }
+	public int getMinY() { return pitchConstants.topBuffer; }
+	public int getMaxY() { return frameImage.getHeight() - pitchConstants.bottomBuffer; }
+	
 	/* Doesn't work */
 	/*
 	 * private void calculateDistortion() { this.xDistortion = new int[640];

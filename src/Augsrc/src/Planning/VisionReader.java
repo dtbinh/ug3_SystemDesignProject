@@ -145,7 +145,12 @@ public class VisionReader extends Thread {
 		return state.getDirection();
 		// 0 = right, 1 = left.
 	}
-	
+		
+	public int getMinX() { return vision.getMinX(); }
+	public int getMaxX() { return vision.getMaxX(); }
+	public int getMinY() { return vision.getMinY(); }
+	public int getMaxY() { return vision.getMaxY(); }
+		
 }
 
 

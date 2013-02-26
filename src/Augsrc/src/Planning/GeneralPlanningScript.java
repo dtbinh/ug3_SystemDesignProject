@@ -121,10 +121,10 @@ public class GeneralPlanningScript extends Thread {
 					}
 				}
 				else {
-					// TODO: use predicted position of ball w.r.t ball trajectory/speed and own speed
-					//
-					// Task assigned to: Ozgur
-					move(ball.getCoors());
+					Position futureCoors = ball.getReachableCoors(ourRobot.getCoors(), 
+					                                              2);
+					if (futureCoors != null) { move(futureCoors); }
+					else                     { move(ball.getCoors()); }
 				}
 			}
 		}
