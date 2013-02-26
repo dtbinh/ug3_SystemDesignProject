@@ -144,7 +144,9 @@ public class Ball extends ObjectDetails {
 		int x = objCoors.getX() + getDisplacement(timespan, velocity.getX(), acceler.getX());
 		int y = objCoors.getY() + getDisplacement(timespan, velocity.getY(), acceler.getY());
 		Position predictedCoors = new Position(x, y);
-		if (reflect) { reflectInside(predictedCoors, GeneralPlanningScript.vision); }
+		if (reflect) { 
+			predictedCoors = reflectInside(predictedCoors, GeneralPlanningScript.vision); 
+		}
 		return predictedCoors;
 	}
 	
