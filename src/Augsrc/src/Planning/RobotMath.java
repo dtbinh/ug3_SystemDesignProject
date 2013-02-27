@@ -23,20 +23,20 @@ public class RobotMath {
        
     //Set the values of the goals, init must be called just after we make a new instance
     public void init() {
-    	goalR.setAngle(0);
+    	goalR.setAngle((float) (3*Math.PI/2));
     	goalR.setCoors(new Position(603,240));
-    	goalL.setAngle((float) Math.PI);
+    	goalL.setAngle((float) Math.PI/2);
     	goalL.setCoors(new Position(35,240));
     	
-    	goalR_top.setAngle(0);
-    	goalR_top.setCoors(new Position(35,171));
-    	goalR_bottom.setAngle(0);
-    	goalR_bottom.setCoors(new Position(35, 325));
+    	goalR_top.setAngle( (float) (3*Math.PI/2));
+    	goalL_top.setCoors(new Position(35,171));
+    	goalR_bottom.setAngle((float) (3*Math.PI/2));
+    	goalL_bottom.setCoors(new Position(35, 325));
     	
-    	goalL_top.setAngle((float) Math.PI);
-    	goalL_top.setCoors(new Position(603,166));
-    	goalL_bottom.setAngle((float) Math.PI);
-    	goalL_bottom.setCoors(new Position(603, 312));
+    	goalL_top.setAngle((float) Math.PI/2);
+    	goalR_top.setCoors(new Position(603,166));
+    	goalL_bottom.setAngle((float) Math.PI/2);
+    	goalR_bottom.setCoors(new Position(603, 312));
      }
     
     public void initLoop() {
@@ -97,7 +97,6 @@ public class RobotMath {
          //it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved.
          angleBetweenRobotAndPoint += TENPI;
          angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % TWOPI;
-         System.out.println(angleBetweenRobotAndPoint);
          return angleBetweenRobotAndPoint;
     }
     
@@ -123,14 +122,12 @@ public class RobotMath {
     public double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
-                 if (((Math.PI*2) - angle) > (Math.PI/10)) {
-                         value = 0.1;
-                         System.out.println("CCW rotation");
+                 if (((Math.PI*2) - angle) > (Math.PI/5)) {
+                         value = 0.2;
                  }
                 
-         } else if (angle > Math.PI/10) {
-                 value = -0.1;
-                 System.out.println("CW rotation");
+         } else if (angle > Math.PI/5) {
+                 value = -0.2;
          }
          wantsToRotate = (!(value == 0)) ;
 
@@ -175,7 +172,7 @@ public class RobotMath {
                          motors[i] += rotationfactor;
                  }
          }
-         if  ((!wantsToStop) || (!hardRotate))  {
+         if  (!(wantsToRotate && hardRotate && wantsToStop))  {
          //hardRotate tells us that we -need- to be facing the correct way.
          //so, keep moving all the time if we don't really care about rotation.
          //may need some testing here
@@ -189,7 +186,7 @@ public class RobotMath {
          if (wantsToStop && wantsToRotate && (hardRotate)){
          //similar here, but reversed.
          // if you want to stop and rotate, only slow down if you actually care about rotating.
-                 multfactor = (multfactor/Math.abs(rotationfactor))/2;
+                 multfactor = (multfactor/Math.abs(rotationfactor))/3;
          } else {
                  for (int i = 0; i<4;i++){
                          if (Math.abs(motors[i]) > maxval) maxval = Math.abs(motors[i]);
@@ -326,7 +323,7 @@ public class RobotMath {
 	     * @author Sarah McGillion
 	     *
 	     */
-	 public Position projectPoint(Position pos, double ang, int dist){
+	 public static Position projectPoint(Position pos, double ang, int dist){
 	 	int newX = (int) (pos.getX() + (dist*Math.sin(ang)));
 	     int newY = (int) (pos.getY() + (dist*Math.cos(ang)));
 	     Position goPoint = new Position(newX,newY);
@@ -510,7 +507,6 @@ public class RobotMath {
 		double distanceScore = getDistanceScore(robot, shootingRight);
 		double angleScore = getAngleScore(robot, shootingRight);
 		double weightedScore = distanceScore * preferDistanceBy + angleScore * (1 - preferDistanceBy);
-		System.out.println("weightedScore = " + weightedScore);
 		return weightedScore;
 	}
 }

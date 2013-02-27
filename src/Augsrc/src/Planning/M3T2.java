@@ -73,7 +73,7 @@ public class M3T2 {
 			}
 			else {
 				Ball shootPoint = new Ball();
-				shootPoint.setCoors(rmaths.projectPoint(ball.getCoors(), 
+				shootPoint.setCoors(RobotMath.projectPoint(ball.getCoors(), 
 				invert((float) RobotMath.getAngleFromRobotToPoint(ourGoal, ball.getCoors())),(int) (RobotMath.euclidDist(ourGoal.getCoors(), ball.getCoors())/2)));
 				ArrayList<Point> parsed = PathSearchHolly.getPath2(
 						new Point (shootPoint.getCoors().getX(), shootPoint.getCoors().getY()), 

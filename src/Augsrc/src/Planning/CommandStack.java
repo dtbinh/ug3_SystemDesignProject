@@ -45,6 +45,10 @@ public class CommandStack {
 	public void pushMoveCommand(Position movePoint, Position rotatePoint,
 								boolean hardRotate) {
 		stack.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
+		//while (stack.size()> 10){
+		//	stack.remove(10);
+		//}
+		//cleaned the stack to avoid memory issues.
 	}
 	
 	public void pushKickCommand(Position kickPoint, Position ballPoint) {

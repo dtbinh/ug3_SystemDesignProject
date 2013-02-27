@@ -1,4 +1,3 @@
-
 package Planning;
 
 import JavaVision.Position;
@@ -30,13 +29,13 @@ public class ObjectAvoidance{
 			
 		//System.out.println("Us: " + ourX + " ," + ourY);
 		//System.out.println("Them " + obsX + " , " + obsY);
-		//System.out.println("Ball: " + destX + " , " + destY);
+		System.out.println("Ball: " + destX + " , " + destY);
 		
-		if((dist > 50)){
+		if((dist > 100)){
 			return false;
-		}else if((dist <50) && (mag2 > mag1)){
+		}else if((dist <100) && (mag2 > mag1)){
 			return false;
-		}else if((dist < 50) && (mag3 > mag1)){
+		}else if((dist < 100) && (mag3 > mag1)){
 			return false;
 		}else{
 			return true;

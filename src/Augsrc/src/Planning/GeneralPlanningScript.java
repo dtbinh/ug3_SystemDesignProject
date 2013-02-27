@@ -4,6 +4,10 @@ package Planning;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.Context;
+import org.zeromq.ZMQ.Socket;
+
 import JavaVision.Position;
 
 /**
@@ -22,11 +26,14 @@ import JavaVision.Position;
  * @author		c-w
  */
 public class GeneralPlanningScript extends Thread {
-	public static double HAS_BALL_DISTANCE_THRESHOLD = 30.0;
+	public static double HAS_BALL_DISTANCE_THRESHOLD = 60.0;
 	public static double END_MOVE_START_ROTATE_DISTANCE_THRESHOLD = 100.0;
 	
 	static VisionReader vision;
 	static RobotMath rmaths;
+	
+	private static Context context;
+    private static Socket socket;
 	
 	static boolean shootingRight;
 	static Position ourGoal;
@@ -35,22 +42,30 @@ public class GeneralPlanningScript extends Thread {
 	static Robot ourRobot;
 	static Robot theirRobot;
 	static Ball ball;
+	static int runs = 0;
+	static int kickWait = 0;
 	
 	static CommandStack plannedCommands;
 	static boolean skipNextPlanningPhase;
 	private static Position safePoint;
 	
 	public static void main(String[] args) {
-		vision = new VisionReader(args[0]);
+		vision = new VisionReader(args[0]); //Our Colour - MAKE GUI 4 DIS
 		rmaths = new RobotMath(); rmaths.init();
-		shootingRight = vision.getDirection() == 0;
+		context = ZMQ.context(1);
+		socket = context.socket(ZMQ.REQ);
+        socket.connect("ipc:///tmp/nxt_bluetooth_robott");
+        sendZeros();
+        System.out.println(args[1].toString());
+		shootingRight = args[1].equals("right");
+		System.out.println(shootingRight);
 		float theirGoalAngle;
 		float ourGoalAngle;
-		if (shootingRight){
-		ourGoal	= rmaths.goalR.getCoors();
-		theirGoal = rmaths.goalL.getCoors();
-		ourGoalAngle = rmaths.goalR.getAngle();
-		theirGoalAngle = rmaths.goalL.getAngle();
+		if (!shootingRight){
+			ourGoal	= rmaths.goalR.getCoors();
+			theirGoal = rmaths.goalL.getCoors();
+			ourGoalAngle = rmaths.goalR.getAngle();
+			theirGoalAngle = rmaths.goalL.getAngle();
 		} else {
 			ourGoal	= rmaths.goalL.getCoors();
 			theirGoal = rmaths.goalR.getCoors();
@@ -59,8 +74,8 @@ public class GeneralPlanningScript extends Thread {
 		}
 		plannedCommands = new CommandStack();
 		skipNextPlanningPhase = false;
-		optimumGP = rmaths.projectPoint(theirGoal, theirGoalAngle, 70);
-		safePoint = rmaths.projectPoint(ourGoal, ourGoalAngle, 70 );
+		optimumGP = theirGoal;
+		safePoint = RobotMath.projectPoint(ourGoal, ourGoalAngle, 70 );
 		
 		
 		while (true) {
@@ -72,6 +87,7 @@ public class GeneralPlanningScript extends Thread {
 			}
 			if (vision.readable()) {
 				controlLoop();
+				runs++;
 			}
 		}
 	}
@@ -89,38 +105,57 @@ public class GeneralPlanningScript extends Thread {
 		
 		// !!!! planning phase !!!!
 		if (!skipNextPlanningPhase) {
-			if (haveBall()) {
+			if (END_MOVE_START_ROTATE_DISTANCE_THRESHOLD > 
+					RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) 
+					&& (!(rmaths.isFacing(ourRobot, theirGoal)))) {
+				shimmy();
+				System.out.println("SHIMMEHYEHE");
+				
+			} else if (haveBall()) {
+				System.out.println("We have ball");
 				// opportunistic strategy:
 				// if the current position has a good enough probability to
 				// score a goal then drop everything the robot is doing and
 				// perform a kick as the next action (and then resume with
 				// whatever you were doing)
-				if (wantToKick()) {
+				if (wantToKick() && (kickWait<runs) ) {
 					if (opponentIsInWay()) {
-						//move to the optimum position
+						System.out.println("We want to kick but opponent in way");
+							//move to the optimum position
 							move(optimumGP);
-						} else {
-							
-							plannedCommands.pushKickCommand(ourRobot.getCoors(),
-													ball.getCoors());
-							skipNextPlanningPhase = true;
-						}	
-				} 
-			}
-			else {
+					} else {
+						System.out.println("We want to kick and have clear shot");
+						plannedCommands.pushKickCommand(ourRobot.getCoors(),
+												ball.getCoors());
+						skipNextPlanningPhase = true;
+					}	
+				} else {
+					move(optimumGP);
+					//plannedCommands.pushMoveCommand(ourRobot.getCoors(), optimumGP, true);
+				}
+			} else {
 				if (opponentHasBall()) {
+					System.out.println("They have ball");
 					plannedCommands.clear();
 					if (opponentIsCloserToOurGoal()) {
+						System.out.println("They are closer to our goal than us");
 						//Run to da goal.
 						move(safePoint);
-						}
+					}
 					else {
-						// TODO: mirror opponent movement
-						// TODO: move into intersection of opponent direction and centre of goal
-						move(theirRobot.getCoors());
+						if (weAreBlocking()){
+							// TODO: mirror opponent movement
+							// TODO: move into intersection of opponent direction and centre of goal
+							move(theirRobot.getCoors());
+							System.out.println("CHAAARGE!");
+						} else {
+							System.out.println("RUUUUUUUN!");
+							move(safePoint);
+						}
 					}
 				}
 				else {
+					System.out.println("Ball is in open play going to ball");
 					Position futureCoors = ball.getReachableCoors(ourRobot.getCoors(), 
 					                                              2);
 					if (futureCoors != null) { move(futureCoors); }
@@ -134,6 +169,7 @@ public class GeneralPlanningScript extends Thread {
 		if (commandContainer instanceof KickCommand) {
 			sendKickCommand(plannedCommands.pop());
 			skipNextPlanningPhase = false;
+			kickWait = runs+25;
 		}
 		else if (commandContainer instanceof MoveCommand) {
 			MoveCommand moveCommand = (MoveCommand) commandContainer;
@@ -141,7 +177,10 @@ public class GeneralPlanningScript extends Thread {
 					  					       moveCommand.moveTowardsPoint);
 			if (dist < END_MOVE_START_ROTATE_DISTANCE_THRESHOLD) {
 				rmaths.toggleWantsToStop();
-				if (dist < HAS_BALL_DISTANCE_THRESHOLD) {
+				sendMoveCommand(moveCommand);
+				if (dist < HAS_BALL_DISTANCE_THRESHOLD && 
+						(!moveCommand.getHardRotate() || 
+						 rmaths.isFacing(ourRobot, moveCommand.getRotateTowardsPoint()))) {
 					plannedCommands.pop();
 				}
 			}
@@ -151,15 +190,18 @@ public class GeneralPlanningScript extends Thread {
 		}
 	}
 	
-	private static void move(Position coors) {
+	private static void move(Position coors, Position obsCoors, float obsAngle) {
 		ArrayList<Point> path = PathSearchHolly.getPath2(
 				new Point(coors.getX(), coors.getY()), 
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()), 
 				(int) Math.toDegrees(ourRobot.getAngle()), 
-				new Point(theirRobot.getCoors().getX(), theirRobot.getCoors().getY()), 
-				(int) Math.toDegrees(theirRobot.getAngle()), 
-				shootingRight ? 1 : 0);
+				new Point(obsCoors.getX(), obsCoors.getY()), 
+				(int) Math.toDegrees(obsAngle), 
+				shootingRight ? 0 : 1);
 		plannedCommands.pushMoveCommand(path);
+	}
+	private static void move(Position coors) {
+		move(coors, theirRobot.getCoors(), theirRobot.getAngle());
 	}
 
 	static boolean opponentIsCloserToOurGoal() {
@@ -181,13 +223,23 @@ public class GeneralPlanningScript extends Thread {
 	static boolean opponentIsInWay() {
 		return ObjectAvoidance.obstacleDetection(ourRobot.getCoors(),
 												 theirRobot.getCoors(),
+												 theirGoal);
+	}
+	
+	static boolean weAreBlocking() {
+		return ObjectAvoidance.obstacleDetection(theirRobot.getCoors(),
+												 ourRobot.getCoors(),
 												 ourGoal);
 	}
 	
 	static boolean wantToKick() {
 		double positionScore = rmaths.getPositionScore(ourRobot.getCoors(),
-													   shootingRight);
-		return positionScore > Math.random();
+													!shootingRight, 0.1);
+		System.out.println(positionScore);
+		return positionScore > Math.pow(Math.random(), 0.5);
+	//Makes kicking much more unlikely - was generating 
+	//~ 5 kicks a second before at terrible positions.
+											
 	}
 	
 	static void sendMoveCommand(Command command) {
@@ -224,4 +276,49 @@ public class GeneralPlanningScript extends Thread {
 	static void getDefaultCommands() {
 		move(ball.getCoors());
 	}
+	static void sendZeros() {
+		sendreceive("1 0 0 0 0");
+		
+	}
+	
+	private static void shimmy(){
+		double step = (Math.PI/6);
+		Robot goalRobot = new Robot();
+		goalRobot.setAngle(0);
+		goalRobot.setCoors(theirGoal);
+		double angleBehindBall = RobotMath.getAngleFromRobotToPoint
+					(goalRobot, ball.getCoors());
+		double relativeRobot = (ourRobot.getAngle() + Math.PI);
+		double angleBetween = relativeRobot-angleBehindBall;
+		if (angleBetween < 0){
+			angleBetween += (RobotMath.TWOPI);
+		} else if( angleBetween > (RobotMath.TWOPI)) {
+			angleBetween -= RobotMath.TWOPI;						
+		}
+		if (angleBetween < Math.PI){
+			step *= -1;
+		}
+		double currentAngle = relativeRobot;
+		boolean hitWall = false;
+		while (true) {
+			currentAngle += step;
+			currentAngle = (currentAngle + RobotMath.TENPI) % RobotMath.TWOPI;
+			if (Math.abs(currentAngle - angleBehindBall) < Math.abs(step)){
+				break;
+			}
+			if (!RobotMath.withinPitch(
+				RobotMath.projectPoint(ball.getCoors(), currentAngle, 100))){
+				hitWall = true;
+				break;
+			}
+		}
+		if (hitWall){
+			step *= -1;
+		}
+		int dist = (int) RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
+		Position moveToPoint = RobotMath.projectPoint(ball.getCoors(),relativeRobot+step, dist);
+		plannedCommands.pushMoveCommand(moveToPoint, ball.getCoors(), false);
+	}
+	
+	
 }

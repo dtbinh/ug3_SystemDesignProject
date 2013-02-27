@@ -17,7 +17,12 @@ public class MoveCommand extends Command {
 	public Position getMoveTowardspoint() {
 		return this.moveTowardsPoint;
 	}
+	public Position getRotateTowardsPoint() {
+		return this.rotateTowardsPoint;
+	}
 	public boolean getHardRotate() {
 		return this.shouldMovementEndFacingRotateTowardsPoint;
 	}
+	
+	
 }

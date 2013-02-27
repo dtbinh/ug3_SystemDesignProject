@@ -22,8 +22,7 @@ public class VisionReader extends Thread {
 	
 	public static void main(String args[]) {
 		
-		colour = "blue"; //do I need to do this a different way?
-		instance = new VisionReader(colour);
+		instance = new VisionReader(args[0]);
 
 	}
 
@@ -116,6 +115,7 @@ public class VisionReader extends Thread {
 			ourRobot = blueRobot;
 			theirRobot = yellowRobot;
 		}
+			
 	}
 	//getters for planning thread.
 	public Robot getOurRobot(){

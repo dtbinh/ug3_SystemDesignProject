@@ -72,8 +72,8 @@ public class PathSearchHolly {
 	private static ArrayList<GridPoint> validGrids;
 	private static ArrayList<GridPoint> invalidGrids;
 
-	private final static int LEFT = 0;
-	private final static int RIGHT = 1;
+	private final static int LEFT = 1;
+	private final static int RIGHT = 0;
 
 	public static int ourSide;
 
@@ -146,13 +146,10 @@ public class PathSearchHolly {
 			for (int y = currentPoint.y-1;y< currentPoint.y + 2; y++) {
 
 				GridPoint pt = new GridPoint(x,y);
-				ArrayList<GridPoint> gp = new ArrayList<GridPoint>();
-				gp.add(pt);
-				Point gridincoors = translateGridsToCoordinates(gp).get(0);
 				//check whether grid is on the "blacklist"
 				if (!invalidGrids.contains(pt)) {
 					//check in range of grids
-					if (gridincoors.x > 130 && gridincoors.y > 140 && gridincoors.x <= 575 && gridincoors.y <= 325) //WRONG
+					if (x > 2 && y > 5 && x <= 30 && y <= 19) //WRONG
 						{
 						//if it's not already on check list, add it
 						if (!validGrids.contains(pt)) {
@@ -164,11 +161,7 @@ public class PathSearchHolly {
 							pt.setMovementCost(pt.getParent().getMovementCost() + calcMovementCost(currentPoint,pt));
 							pt.setHeuristicCost(calcHeuristicCost(pt,endPoint));
 							pt.setTotalCost(pt.getMovementCost() + pt.getHeuristicCost());
-						} else {
-							
-							invalidGrids.add(pt);
-							
-						}
+						} 
 						if (validGrids.contains(pt)) {
 							if (pt.getMovementCost() > calcMovementCost(currentPoint,pt)) {
 								pt.setParent(currentPoint);
@@ -176,6 +169,9 @@ public class PathSearchHolly {
 								pt.setTotalCost(pt.getMovementCost() + pt.getHeuristicCost());
 							}
 						}
+					}	else {
+							invalidGrids.add(pt);
+							
 					}
 				}
 			}
@@ -196,7 +192,7 @@ public class PathSearchHolly {
 
 	private static int calcMovementCost(GridPoint currentPoint, GridPoint newPoint) {
 		if (oppGridPosition.distance(newPoint) < 3) {
-			return (int) Math.pow(50, 1- oppGridPosition.distance(newPoint));
+			return (int) Math.pow(20, 3- oppGridPosition.distance(newPoint));
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 5 && newPoint.x >= ballGridPosition.x)
@@ -208,7 +204,7 @@ public class PathSearchHolly {
 		}
 		if (oppGridPosition.distance(newPoint) < 7) {
 			//discourage points that are quite close to the opponent
-			return 30;
+			return 20;
 		}
 		if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
 			return 18;
@@ -325,15 +321,19 @@ public class PathSearchHolly {
     }
 
 	public static void main(String args[]) {
-Point ourPosition = new Point(400,325);
-        Point oppPosition = new Point (300,325);
-        Point ballPosition = new Point(180,326);
+		Point ourPosition = new Point(275,350);
+        Point oppPosition = new Point (300,350);
+        Point ballPosition = new Point(400,351);
 
 		int ourAngle = 0;
 		int oppAngle = 0;
-		ArrayList<Point> commands = getPath2(ballPosition, ourPosition, ourAngle, oppPosition, oppAngle, RIGHT);
+		ArrayList<Point> commands = getPath2(ballPosition, 
+				ourPosition, 
+				ourAngle, 
+				oppPosition, 
+				oppAngle, RIGHT);
 		for (int i = 0; i < commands.size(); i++) {
-			System.out.println("X COORD" + commands.get(i).getX() + " Y COORD " + commands.get(i).getY() );
+			System.out.println("X COORD " + commands.get(i).getX() + " Y COORD " + commands.get(i).getY() );
 			
 			//ourPosition = commands.get(1);
 		} 
