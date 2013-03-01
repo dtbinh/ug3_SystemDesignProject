@@ -101,7 +101,7 @@ public class PathSearchHolly {
 		startGridPoint = translateCoordinatesToGrid(_ourPosition);
 		endGridPoint = translateCoordinatesToGrid(_ballPosition);
 
-		validGrids.add(startGridPoint);
+		invalidGrids.add(startGridPoint);
 		search(startGridPoint,endGridPoint);
 
 		path = optimisePath(path);
@@ -129,6 +129,8 @@ public class PathSearchHolly {
 		}
 
 		//optimise angles repeatedly 3 times
+		// TODO: test and adjust!!! 3 times might be too much. also, I (Ozzy) think that 
+		// removing the LAST point in a small angle is a good idea. what do you think?
 		for (int j = 0; j < 3; j++) {
 			for (int i = 0; i < newPath.size() - 2; i++) {
 				//remove points that hardly change in gradient
@@ -164,16 +166,17 @@ public class PathSearchHolly {
 							pt.setHeuristicCost(calcHeuristicCost(pt,endPoint));
 							pt.setTotalCost(pt.getMovementCost() + pt.getHeuristicCost());
 						} 
-						if (validGrids.contains(pt)) {
-							if (pt.getMovementCost() > calcMovementCost(currentPoint,pt)) {
+						else {
+						    pt = validGrids.get(validGrids.indexOf(pt)); // IMPORTANT
+						    int newMovementCost = pt.getParent().getMovementCost() + calcMovementCost(currentPoint,pt);
+							if (pt.getMovementCost() > newMovementCost) {
 								pt.setParent(currentPoint);
-								pt.setMovementCost(pt.getParent().getMovementCost() + calcMovementCost(currentPoint,pt));
+								pt.setMovementCost(newMovementCost);
 								pt.setTotalCost(pt.getMovementCost() + pt.getHeuristicCost());
 							}
 						}
-					}	else {
-							invalidGrids.add(pt);
-							
+					} else {
+						invalidGrids.add(pt);
 					}
 				}
 			}
@@ -218,7 +221,7 @@ public class PathSearchHolly {
 
 		//diagonal movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 2) {
-			return 14;
+			return 15;
 		}
 
 		//if (strafingEnabled == true) {
@@ -228,9 +231,8 @@ public class PathSearchHolly {
 		return 0;
 	}
 
-	//Manhattan distance //TODO: remove/replace with better heuristic system.
 	private static int calcHeuristicCost(GridPoint currentPoint, GridPoint endPoint) {
-		return 10 * (Math.abs(endPoint.x - currentPoint.x) + Math.abs(endPoint.y - currentPoint.y));
+		return (int) (10 * currentPoint.distance(endPoint));
 	}
 
 	private static void tracePath(GridPoint startPoint,GridPoint endPoint) {
