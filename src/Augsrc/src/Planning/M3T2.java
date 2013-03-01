@@ -48,6 +48,10 @@ public class M3T2 {
 		}sendZeros();
 	}
 	
+	
+	//TODO: Agree on global goal convention. 
+	//(and fix the stuff in here if need be
+	//TODO: implement contantly updating commandstack here. 
 	static  void doStuff() {
 		// AGAIN: THOU SHALT NOT NOT DO THESE
 		ourRobot = vision.getOurRobot(); 

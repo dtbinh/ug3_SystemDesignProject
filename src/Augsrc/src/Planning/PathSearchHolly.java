@@ -72,6 +72,8 @@ public class PathSearchHolly {
 	private static ArrayList<GridPoint> validGrids;
 	private static ArrayList<GridPoint> invalidGrids;
 
+	
+	//NOT which side we're shooting to - what side we're protecting.
 	private final static int LEFT = 1;
 	private final static int RIGHT = 0;
 
@@ -149,7 +151,7 @@ public class PathSearchHolly {
 				//check whether grid is on the "blacklist"
 				if (!invalidGrids.contains(pt)) {
 					//check in range of grids
-					if (x > 2 && y > 5 && x <= 30 && y <= 19) //WRONG
+					if (x > 3 && y > 5 && x <= 30 && y <= 19) //WRONG
 						{
 						//if it's not already on check list, add it
 						if (!validGrids.contains(pt)) {
@@ -192,7 +194,7 @@ public class PathSearchHolly {
 
 	private static int calcMovementCost(GridPoint currentPoint, GridPoint newPoint) {
 		if (oppGridPosition.distance(newPoint) < 3) {
-			return (int) Math.pow(20, 3- oppGridPosition.distance(newPoint));
+			return (int) Math.pow(20, 4- oppGridPosition.distance(newPoint));
 		}
 		if (ourSide == LEFT) {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 5 && newPoint.x >= ballGridPosition.x)
@@ -203,9 +205,9 @@ public class PathSearchHolly {
 				return 65;
 		}
 		
-		if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
-			return 18;
-		}
+		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
+		//	return 18;
+		//}
 		if (oppGridPosition.distance(newPoint) < 7 && Math.abs(oppGridPosition.y - newPoint.y) < 5) {
 			return 35;
 		}
@@ -219,14 +221,14 @@ public class PathSearchHolly {
 			return 14;
 		}
 
-		if (strafingEnabled == true) {
-
-		}
+		//if (strafingEnabled == true) {
+		//	
+		//}
 
 		return 0;
 	}
 
-	//Manhattan distance
+	//Manhattan distance //TODO: remove/replace with better heuristic system.
 	private static int calcHeuristicCost(GridPoint currentPoint, GridPoint endPoint) {
 		return 10 * (Math.abs(endPoint.x - currentPoint.x) + Math.abs(endPoint.y - currentPoint.y));
 	}
@@ -285,6 +287,7 @@ public class PathSearchHolly {
 		return coordinateList;
 	}
 
+	//TODO: Remove?
 	private static ArrayList<int[]> optimizeCommands(ArrayList<int[]> oldCommands){
 		ArrayList<int[]> newCommands = new ArrayList<int[]>();
 
@@ -317,7 +320,7 @@ public class PathSearchHolly {
         return invalidGrids;
     }
 
-	public static void main(String args[]) {
+	/*public static void main(String args[]) {
 		Point ourPosition = new Point(275,350);
         Point oppPosition = new Point (300,350);
         Point ballPosition = new Point(400,351);
@@ -335,7 +338,7 @@ public class PathSearchHolly {
 			//ourPosition = commands.get(1);
 		} 
 	}
-	
+	*/
 	public static double getAngle(GridPoint a, GridPoint b) {
 		return Math.toDegrees(Math.atan2((a.getY() - b.getY()), (b.getX() - a.getX())));
 	}

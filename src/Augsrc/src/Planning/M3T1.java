@@ -48,7 +48,10 @@ public class M3T1 extends Thread {
 		ball = vision.getBall();
 		rmaths.initLoop();
 		
+		//TODO: implement looping re-make of these commands like in the game strategy.
+		//A* deosn't plan an avoidance path till pretty late for some reason
 		if (plannedCommands.isEmpty()) {
+			//OR USE THIS CODE.
 			//plannedCommands = ObjectAvoidance.planAvoidance(ourRobot, theirRobot, 
 								//0, true, ourGoal, ball,
 								//plannedCommands);
@@ -109,7 +112,11 @@ public class M3T1 extends Thread {
 	}
 	
 	private static boolean weRecievedSomeSensorInput() {
-		// TODO Auto-generated method stub
+		//Project a point PI degrees from your current position,
+		//head there,
+		//loosely face the ball
+		//TODO: make some sense of an uninterruptable command.
+		//maybe an attribute of Command - running time (cycles)?
 		return false;
 	}
 
