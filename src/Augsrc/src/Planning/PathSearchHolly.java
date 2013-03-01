@@ -154,7 +154,7 @@ public class PathSearchHolly {
 				if (!invalidGrids.contains(pt)) {
 					//check in range of grids
 					if (x > 3 && y > 5 && x <= 30 && y <= 19) //WRONG
-						{
+					{
 						//if it's not already on check list, add it
 						if (!validGrids.contains(pt)) {
 							validGrids.add(pt);
@@ -167,8 +167,8 @@ public class PathSearchHolly {
 							pt.setTotalCost(pt.getMovementCost() + pt.getHeuristicCost());
 						} 
 						else {
-						    pt = validGrids.get(validGrids.indexOf(pt)); // IMPORTANT
-						    int newMovementCost = pt.getParent().getMovementCost() + calcMovementCost(currentPoint,pt);
+					    pt = validGrids.get(validGrids.indexOf(pt)); // IMPORTANT
+					    int newMovementCost = currentPoint.getMovementCost() + calcMovementCost(currentPoint,pt);
 							if (pt.getMovementCost() > newMovementCost) {
 								pt.setParent(currentPoint);
 								pt.setMovementCost(newMovementCost);
