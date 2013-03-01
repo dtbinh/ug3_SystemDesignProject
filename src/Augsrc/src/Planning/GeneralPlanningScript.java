@@ -248,7 +248,8 @@ public class GeneralPlanningScript extends Thread {
 				(int) Math.toDegrees(ourRobot.getAngle()), 
 				new Point(obsCoors.getX(), obsCoors.getY()), 
 				(int) Math.toDegrees(obsAngle), 
-				shootingRight ? 0 : 1);
+				shootingRight ? PathSearchHolly.LEFT : PathSearchHolly.RIGHT);
+		        // if we're shootingRight, *our* side is LEFT
 		plannedCommands.pushMoveCommand(path);
 	}
 	private static void move(Position coors) {

@@ -74,8 +74,8 @@ public class PathSearchHolly {
 
 	
 	//NOT which side we're shooting to - what side we're protecting.
-	private final static int LEFT = 1;
-	private final static int RIGHT = 0;
+	public final static int LEFT = 1;
+	public final static int RIGHT = 0;
 
 	public static int ourSide;
 
