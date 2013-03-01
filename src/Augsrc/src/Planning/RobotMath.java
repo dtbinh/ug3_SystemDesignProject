@@ -123,11 +123,11 @@ public class RobotMath {
          double value = 0;;
          if (angle > (Math.PI) ){
                  if (((Math.PI*2) - angle) > (Math.PI/5)) {
-                         value = 0.2;
+                         value = 0.3;
                  }
                 
          } else if (angle > Math.PI/5) {
-                 value = -0.2;
+                 value = -0.3;
          }
          wantsToRotate = (!(value == 0)) ;
 
@@ -288,16 +288,11 @@ public class RobotMath {
 	     */
 	
 	 public Position pointBehindBall(Robot goal, Position ball){
-	 	    double rvrsBallToGoal = (3*Math.PI)/2;
+	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goal, ball)+Math.PI;
 	         Position goPoint;
 	        
-	         if(goal == goalL){
-	  
-	                 goPoint = projectPoint(ball, rvrsBallToGoal, -100);
-	         }else{
-	                 
-	                 goPoint = projectPoint(ball, rvrsBallToGoal, 100);
-	         }
+	         goPoint = projectPoint(ball, rvrsBallToGoal, 100);
+	        
 	        
 	         if (!withinPitch(goPoint)){
 	                 goPoint.setX((ball.getX()));

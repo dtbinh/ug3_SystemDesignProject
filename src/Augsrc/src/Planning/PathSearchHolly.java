@@ -202,10 +202,7 @@ public class PathSearchHolly {
 			if (Math.abs(newPoint.y - ballGridPosition.y) < 5 && newPoint.x <= ballGridPosition.x)
 				return 65;
 		}
-		if (oppGridPosition.distance(newPoint) < 7) {
-			//discourage points that are quite close to the opponent
-			return 20;
-		}
+		
 		if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
 			return 18;
 		}
