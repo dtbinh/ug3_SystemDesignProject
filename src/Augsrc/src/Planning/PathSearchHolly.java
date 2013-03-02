@@ -153,7 +153,7 @@ public class PathSearchHolly {
 				//check whether grid is on the "blacklist"
 				if (!invalidGrids.contains(pt)) {
 					//check in range of grids
-					if (x > 3 && y > 5 && x <= 30 && y <= 19) //WRONG
+					if (x > 3 && y > 4 && x <= 30 && y <= 20) 
 					{
 						//if it's not already on check list, add it
 						if (!validGrids.contains(pt)) {
@@ -196,32 +196,36 @@ public class PathSearchHolly {
 	}
 
 	private static int calcMovementCost(GridPoint currentPoint, GridPoint newPoint) {
-		if (oppGridPosition.distance(newPoint) < 3) {
-			return (int) Math.pow(20, 4- oppGridPosition.distance(newPoint));
+		int score = 0;
+		if (/*newPoint.x == 3 ||*/ newPoint.y == 4 || /*newPoint.x == 29 ||*/ newPoint.y == 20) {
+			score = 9000;
+		}
+		if (oppGridPosition.distance(newPoint) < 4) {
+			return score + ((int) Math.pow(35, 5- oppGridPosition.distance(newPoint)));
+		}
+		if (oppGridPosition.distance(newPoint) < 6) {
+			return score + 20;
 		}
 		if (ourSide == LEFT) {
-			if (Math.abs(newPoint.y - ballGridPosition.y) < 5 && newPoint.x >= ballGridPosition.x)
-				return 65;
+			if (Math.abs(newPoint.y - ballGridPosition.y) < 3 && newPoint.x >= ballGridPosition.x)
+				return score + 65;
 		}
 		if (ourSide == RIGHT) {
-			if (Math.abs(newPoint.y - ballGridPosition.y) < 5 && newPoint.x <= ballGridPosition.x)
-				return 65;
+			if (Math.abs(newPoint.y - ballGridPosition.y) < 3 && newPoint.x <= ballGridPosition.x)
+				return score + 65;
 		}
 		
-		//if (Math.abs(oppGridPosition.y - newPoint.y) < 5) {
-		//	return 18;
-		//}
 		if (oppGridPosition.distance(newPoint) < 7 && Math.abs(oppGridPosition.y - newPoint.y) < 5) {
-			return 35;
+			return score + 35;
 		}
 		//horizontal and vertical movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 1) {
-			return 10;
+			return score + 10;
 		}
 
 		//diagonal movements
 		if (Math.abs(newPoint.x - currentPoint.x) + Math.abs(newPoint.y - currentPoint.y) == 2) {
-			return 15;
+			return score + 18;
 		}
 
 		//if (strafingEnabled == true) {
@@ -345,5 +349,9 @@ public class PathSearchHolly {
 		return Math.toDegrees(Math.atan2((a.getY() - b.getY()), (b.getX() - a.getX())));
 	}
 				
-	
+	public static void printPath(ArrayList<Point> parsed) {
+		for(int i=0; i < parsed.size(); i ++){
+			System.out.println("Point " + i + " x: " + parsed.get(i).x + " y: " + parsed.get(i).getY());
+		}
+	}
 }
