@@ -3,7 +3,6 @@
 """
 """
 
-import collections
 import pygame
 import pygame.camera
 import sys
@@ -52,19 +51,19 @@ class Communications(object):
         # TODO: implement
         print 'DummyBot: Kick!'
 
-    def send_rotateanticlockwise_command(self):
+    def send_anticlockwise_command(self):
         # TODO: implement
         print 'DummyBot: Rotating anti clockwise'
 
-    def send_rotateclockwise_command(self):
+    def send_clockwise_command(self):
         # TODO: implement
         print 'DummyBot: Rotating clockwise'
 
-    def send_moveforwards_command(self):
+    def send_forwards_command(self):
         # TODO: implement
         print 'DummyBot: Moving forwards'
 
-    def send_movebackwards_command(self):
+    def send_backwards_command(self):
         # TODO: implement
         print 'DummyBot: Moving backwards'
 
@@ -78,6 +77,7 @@ class Communications(object):
 
 
 class DummyBotGUI(object):
+    FPS = 60
     STOP_KEYS = [pygame.K_ESCAPE]
     KICK_KEYS = [pygame.K_RETURN, pygame.K_SPACE]
     FORWARDS_KEYS = [pygame.K_w, pygame.K_UP]
@@ -86,13 +86,14 @@ class DummyBotGUI(object):
     CLOCKWISE_KEYS = [pygame.K_d, pygame.K_RIGHT]
 
     def __init__(self, camera='/dev/video0', size=(640, 480), ipc=False):
+        self.clock = pygame.time.Clock()
         self.camera = VideoInput(camera)
         self.size = size
         self.display = pygame.display.set_mode(size, 0)
         pygame.display.set_caption(self.__class__.__name__)
         self.snapshot = pygame.surface.Surface(self.size, 0, self.display)
         self.communications = Communications(ipc=ipc)
-        self.keydown = collections.defaultdict(lambda: False)
+        self.robot_is_stopped = True
 
     def get_camera_image(self):
         self.snapshot = self.camera.get_image(self.snapshot)
@@ -103,18 +104,28 @@ class DummyBotGUI(object):
         pygame.display.flip()
 
     def send_commands(self):
-        if any([self.keydown[key] for key in DummyBotGUI.STOP_KEYS]):
+        pressed = pygame.key.get_pressed()
+        if any([pressed[key] for key in DummyBotGUI.STOP_KEYS]):
             self.communications.send_stop_command()
-        elif any([self.keydown[key] for key in DummyBotGUI.KICK_KEYS]):
+            self.robot_is_stopped = True
+        elif any([pressed[key] for key in DummyBotGUI.KICK_KEYS]):
             self.communications.send_kick_command()
-        elif any([self.keydown[key] for key in DummyBotGUI.FORWARDS_KEYS]):
-            self.communications.send_moveforwards_command()
-        elif any([self.keydown[key] for key in DummyBotGUI.BACKWARDS_KEYS]):
-            self.communications.send_movebackwards_command()
-        elif any([self.keydown[key] for key in DummyBotGUI.ANTICLOCKWISE_KEYS]):
-            self.communications.send_rotateanticlockwise_command()
-        elif any([self.keydown[key] for key in DummyBotGUI.CLOCKWISE_KEYS]):
-            self.communications.send_rotateclockwise_command()
+        elif any([pressed[key] for key in DummyBotGUI.FORWARDS_KEYS]):
+            self.communications.send_forwards_command()
+            self.robot_is_stopped = False
+        elif any([pressed[key] for key in DummyBotGUI.BACKWARDS_KEYS]):
+            self.communications.send_backwards_command()
+            self.robot_is_stopped = False
+        elif any([pressed[key] for key in DummyBotGUI.CLOCKWISE_KEYS]):
+            self.communications.send_clockwise_command()
+            self.robot_is_stopped = False
+        elif any([pressed[key] for key in DummyBotGUI.ANTICLOCKWISE_KEYS]):
+            self.communications.send_anticlockwise_command()
+            self.robot_is_stopped = False
+        else:
+            if not self.robot_is_stopped:
+                self.communications.send_stop_command()
+                self.robot_is_stopped = True
 
     def run(self):
         done = False
@@ -123,12 +134,9 @@ class DummyBotGUI(object):
             for event in pygame.event.get():
                 if is_quit_event(event):
                     done = True
-                elif event.type == pygame.KEYDOWN:
-                    self.keydown[event.key] = True 
-                elif event.type == pygame.KEYUP:
-                    self.keydown[event.key] = False
             self.send_commands()
             self.draw()
+            self.clock.tick(DummyBotGUI.FPS)
 
 def is_quit_event(event):
     if event.type == pygame.QUIT:
