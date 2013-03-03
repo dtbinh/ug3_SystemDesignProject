@@ -49,26 +49,38 @@ class Communications(object):
 
     def send_kick_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Kick!'
 
     def send_anticlockwise_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Rotating anti clockwise'
 
     def send_clockwise_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Rotating clockwise'
 
     def send_forwards_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Moving forwards'
 
     def send_backwards_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Moving backwards'
 
     def send_stop_command(self):
         # TODO: implement
+        if self.socket:
+            pass
         print 'DummyBot: Stopping'
 
     def __del__(self):
@@ -103,23 +115,27 @@ class DummyBotGUI(object):
         self.get_camera_image()
         pygame.display.flip()
 
-    def send_commands(self):
+    def send_commands(self, stop_keys=STOP_KEYS, kick_keys=KICK_KEYS,
+                      forwards_keys=FORWARDS_KEYS,
+                      backwards_keys=BACKWARDS_KEYS,
+                      clockwise_keys=CLOCKWISE_KEYS,
+                      anticlockwise_keys=ANTICLOCKWISE_KEYS):
         pressed = pygame.key.get_pressed()
-        if any([pressed[key] for key in DummyBotGUI.STOP_KEYS]):
+        if any([pressed[key] for key in stop_keys]):
             self.communications.send_stop_command()
             self.robot_is_stopped = True
-        elif any([pressed[key] for key in DummyBotGUI.KICK_KEYS]):
+        elif any([pressed[key] for key in kick_keys]):
             self.communications.send_kick_command()
-        elif any([pressed[key] for key in DummyBotGUI.FORWARDS_KEYS]):
+        elif any([pressed[key] for key in forwards_keys]):
             self.communications.send_forwards_command()
             self.robot_is_stopped = False
-        elif any([pressed[key] for key in DummyBotGUI.BACKWARDS_KEYS]):
+        elif any([pressed[key] for key in backwards_keys]):
             self.communications.send_backwards_command()
             self.robot_is_stopped = False
-        elif any([pressed[key] for key in DummyBotGUI.CLOCKWISE_KEYS]):
+        elif any([pressed[key] for key in clockwise_keys]):
             self.communications.send_clockwise_command()
             self.robot_is_stopped = False
-        elif any([pressed[key] for key in DummyBotGUI.ANTICLOCKWISE_KEYS]):
+        elif any([pressed[key] for key in anticlockwise_keys]):
             self.communications.send_anticlockwise_command()
             self.robot_is_stopped = False
         else:
