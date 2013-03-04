@@ -54,7 +54,7 @@ public class bluetooth_nxt {
     private static TouchSensor sensor3;
 	
 	public static void main(String[] args) {
-		Motormux robot = new Motormux(SensorPort.S4);
+		robot = new Motormux(SensorPort.S4);
 		
         sensor1 = new TouchSensor(SensorPort.S1);
         sensor2 = new TouchSensor(SensorPort.S2);
