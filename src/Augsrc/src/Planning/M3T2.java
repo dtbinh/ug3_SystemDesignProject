@@ -213,7 +213,7 @@ public class M3T2 extends Thread {
 		
 	static boolean haveBall() {
 		
-		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 35 && rmaths.isFacing(ourRobot, ball.getCoors()));
+		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 30 && rmaths.isFacing(ourRobot, ball.getCoors()));
 	}
 	
 	static boolean closeToGoal() {
