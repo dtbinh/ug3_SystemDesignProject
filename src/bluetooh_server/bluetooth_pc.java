@@ -48,13 +48,14 @@ public class bluetooth_pc
 		// Parse command line argument
 		if (args.length > 0 && args[0].equals("dummy"))
 		{
-			System.out.println("Dummy bot server starting");
+			System.out.println("Dummy bot server");
 			NXT_MAC_ADDRESS = "00:16:53:0B:B5:A3";
 			NXT_NAME = "G5Dummy";	
-		} else
+		} 
+		else
 		{
-                        NXT_MAC_ADDRESS = "00:16:53:07:D5:5F";
-                        NXT_NAME = "G5";
+			NXT_MAC_ADDRESS = "00:16:53:07:D5:5F";
+			NXT_NAME = "G5";
 		}
 
 		Context context = ZMQ.context(1);
@@ -97,16 +98,32 @@ public class bluetooth_pc
 
 				// Wait for request
 				byte[] request = socket.recv(0);
+				
+				// Parse request and send it to the robot
 				reply_error_code = handle_request(new String(request));
 
+				// Read status of touch sensors
+				int touch_sensors = in.read();
 
+				// Parse response
+				boolean s1 = (touch_sensors & (1 << 0)) != 0;
+				boolean s2 = (touch_sensors & (1 << 1)) != 0;
+				boolean s3 = (touch_sensors & (1 << 2)) != 0;
+				boolean s4 = (touch_sensors & (1 << 3)) != 0;
+				
+				// Typecast to Int (JAVA-style!)
+				int s1_int = s1 ? 1 : 0;
+				int s2_int = s2 ? 1 : 0;
+				int s3_int = s3 ? 1 : 0;
+				int s4_int = s4 ? 1 : 0;
+				
 				//  Send status reply back to client
-				String replyString = reply_error_code + " 0 0 0 0"; // (no)error code, no sensor (out of 4) is active
+				String replyString = reply_error_code + " " + s1_int + " " + s2_int + " " + s3_int + " " + s4_int;
+				System.out.println("Reply: [" + replyString + "]\n");
+				
 				byte[] reply = replyString.getBytes();
 				socket.send(reply, 0);
 
-				// Send command to the robot
-				//send_command(0xFF);
 
 				// Send reply to the IPC
 				//int b = in.read();

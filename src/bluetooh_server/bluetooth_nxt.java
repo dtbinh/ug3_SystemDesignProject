@@ -49,16 +49,26 @@ public class bluetooth_nxt {
 	private static InputStream dis;
 	private static OutputStream dos;
 
+    private static TouchSensor sensor1;
+    private static TouchSensor sensor2;
+    private static TouchSensor sensor3;
+	
 	public static void main(String[] args) {
 		Motormux robot = new Motormux(SensorPort.S4);
+		
+        sensor1 = new TouchSensor(SensorPort.S1);
+        sensor2 = new TouchSensor(SensorPort.S2);
+        sensor3 = new TouchSensor(SensorPort.S3);
+        
 		Sound.setVolume(50);
 
 		// Max kicker speed
 		Motor.C.setSpeed(12000);
 		Motor.A.setSpeed(6000);
 		Motor.B.setSpeed(6000);
-		Motor.A.setAcceleration(5000);
-		Motor.B.setAcceleration(4000);
+		Motor.A.setAcceleration(6000);
+		Motor.B.setAcceleration(6000);
+		
 		while (true) 
 		{
 			try 
@@ -94,8 +104,18 @@ public class bluetooth_nxt {
 					}
 
 					handle_request(opcode[0]);
-
-
+					
+					// Return status of touch sensors
+					opcode[0] = 0;
+					if (sensor1.isPressed())
+						opcode[0] |= (1 << 0);
+					
+					if (sensor2.isPressed())
+						opcode[0] |= (1 << 1);
+					
+					if (sensor3.isPressed())
+						opcode[0] |= (1 << 2);
+					
 					//TODO: Dirty workaround for detecting random disconnect
 					dos.write(opcode);
 					dos.flush();
