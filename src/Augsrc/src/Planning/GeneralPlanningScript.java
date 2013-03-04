@@ -65,7 +65,7 @@ public class GeneralPlanningScript extends Thread {
 		rmaths = new RobotMath(); rmaths.init();
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
-        socket.connect("ipc:///tmp/nxt_bluetooth_robott");
+        socket.connect("tcp://127.0.0.1:5555");
         sendZeros();
         System.out.println(args[1].toString());
 		shootingRight = args[1].equals("right");

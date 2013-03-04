@@ -43,7 +43,7 @@ import org.zeromq.ZMQ.*;
      
                     //  Socket to talk to clients over IPC
                     socket = context.socket(ZMQ.REQ);
-                    socket.connect("ipc:///tmp/nxt_bluetooth_robott");
+                    socket.connect("tcp://127.0.0.1:5555");
                    
                     instance = new DribbleNew();
      
