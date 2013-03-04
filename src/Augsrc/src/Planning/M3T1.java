@@ -1,6 +1,7 @@
 package Planning;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.*;
@@ -11,7 +12,7 @@ import JavaVision.Position;
 public class M3T1 extends Thread {
 	private static Context context;
     private static Socket socket;
-	static VisionReader vision = new VisionReader("blue");
+	static VisionReader vision = new VisionReader("yellow");
 	static RobotMath rmaths = new RobotMath();
 	private static boolean visitedCurrent = false;
 	
@@ -21,6 +22,9 @@ public class M3T1 extends Thread {
 	static Ball ball;
 	static CommandStack plannedCommands = new CommandStack();
 	private static boolean finished = false;
+	
+	private static String[] sensorData = {"0", "0", "0", "0", "0"};
+	private static boolean movingAway;
 
 	public static void main(String args[]) throws InterruptedException{
 		
@@ -41,6 +45,11 @@ public class M3T1 extends Thread {
 	}
 	
 	static  void findPath() {
+		//IF WE RECIEVE SENSOR INPUT WE SHOULD BACK OFF
+		
+
+	
+		
 		// AGAIN: THOU SHALT NOT NOT DO THESE
 		ourRobot = vision.getOurRobot(); 
 		theirRobot = vision.getTheirRobot(); 
@@ -49,6 +58,8 @@ public class M3T1 extends Thread {
 		System.out.println("Our coors X: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
 		System.out.println("Their coors X: " + theirRobot.getCoors().getX() + " y: " + theirRobot.getCoors().getY());
 		System.out.println("Ball coors X: " + ball.getCoors().getX() + " y: " + ball.getCoors().getY());
+		
+		
 		
 		//TODO: implement looping re-make of these commands like in the game strategy.
 		//A* deosn't plan an avoidance path till pretty late for some reason
@@ -81,6 +92,11 @@ public class M3T1 extends Thread {
 			}
 			
 		}*/
+		
+		
+	
+			
+		
 		ArrayList<Point> parsed = PathSearchHolly.getPath2(
 				new Point (ball.getCoors().getX(),ball.getCoors().getY()), 
 				new Point (ourRobot.getCoors().getX(),ourRobot.getCoors().getY()) , 
@@ -93,6 +109,14 @@ public class M3T1 extends Thread {
 		System.out.println("Current suggested point X: " + movePos.getX() + " Y: " + movePos.getY());
 		Position rotatePos = new Position (parsed.get(parsed.size()-1).x, parsed.get(parsed.size()-1).y) ;
 		plannedCommands.pushMoveCommand(movePos, rotatePos, (RobotMath.euclidDist(movePos, ball.getCoors()) < 150));	
+		
+		
+		if (weReceivedSomeSensorInput()) {
+			//back up a little
+			Double newAngle = (ourRobot.getAngle()+Math.PI) % RobotMath.TWOPI;
+			Position backTheFuckOffPoint = rmaths.projectPoint(ourRobot.getCoors(), newAngle, 70);
+			plannedCommands.pushMoveCommand(backTheFuckOffPoint, ball.getCoors(), false);
+		}
 		
 		System.out.println("Size of command stack " + plannedCommands.size());
 		Command commandContainer = plannedCommands.getFirst();
@@ -137,7 +161,7 @@ public class M3T1 extends Thread {
 		cleanOutput();
 	}
 	
-	private static boolean weReceivedSomeSensorInput() {
+	public static boolean weReceivedSomeSensorInput() {
 		//Project a point PI degrees from your current position,
 		//head there,
 		//loosely face the ball
@@ -145,8 +169,13 @@ public class M3T1 extends Thread {
 		//maybe an attribute of Command - running time (cycles)?
 		
 		//Once Sensor signal received **find out from Andrew where the signal is**
-
-		return false;
+		boolean data = false;
+		try{
+		 data = ((sensorData[1].equals("1")) || (sensorData[2].equals("")));
+		} catch (NullPointerException e) {
+			System.out.println("LOL");
+		}
+		return data;
 	}
 
 	static void sendZeros() {
@@ -173,8 +202,14 @@ public class M3T1 extends Thread {
 		
 		socket.send(signal, 0);
         System.out.println("Sending OK");
-        socket.recv(0);
+        byte[] reply = socket.recv(0);
+        String unparsedData  = new String(reply,"UTF-8");
+        sensorData =  splitStr(unparsedData, " ");
         System.out.println("Recieving OK");
+        
+        
+        
+        
 		
 	}
 
@@ -191,6 +226,16 @@ public class M3T1 extends Thread {
 	static Float invert(Float angle){
 		return (float) ((float) (angle+Math.PI) % (2*Math.PI)); //reverse that stuff!!!
 	}
+	
+	 public static String[] splitStr(String str, String delim) {
+         StringTokenizer stringTokenizer = new StringTokenizer( str, delim );
+         String[] strArr = new String[stringTokenizer.countTokens()];
+         int i = 0;
+         while( stringTokenizer.hasMoreTokens() ) {
+             strArr[i] = stringTokenizer.nextToken();
+         }
+         return strArr;
+     }
 	
 }
 

@@ -11,7 +11,7 @@ import JavaVision.Position;
 public class M3T2 extends Thread {
 	private static Context context;
     private static Socket socket;
-	static VisionReader vision = new VisionReader("blue");
+	static VisionReader vision = new VisionReader("yellow");
 	static RobotMath rmaths = new RobotMath();
 	private static boolean visitedCurrent = false;
 	
@@ -122,7 +122,7 @@ public class M3T2 extends Thread {
 			} else { 
 				// dribble to a point in front of the ball if have ball
 				destination = RobotMath.projectPoint(ball.getCoors(), 
-					invert(RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors())), 100);
+					invert(RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors())), 10);
 				if (closeToWall()) {
 					// also move a little towards the centre
 					destination.setY((int)(destination.getY()*0.7) + 72);
@@ -217,7 +217,7 @@ public class M3T2 extends Thread {
 	}
 	
 	static boolean closeToGoal() {
-		return (RobotMath.euclidDist(ourRobot.getCoors(), theirGoal.getCoors()) < 200);
+		return (RobotMath.euclidDist(ourRobot.getCoors(), theirGoal.getCoors()) < 100);
 	}
 	
 	static boolean closeToWall() {
