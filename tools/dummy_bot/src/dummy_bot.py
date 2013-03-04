@@ -9,6 +9,10 @@ import sys
 import time
 import zmq
 
+FORWARD_SPEED = 1000
+BACKWARD_SPEED = 1000
+TURN_SPEED = 1000
+
 pygame.init()
 pygame.camera.init()
 
@@ -27,9 +31,9 @@ class VideoInput(object):
 
 
 class Communications(object):
-    SLEEP_TIME = 0.05
+    SLEEP_TIME = 0.1    
 
-    def __init__(self, address='ipc:///tmp/nxt_bluetooth_robot', ipc=True):
+    def __init__(self, address='tcp://127.0.0.1:5555', ipc=True):
         if ipc:
             self.context = zmq.Context()
             print 'Connecting to server...'
@@ -42,7 +46,7 @@ class Communications(object):
     def _send_message(self, message, sleep_time=SLEEP_TIME):
         if self.socket:
             self.socket.send(message)
-            print 'Server response: %s' % socket.recv()
+            print 'Server response: %s' % self.socket.recv()
             time.sleep(sleep_time)
         else:
             print message
@@ -50,37 +54,44 @@ class Communications(object):
     def send_kick_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            #self._send_message(message, sleep_time)
+            pass        
+        
         print 'DummyBot: Kick!'
 
     def send_anticlockwise_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            self._send_message("1 %d %d %d %d" % (TURN_SPEED, -TURN_SPEED, 0, 0))
+
         print 'DummyBot: Rotating anti clockwise'
 
     def send_clockwise_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            self._send_message("1 %d %d %d %d" % (-TURN_SPEED, TURN_SPEED, 0, 0))
+        
         print 'DummyBot: Rotating clockwise'
 
     def send_forwards_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            self._send_message("1 %d %d %d %d" % (FORWARD_SPEED, FORWARD_SPEED, 0, 0))
+        
         print 'DummyBot: Moving forwards'
 
     def send_backwards_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            self._send_message("1 %d %d %d %d" % (-BACKWARD_SPEED, -BACKWARD_SPEED, 0, 0))
+            
         print 'DummyBot: Moving backwards'
 
     def send_stop_command(self):
         # TODO: implement
         if self.socket:
-            pass
+            self._send_message("1 %d %d %d %d" % (0, 0, 0, 0))
+        
         print 'DummyBot: Stopping'
 
     def __del__(self):

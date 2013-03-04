@@ -77,7 +77,7 @@ def run_app(enable_ipc=True):
         context = zmq.Context()
         print "Connecting to server..."
         socket = context.socket(zmq.REQ)
-        socket.connect("ipc:///tmp/nxt_bluetooth_robot")
+        socket.connect("tcp://127.0.0.1:5555")
     
     # main loop
     done = False
