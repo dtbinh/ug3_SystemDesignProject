@@ -104,11 +104,11 @@ function install_pygame {
 
 cleanup
 
-install_lejos
-install_bluetooth
-install_zmq
-install_jzmq
-install_pyzmq
+install_lejos && \
+install_bluetooth && \
+install_zmq && \
+install_jzmq && \
+install_pyzmq && \
 install_pygame
 
 source ~/.bashrc
