@@ -122,11 +122,11 @@ public class RobotMath {
     public double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
-                 if (((Math.PI*2) - angle) > (Math.PI/5)) {
+                 if (((Math.PI*2) - angle) > (Math.PI/4.5)) {
                          value = 0.3;
                  }
                 
-         } else if (angle > Math.PI/5) {
+         } else if (angle > Math.PI/4.5) {
                  value = -0.3;
          }
          wantsToRotate = (!(value == 0)) ;
@@ -134,6 +134,22 @@ public class RobotMath {
          return value;
     }
 
+    public boolean isTargeting(Robot robot, Position point) {
+        double angle = getAngleFromRobotToPoint(robot,point);
+        double value = 0;;
+        if (angle > (Math.PI) ){
+            if (((Math.PI*2) - angle) > (Math.PI/6)) {
+                    value = 0.3;
+            }
+	            
+	     } else if (angle > Math.PI/6) {
+	             value = -0.3;
+	     }
+
+        return (value == 0);
+	}	
+    
+    
     /**
      * getMotorValues applies holonomic algorithms to generate the correct 
      * motor values for the robot to move at an angle and rotate at the 
@@ -165,7 +181,7 @@ public class RobotMath {
     public int[] getMotorValues(double rotationfactor, double angle, boolean hardRotate){
          double[] motors = {0,0,0,0};
          int[] returnvalues = {0,0,0,0};
-         double multfactor = 255;
+         double multfactor = 150;
          double maxval = 0.0001;
          if (wantsToRotate) {
                  for (int i = 0; i<4;i++){
@@ -186,7 +202,7 @@ public class RobotMath {
          if (wantsToStop && wantsToRotate && (hardRotate)){
          //similar here, but reversed.
          // if you want to stop and rotate, only slow down if you actually care about rotating.
-                 multfactor = (multfactor/Math.abs(rotationfactor))/3;
+                 multfactor = (multfactor/Math.abs(rotationfactor))/4;
          } else {
                  for (int i = 0; i<4;i++){
                          if (Math.abs(motors[i]) > maxval) maxval = Math.abs(motors[i]);

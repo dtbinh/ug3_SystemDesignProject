@@ -80,11 +80,10 @@ public class M3T2 extends Thread {
 		
 		// START EXECUTION
 		Command commandContainer = plannedCommands.getFirst();
-		// TODO: make decision about kicking more reliable, maybe use wantToKick()
-		if (haveBall() && closeToGoal() && rmaths.isFacing(ourRobot, theirGoal.getCoors())) {
+		if (haveBall() && closeToGoal() && rmaths.isTargeting(ourRobot, theirGoal.getCoors())) {
 			sendZeros();
 			sendKickCommand(new KickCommand());
-			finished = true;
+//			finished = true;
 		}
 		else if (commandContainer instanceof MoveCommand) {
 			MoveCommand moveCommand = (MoveCommand) commandContainer;
@@ -118,11 +117,14 @@ public class M3T2 extends Thread {
 		} else {
 			needsRecovery = false;
 			if (!haveBall()) {
-				destination = ball.getCoors();
+//				destination = ball.getCoors();
+				destination = RobotMath.projectPoint(ball.getCoors(), 
+						RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors()), 60);
 			} else { 
 				// dribble to a point in front of the ball if have ball
 				destination = RobotMath.projectPoint(ball.getCoors(), 
-					invert(RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors())), 10);
+					invert(RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors())), 
+					(int)(RobotMath.euclidDist(theirGoal.getCoors(), ball.getCoors()))/2);
 				if (closeToWall()) {
 					// also move a little towards the centre
 					destination.setY((int)(destination.getY()*0.7) + 72);
@@ -217,7 +219,7 @@ public class M3T2 extends Thread {
 	}
 	
 	static boolean closeToGoal() {
-		return (RobotMath.euclidDist(ourRobot.getCoors(), theirGoal.getCoors()) < 100);
+		return (RobotMath.euclidDist(ourRobot.getCoors(), theirGoal.getCoors()) < 140);
 	}
 	
 	static boolean closeToWall() {
