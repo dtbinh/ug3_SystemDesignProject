@@ -11,7 +11,7 @@ import JavaVision.Position;
 public class M3T2 extends Thread {
 	private static Context context;
     private static Socket socket;
-	static VisionReader vision = new VisionReader("yellow");
+	static VisionReader vision = new VisionReader("blue");
 	static RobotMath rmaths = new RobotMath();
 	private static boolean visitedCurrent = false;
 	
@@ -119,7 +119,7 @@ public class M3T2 extends Thread {
 			if (!haveBall()) {
 //				destination = ball.getCoors();
 				destination = RobotMath.projectPoint(ball.getCoors(), 
-						RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors()), 60);
+						RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors()), 40);
 			} else { 
 				// dribble to a point in front of the ball if have ball
 				destination = RobotMath.projectPoint(ball.getCoors(), 
@@ -127,7 +127,7 @@ public class M3T2 extends Thread {
 					(int)(RobotMath.euclidDist(theirGoal.getCoors(), ball.getCoors()))/2);
 				if (closeToWall()) {
 					// also move a little towards the centre
-					destination.setY((int)(destination.getY()*0.7) + 72);
+					destination.setY((int)(destination.getY()*0.7 + 240*0.3));
 				}
 			}
 		} 
@@ -160,8 +160,6 @@ public class M3T2 extends Thread {
 	private static Position getRotatePos(Point targetPoint) {
 		if (needsRecovery) {
 			return ball.getCoors();
-		} else if (haveBall() && !closeToWall()) {
-			return theirGoal.getCoors();
 		} else {
 			return new Position(targetPoint); 
 		}
@@ -184,12 +182,6 @@ public class M3T2 extends Thread {
 		
 	}
 
-	
-	static boolean wantToKick() {
-		double positionScore = rmaths.getPositionScore(ourRobot.getCoors(),
-													   shootingRight);
-		return positionScore > Math.random();
-	}
 	
 	static void sendMoveCommand(MoveCommand moveCommand) {
 		String signal = rmaths.getSigToPoint(ourRobot, moveCommand.moveTowardsPoint,
@@ -215,7 +207,7 @@ public class M3T2 extends Thread {
 		
 	static boolean haveBall() {
 		
-		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 30 && rmaths.isFacing(ourRobot, ball.getCoors()));
+		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 60 && rmaths.isFacing(ourRobot, ball.getCoors()));
 	}
 	
 	static boolean closeToGoal() {
