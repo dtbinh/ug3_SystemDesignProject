@@ -71,7 +71,7 @@ public class M3T2 extends Thread {
 		Position rotatePos = getRotatePos(parsed.get(parsed.size()-1));
 
 		plannedCommands.pushMoveCommand(movePos, rotatePos, 
-				((RobotMath.euclidDist(movePos, ball.getCoors()) < 125)&&(!haveBall())));	
+				((RobotMath.euclidDist(movePos, ball.getCoors()) < 125)&&(!haveBallStrict())));	
 		// END PLANNING
 		
 		PathSearchHolly.printPath(parsed);
@@ -80,7 +80,7 @@ public class M3T2 extends Thread {
 		
 		// START EXECUTION
 		Command commandContainer = plannedCommands.getFirst();
-		if (haveBall() && closeToGoal() && rmaths.isTargeting(ourRobot, theirGoal.getCoors())) {
+		if (haveBallStrict() && closeToGoal() && rmaths.isTargeting(ourRobot, theirGoal.getCoors())) {
 			sendZeros();
 			sendKickCommand(new KickCommand());
 //			finished = true;
@@ -158,11 +158,18 @@ public class M3T2 extends Thread {
 	}
 	
 	private static Position getRotatePos(Point targetPoint) {
-		if (needsRecovery) {
-			return ball.getCoors();
-		} else {
-			return new Position(targetPoint); 
-		}
+		return RobotMath.projectPoint(ball.getCoors(), 
+				invert(RobotMath.getAngleFromRobotToPoint(theirGoal, ball.getCoors())), 
+				(int)(RobotMath.euclidDist(theirGoal.getCoors(), ball.getCoors()))/2);
+//		Position targetPosition = new Position(targetPoint);
+//		if (needsRecovery) {
+//			return ball.getCoors();
+//		} else if (RobotMath.euclidDist(theirGoal.getCoors(), targetPosition) > 
+//					RobotMath.euclidDist(theirGoal.getCoors(), ball.getCoors())) {
+//			return ball.getCoors();
+//		} else {
+//			return targetPosition; 
+//		}
 	}
 	
 	private static boolean weReceivedSomeSensorInput() {
@@ -208,6 +215,10 @@ public class M3T2 extends Thread {
 	static boolean haveBall() {
 		
 		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 60 && rmaths.isFacing(ourRobot, ball.getCoors()));
+	}
+	
+	static boolean haveBallStrict() {
+		return (RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 40 && rmaths.isFacing(ourRobot, ball.getCoors()));
 	}
 	
 	static boolean closeToGoal() {

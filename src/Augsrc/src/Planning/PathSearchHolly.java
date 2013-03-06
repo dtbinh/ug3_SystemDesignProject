@@ -201,7 +201,7 @@ public class PathSearchHolly {
 			score = 9000;
 		}
 		if (oppGridPosition.distance(newPoint) < 4) {
-			return score + ((int) Math.pow(35, 5- oppGridPosition.distance(newPoint)));
+			return score + ((int) Math.pow(30, 5- oppGridPosition.distance(newPoint)));
 		}
 		if (oppGridPosition.distance(newPoint) < 6) {
 			return score + 20;

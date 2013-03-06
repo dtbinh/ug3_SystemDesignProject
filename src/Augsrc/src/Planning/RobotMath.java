@@ -122,11 +122,11 @@ public class RobotMath {
     public double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
-                 if (((Math.PI*2) - angle) > (Math.PI/4)) {
+                 if (((Math.PI*2) - angle) > (Math.PI/5)) {
                          value = 0.3;
                  }
                 
-         } else if (angle > Math.PI/4) {
+         } else if (angle > Math.PI/5) {
                  value = -0.3;
          }
          wantsToRotate = (!(value == 0)) ;
