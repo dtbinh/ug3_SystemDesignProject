@@ -5,7 +5,6 @@ NXTCLASS="bluetooth_nxt"
 BTADDRESS="00:16:53:07:D5:5F"
 BTNAME="G5"
 
-# switch to bummy robot if $1 is set
 case $1 in
     --dummy-bot)
         NXTCLASS="bluetooth_nxtd"
