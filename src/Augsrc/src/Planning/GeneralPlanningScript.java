@@ -176,7 +176,7 @@ public class GeneralPlanningScript extends Thread {
 					} else {
 						System.out.println("We want to kick and have clear shot");
 						plannedCommands.pushKickCommand(ourRobot.getCoors(),
-												ball.getCoors());
+												theirGoal);
 						skipNextPlanningPhase = true;
 					}	
 				} else {
@@ -190,7 +190,7 @@ public class GeneralPlanningScript extends Thread {
 					if (opponentIsCloserToOurGoal()) {
 						System.out.println("They are closer to our goal than us");
 						//Run to da goal.
-						move(safePoint);
+						move(safePoint, ball.getCoors, false);
 					}
 					else {
 						if (weAreBlocking()){
@@ -305,6 +305,7 @@ public class GeneralPlanningScript extends Thread {
 	}
 	
 	static void sendKickCommand(Command c) {
+		sendZeros();
 		sendreceive("3");
 	}
 
