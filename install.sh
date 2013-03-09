@@ -1,6 +1,6 @@
 SDP_HOME=`pwd`
 LIB="$SDP_HOME/lib"
-LD_LIBRARY_DIR="$LIB/lib"
+LD_LIBRARY_DIR="$LIB/ld_library_dir"
 
 function add_to_bashrc {
     grep -Fxq "$*" ~/.bashrc || echo "$*" >> ~/.bashrc
@@ -47,7 +47,6 @@ function install_jzmq {
     && ./configure --prefix=$LIB CXXFLAGS=-I$LIB/include LDFLAGS=-L$LD_LIBRARY_DIR \
     && make \
    	&& make install \
-    && rm $lLOCATION \
     && rm -rf $lEXTRACT_DIR
 }
 
@@ -102,13 +101,29 @@ function install_pygame {
     && rm -rf $lEXTRACT_DIR
 }
 
-cleanup
+function install_v4l4j {
+    export JDK_HOME="/usr/lib/jvm/java-openjdk"
+    local version="v4l4j-0.9.0"
+    cd $LIB
+    echo "> Downloading v4l4j"
+    wget "http://v4l4j.googlecode.com/files/$version.tar.gz" && \
+    echo "> extracting v4l4j" && \
+    tar xvf $version.tar.gz && \
+    rm $version.tar.gz && \
+    cd $version && \
+    ant clean && \
+    ant all && \
+    cp libv4l4j.so libvideo/libvideo.so.0 $LD_LIBRARY_DIR
+}
 
+cleanup && \
+
+install_v4l4j && \
 install_lejos && \
 install_bluetooth && \
 install_zmq && \
 install_jzmq && \
 install_pyzmq && \
-install_pygame
+install_pygame && \
 
 source ~/.bashrc
