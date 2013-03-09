@@ -45,6 +45,13 @@ public class Ball extends ObjectDetails {
 	/**
 	 * @return	2-D vector representing velocity of ball.
 	 */
+	
+	/**
+	 * Note from Sarah
+	 * Why don't we just get the initial velocity, between times 1 and 2,
+	 * then get the current velocity at times 3 and 4. So two types of get velocity methods.
+	 * Makes acceleration accurate?
+	 */
 	private RealVector getVelocity() {
 		double interval = (double) (time2 - time1);
 		double speedX = (coors2.getX() - coors1.getX()) / interval;
@@ -52,9 +59,23 @@ public class Ball extends ObjectDetails {
 		return (new RealVector(speedX, speedY));
 	}
 	
+	/**
+	 private RealVector getCurrentVelocity(){
+	 double interval = (double) (time4 - time3);
+	 double speedX = (coors4.getX() - coors3.getX()) / interval;
+	 double speedY = (coors4.getY() - coors3.getY()) / interval;
+	return (new RealVector(speedX, speedY));
+	 */
 	// TODO: now it's just a guess -- should at least test factors
 	/**
 	 * @return	2-D vector representing acceleration of ball.  
+	 */
+	
+	/**
+	 * Note from Sarah
+	 * Acceleration = change in velocity over change in time
+	 * So e could use the Current velocity and initial velocity?
+	 * Don't understand why you've used -0.02 as a change?
 	 */
 	private RealVector getAcceleration() {
 		RealVector speed = this.getVelocity();

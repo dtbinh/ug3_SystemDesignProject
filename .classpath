@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/bcel.jar"/>
-	<classpathentry kind="lib" path="lib/bluecove-gpl.jar"/>
-	<classpathentry kind="lib" path="lib/bluecove.jar"/>
-	<classpathentry kind="lib" path="lib/classes.jar"/>
-	<classpathentry kind="lib" path="lib/commons-cli.jar"/>
-	<classpathentry kind="lib" path="lib/jtools.jar"/>
-	<classpathentry kind="lib" path="lib/pccomm.jar"/>
-	<classpathentry kind="lib" path="lib/pctools.jar"/>
-	<classpathentry kind="lib" path="lib/v4l4j.jar"/>
-	<classpathentry kind="lib" path="lib/zmq.jar"/>
+	<classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/3rdparty/bcel.jar"/>
+	<classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/3rdparty/bluecove-gpl.jar"/>
+	<classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/3rdparty/bluecove.jar"/>
+    <classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/nxt/classes.jar"/>
+    <classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/3rdparty/commons-cli.jar"/>
+	<classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/jtools.jar"/>
+    <classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/pccomm.jar"/>
+	<classpathentry kind="lib" path="lib/leJOS_NXJ_0.9.1beta-3/lib/pc/pctools.jar"/>
+    <classpathentry kind="lib" path="lib/v4l4j-0.9.0/v4l4j.jar"/>
+    <classpathentry kind="lib" path="lib/share/java/zmq.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
