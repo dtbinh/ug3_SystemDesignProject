@@ -3,21 +3,23 @@ package BluetoothServer;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import lejos.nxt.LCD;
+import lejos.nxt.Sound;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTConnection;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import lejos.nxt.*;
-import lejos.nxt.LCD;
-import lejos.nxt.Sound;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 
-import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.comm.NXTConnection;
 
-public class bluetooth_nxt {
+
+public class BluetoothNXTD {
 
 	// Error codes
 	public static final byte RET_OK = 0;
@@ -29,7 +31,7 @@ public class bluetooth_nxt {
 	// Opcodes
 	public static final byte OP_SET_MOTOR_SPEEDS = 1;
 	public static final byte OP_CHANGE_ROBOT_DIRECTION = 2;
-	public static final byte THIS_IS_SPARTAAA = 3; // kick
+	public static final byte OP_KICK = 3;
 	public static final byte OP_ROTATE_RXT_MOTOR = 4;
 	public static final byte OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final byte OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
@@ -49,26 +51,13 @@ public class bluetooth_nxt {
 	private static InputStream dis;
 	private static OutputStream dos;
 
-    private static TouchSensor sensor1;
-    private static TouchSensor sensor2;
-    private static TouchSensor sensor3;
-	
 	public static void main(String[] args) {
-		robot = new Motormux(SensorPort.S4);
-		
-        sensor1 = new TouchSensor(SensorPort.S1);
-        sensor2 = new TouchSensor(SensorPort.S2);
-        sensor3 = new TouchSensor(SensorPort.S3);
-        
+		Motormux robot = new Motormux(SensorPort.S4);
 		Sound.setVolume(50);
 
 		// Max kicker speed
-		Motor.C.setSpeed(12000);
-		Motor.A.setSpeed(6000);
-		Motor.B.setSpeed(6000);
 		Motor.A.setAcceleration(6000);
 		Motor.B.setAcceleration(6000);
-		
 		while (true) 
 		{
 			try 
@@ -104,18 +93,8 @@ public class bluetooth_nxt {
 					}
 
 					handle_request(opcode[0]);
-					
-					// Return status of touch sensors
-					opcode[0] = 0;
-					if (sensor1.isPressed())
-						opcode[0] |= (1 << 0);
-					
-					if (sensor2.isPressed())
-						opcode[0] |= (1 << 1);
-					
-					if (sensor3.isPressed())
-						opcode[0] |= (1 << 2);
-					
+
+
 					//TODO: Dirty workaround for detecting random disconnect
 					dos.write(opcode);
 					dos.flush();
@@ -141,23 +120,36 @@ public class bluetooth_nxt {
 				short m3 = (short) ((short)motor_speeds[5] << 8 | (255 & (short)motor_speeds[4]));
 				short m4 = (short) ((short)motor_speeds[7] << 8 | (255 & (short)motor_speeds[6]));
 
-				robot.set_speed(0, m1);
-				robot.set_speed(1, m2);
-				robot.set_speed(2, m3);
-				robot.set_speed(3, m4);
-
-				if (m1 == 0 && m2 == 0 && m3 == 0 && m4 == 0)
+				if (m1 > 0) 
 				{
-					robot.flt();
+					Motor.A.setSpeed(m1);
+					Motor.A.forward();
 				}
+				else
+				{
+					Motor.A.setSpeed(-m1);
+					Motor.A.backward();
+				}
+				
+				if (m2 > 0) 
+				{
+					Motor.B.setSpeed(m2);
+					Motor.B.forward();
+				}
+				else
+				{
+					Motor.B.setSpeed(-m2);
+					Motor.B.backward();
+				}
+				
 
-
+				
 				LCD.drawString("M1: " + m1 + "   ", 0, 3);
 				LCD.drawString("M2: " + m2 + "   ", 0, 4);
 				LCD.drawString("M3: " + m3 + "   ", 0, 5);
 				LCD.drawString("M4: " + m4 + "   ", 0, 6);
 			}
-			else if (opcode == THIS_IS_SPARTAAA)
+			else if (opcode == OP_KICK)
 			{
 				// TODO: add to thread
 				kick();
@@ -181,7 +173,9 @@ public class bluetooth_nxt {
 				else if (opcode == OP_CHANGE_RXT_MOTOR_SPEED)
 				{
 					Motor.A.setSpeed(mA);
+				
 					Motor.B.setSpeed(mB);
+				
 				}
 				else if (opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
 				{
@@ -214,5 +208,8 @@ public class bluetooth_nxt {
 		// Reset kicker to original position
 		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
 	}
+
+
+
 }
 

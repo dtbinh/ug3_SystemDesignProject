@@ -15,7 +15,7 @@ import org.zeromq.ZMQ.*;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
 
-public class bluetooth_pc {
+public class BluetoothPC {
 	public static String NXT_MAC_ADDRESS;// = "00:16:53:07:D5:5F";
 	public static String NXT_NAME;// = "G5";
 	
