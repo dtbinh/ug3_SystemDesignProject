@@ -27,4 +27,4 @@
   to upload the program over bluetooth
 * To return to the main menu press `orange` and `down` (the one right below 
   orange) buttons at the same time
-* If using the dummy robot, add --dummy-robot to all the script calls
+* If using the dummy robot, add `--dummy-robot` to all the script calls
