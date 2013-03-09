@@ -20,6 +20,7 @@ base_dir="$(dirname $(readlink -f $0))"
 src_dir="$base_dir/src"
 bin_dir="$base_dir/bin"
 lib_dir="$base_dir/lib"
+ldlib_dir="$base_dir/lib/lib"
 java_package="BluetoothServer"
 java_path="$src_dir/$java_package"
 
@@ -31,7 +32,7 @@ jmq_jar="$lib_dir/share/java/zmq.jar"
 
 classpath="$bin_dir:$lejos_jar:$jmq_jar:$CLASSPATH"
 export PATH="$lejos_bin:$PATH"
-export LD_LIBRARY_PATH="$lib_dir:$lib_dir/lib:$LD_LIBRAR_PATH"
+export LD_LIBRARY_PATH="$lib_dir:$ldlib_dir:$LD_LIBRAR_PATH"
 
 java_class=
 bluetooth_address=
