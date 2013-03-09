@@ -13,6 +13,7 @@ function cleanup {
     STR="export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$LD_LIBRARY_DIR"
     add_to_bashrc $STR
     cd $SDP_HOME
+    echo "" > .classpath
 }
 
 function install_v4l4j {

@@ -16,6 +16,7 @@
 * For "location", select browse, navigate to ug3_SDP, click "OK", then "Finish"
 * Go to the environment tab, click "new", then type LD_LIBRARY_PATH for the 
   name and ./lib for the value, click "ok" then "apply" then "run"
+* Alternative easy way: run `./eclipse`
 
 ## Bluetooth ##
 * Turn on NXT brick and make sure you are in the main menu
