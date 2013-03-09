@@ -5,7 +5,7 @@ import JavaVision.Position;
 public class GameConstants {
 	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 128;
-	public final static int NEAR_BALL_RANGE = 100;
+	public final static int NEAR_RANGE = 100;
 	
 	public static Robot OUR_ROBOT;
 	public static Robot THEIR_ROBOT;

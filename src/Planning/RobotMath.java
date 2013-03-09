@@ -276,7 +276,7 @@ public class RobotMath {
     	
     }
     public static String moveToFace(Position movePos, Position rotatePos){
-    	if (euclidDist(GameConstants.OUR_ROBOT_COORS, movePos) < GameConstants.NEAR_BALL_RANGE &&
+    	if ((euclidDist(GameConstants.OUR_ROBOT_COORS, movePos) < GameConstants.NEAR_RANGE) &&
     			!(isFacing(GameConstants.OUR_ROBOT, rotatePos))){
     		return rotate(rotatePos);
     	} else {
