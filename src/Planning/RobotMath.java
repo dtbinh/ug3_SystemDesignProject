@@ -218,6 +218,74 @@ public class RobotMath {
          return returnvalues;
         
  	}
+    /*
+    public double[] getMovementRatio(double angle){
+    	 double[] motors = {0,0,0,0};
+    	 motors[0] -= (Math.cos(angle));
+         motors[1] += (Math.sin(angle));
+         motors[2] -= (Math.sin(angle));
+         motors[3] += (Math.cos(angle));
+    	 return motors;
+    }
+    //TODO: Do constants ASAP
+    public String moveStraight(Position destination){
+    	double angle = getAngleFromRobotToPoint(Constants.ourRobot, destination);
+    	double[] motors = getMovementRatio(angle);
+    	return (normalisedSignal(motors,Constants.MAX_SPEED));
+   
+    }
+    
+    public String normalisedSignal(double[] motors,int maxspeed){
+    	int maxVal = 0;
+    	for (int i = 0; i<4;i++){
+             if (Math.abs(motors[i]) > maxVal) {
+            	 maxVal = (int) Math.abs(motors[i]);
+             }
+    	}
+    	
+    	maxspeed = (maxspeed/maxVal);
+    	int[] returnvalues = new int[4];
+		for (int i = 0;i<4;i++) {
+    		 returnvalues[i] = (int) (motors[i]*maxspeed);
+    	}
+            
+    	 return createSignal(returnvalues);
+    }
+   /* 
+    public String rotate(Position toFace){
+    	double angle = getAngleFromRobotToPoint(Constants.ourRobot,toFace);
+    	double direction = getRotationValue(angle);
+    	double[] motors = {direction, direction, direction,direction};
+    	
+    	return(normalisedSignal(motors,Constants.TURN_SPEED));    	
+    }
+    
+    public String moveAndTurn(Position movePos, Position rotatePos){	
+    	double moveAngle = getAngleFromRobotToPoint(Constants.OUR_ROBOT, movePos);	
+    	double[] motors = getMovementRatio(moveAngle);    	
+    	
+    	double rotateAngle = getAngleFromRobotToPoint(Constants.OUR_ROBOT, rotatePos);
+    	double directionOfRotation = getRotationValue(rotateAngle);
+    	
+    	for (int i = 0;i<4;i++) {
+   		 	motors[i] += directionOfRotation;
+    	}
+    	
+    	return normalisedSignal(motors,MAX_SPEED);    	
+    	
+    }
+    public String moveToFace(Position movePos, Position rotatePos){
+    	if (euclid(Constants.OUR_ROBOT_COORS, movePos) < Constants.NEAR_BALL_RANGE &&
+    			!(isFacing(Constants.OUR_ROBOT, rotatePos))){
+    		return rotate(rotatePos);
+    	} else {
+    		return moveAndTurn(movePos, rotatePos);
+    	}
+    }
+    */
+    
+    /*
+    
     /**
      *createSignal puts motor values into a string that can be used by the IPC
      *   
