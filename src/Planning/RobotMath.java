@@ -18,7 +18,7 @@ public class RobotMath {
     Robot goalR_bottom = new Robot();
     static double TENPI = Math.PI*10;
     static double TWOPI = Math.PI*2;
-    private boolean wantsToRotate;
+    private static boolean wantsToRotate;
     private boolean wantsToStop;
        
     //Set the values of the goals, init must be called just after we make a new instance
@@ -119,7 +119,7 @@ public class RobotMath {
      *
      */
 
-    public double getRotationValue(double angle){
+    public static double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
                  if (((Math.PI*2) - angle) > (Math.PI/5)) {
@@ -129,6 +129,7 @@ public class RobotMath {
          } else if (angle > Math.PI/5) {
                  value = -0.3;
          }
+         //TODO:Remove.
          wantsToRotate = (!(value == 0)) ;
 
          return value;
@@ -218,8 +219,8 @@ public class RobotMath {
          return returnvalues;
         
  	}
-    /*
-    public double[] getMovementRatio(double angle){
+    
+    public static double[] getMovementRatio(double angle){
     	 double[] motors = {0,0,0,0};
     	 motors[0] -= (Math.cos(angle));
          motors[1] += (Math.sin(angle));
@@ -228,21 +229,21 @@ public class RobotMath {
     	 return motors;
     }
     //TODO: Do constants ASAP
-    public String moveStraight(Position destination){
-    	double angle = getAngleFromRobotToPoint(Constants.ourRobot, destination);
+    public static String moveStraight(Position destination){
+    	double angle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, destination);
     	double[] motors = getMovementRatio(angle);
-    	return (normalisedSignal(motors,Constants.MAX_SPEED));
+    	return (normalisedSignal(motors,GameConstants.MAX_SPEED));
    
     }
     
-    public String normalisedSignal(double[] motors,int maxspeed){
-    	int maxVal = 0;
+    public static String normalisedSignal(double[] motors,int maxspeed){
+    	int maxVal = -1;
     	for (int i = 0; i<4;i++){
              if (Math.abs(motors[i]) > maxVal) {
             	 maxVal = (int) Math.abs(motors[i]);
              }
     	}
-    	
+    	maxVal = (maxVal == 0) ? 1 : maxVal;
     	maxspeed = (maxspeed/maxVal);
     	int[] returnvalues = new int[4];
 		for (int i = 0;i<4;i++) {
@@ -251,40 +252,40 @@ public class RobotMath {
             
     	 return createSignal(returnvalues);
     }
-   /* 
-    public String rotate(Position toFace){
-    	double angle = getAngleFromRobotToPoint(Constants.ourRobot,toFace);
+    
+    public static String rotate(Position toFace){
+    	double angle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT,toFace);
     	double direction = getRotationValue(angle);
     	double[] motors = {direction, direction, direction,direction};
     	
-    	return(normalisedSignal(motors,Constants.TURN_SPEED));    	
+    	return(normalisedSignal(motors,GameConstants.TURN_SPEED));    	
     }
     
-    public String moveAndTurn(Position movePos, Position rotatePos){	
-    	double moveAngle = getAngleFromRobotToPoint(Constants.OUR_ROBOT, movePos);	
+    public static String moveAndTurn(Position movePos, Position rotatePos){	
+    	double moveAngle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, movePos);	
     	double[] motors = getMovementRatio(moveAngle);    	
     	
-    	double rotateAngle = getAngleFromRobotToPoint(Constants.OUR_ROBOT, rotatePos);
+    	double rotateAngle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, rotatePos);
     	double directionOfRotation = getRotationValue(rotateAngle);
     	
     	for (int i = 0;i<4;i++) {
    		 	motors[i] += directionOfRotation;
     	}
     	
-    	return normalisedSignal(motors,MAX_SPEED);    	
+    	return normalisedSignal(motors,GameConstants.MAX_SPEED);    	
     	
     }
-    public String moveToFace(Position movePos, Position rotatePos){
-    	if (euclid(Constants.OUR_ROBOT_COORS, movePos) < Constants.NEAR_BALL_RANGE &&
-    			!(isFacing(Constants.OUR_ROBOT, rotatePos))){
+    public static String moveToFace(Position movePos, Position rotatePos){
+    	if ((euclidDist(GameConstants.OUR_ROBOT_COORS, movePos) < GameConstants.NEAR_RANGE) &&
+    			!(isFacing(GameConstants.OUR_ROBOT, rotatePos))){
     		return rotate(rotatePos);
     	} else {
     		return moveAndTurn(movePos, rotatePos);
     	}
     }
-    */
+  
     
-    /*
+
     
     /**
      *createSignal puts motor values into a string that can be used by the IPC
@@ -301,7 +302,7 @@ public class RobotMath {
      *
      */
 
- 	public String createSignal(int[] codes){
+ 	public static String createSignal(int[] codes){
  			String sig = "1 "+codes[0]+" "+codes[1]+" "+codes[2]+" "+codes[3];
         
  			return sig;
@@ -347,7 +348,7 @@ public class RobotMath {
 	     * @author      Caithan Moore - S1024940
 	     *
 	     */
-	 public boolean isFacing(Robot robot, Position point) {
+	 public static boolean isFacing(Robot robot, Position point) {
 	         double angle = getAngleFromRobotToPoint(robot,point);
 	         double value = getRotationValue(angle);
 	        
