@@ -18,14 +18,12 @@ import java.util.ArrayList;
 public class BluetoothPC {
 	public static String NXT_MAC_ADDRESS;// = "00:16:53:07:D5:5F";
 	public static String NXT_NAME;// = "G5";
-	
 	// Error codes
 	public static final int RET_OK = 0;
 	public static final int RET_UNDEFINED_OP = -1;
 	public static final int RET_ERROR_PARSING_OP = -2;
 	public static final int RET_ERROR_PARSING_PARAMS = -3;
 	public static final int RET_NOT_IMPLEMENTED = -4;
-
 	// Opcodes
 	public static final int OP_SET_MOTOR_SPEEDS = 1;
 	public static final int OP_CHANGE_ROBOT_DIRECTION = 2;
@@ -33,7 +31,7 @@ public class BluetoothPC {
 	public static final int OP_ROTATE_RXT_MOTOR = 4;
 	public static final int OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final int OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
-
+    // Privates
 	private static InputStream in;
 	private static OutputStream out;
 
@@ -43,8 +41,7 @@ public class BluetoothPC {
 			System.out.println("Dummy bot server");
 			NXT_MAC_ADDRESS = "00:16:53:0B:B5:A3";
 			NXT_NAME = "G5Dummy";	
-		} 
-		else {
+		} else {
 			NXT_MAC_ADDRESS = "00:16:53:07:D5:5F";
 			NXT_NAME = "G5";
 		}
@@ -111,7 +108,6 @@ public class BluetoothPC {
 				byte[] reply = replyString.getBytes();
 				socket.send(reply, 0);
 
-
 				// Send reply to the IPC
 				//int b = in.read();
 
@@ -169,19 +165,16 @@ public class BluetoothPC {
 			// m4
 			command[7] = (byte)(m4 & 0xff);
 			command[8] = (byte)((m4 >> 8) & 0xff);
-		}
-		else if (opcode == OP_CHANGE_ROBOT_DIRECTION) {
+		} else if (opcode == OP_CHANGE_ROBOT_DIRECTION) {
 			// Params: [short short short] = [speed movement_angle rotation_angle] 
 			System.out.println("\tNot implemented opcode: " + opcode); 
 			return RET_NOT_IMPLEMENTED; // Not implemented opcode			
-		}
-		else if (opcode == OP_KICK) {
+		} else if (opcode == OP_KICK) {
 			command = new byte[1];
 			command[0] = (byte)opcode;
-		}
-		else if (opcode == OP_ROTATE_RXT_MOTOR ||
-				 opcode == OP_CHANGE_RXT_MOTOR_SPEED ||
-				 opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
+		} else if (opcode == OP_ROTATE_RXT_MOTOR ||
+		           opcode == OP_CHANGE_RXT_MOTOR_SPEED ||
+				   opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
 			// Params: [short short]
 			short mA = request_codes[1];
 			short mB = request_codes[2];
@@ -198,8 +191,7 @@ public class BluetoothPC {
 			// B
 			command[3] = (byte)(mB & 0xff);
 			command[4] = (byte)((mB >> 8) & 0xff);
-		}
-		else {
+		} else {
 			System.out.println("\tUndefined opcode: " + opcode); 
 			return RET_UNDEFINED_OP; // Undefined opcode
 		}

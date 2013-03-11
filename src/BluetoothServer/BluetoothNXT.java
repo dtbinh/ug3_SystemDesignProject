@@ -18,37 +18,31 @@ import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 
 public class BluetoothNXT {
-
 	// Error codes
 	public static final byte RET_OK = 0;
 	public static final byte RET_UNDEFINED_OP = -1;
 	public static final byte RET_ERROR_PARSING_OP = -2;
 	public static final byte RET_ERROR_PARSING_PARAMS = -3;
 	public static final byte RET_NOT_IMPLEMENTED = -4;
-
 	// Opcodes
 	public static final byte OP_SET_MOTOR_SPEEDS = 1;
 	public static final byte OP_CHANGE_ROBOT_DIRECTION = 2;
-	public static final byte THIS_IS_SPARTAAA = 3; // kick
+	public static final byte OP_KICK = 3;
 	public static final byte OP_ROTATE_RXT_MOTOR = 4;
 	public static final byte OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final byte OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
-
 	// M1 - kick
 	public static final int KICK_ANGLE = 130; // in "ticks"
 	public static final int KICK_DIRECTION = 1; // change to -1, to change direction
-
 	// M1 - drive
 	public static final int DRIVE_DISTANCE = 2500; // in "ticks"
 	public static final int LEFT_DIRECTION = 1; // change to -1, to change direction
 	public static final int RIGHT_DIRECTION = -1; // change to 1, to change direction
 	public static final int ACCELERATION = 2500; // Default 6000
-
 	// Privates
 	private static Motormux robot;
 	private static InputStream dis;
 	private static OutputStream dos;
-
     private static TouchSensor sensor1;
     private static TouchSensor sensor2;
     private static TouchSensor sensor3;
@@ -59,7 +53,7 @@ public class BluetoothNXT {
         sensor1 = new TouchSensor(SensorPort.S1);
         sensor2 = new TouchSensor(SensorPort.S2);
         sensor3 = new TouchSensor(SensorPort.S3);
-        
+
 		// Sound.setVolume(50);
 
 		// Max kicker speed
@@ -68,11 +62,9 @@ public class BluetoothNXT {
 		Motor.B.setSpeed(6000);
 		Motor.A.setAcceleration(6000);
 		Motor.B.setAcceleration(6000);
-		
-		while (true) 
-		{
-			try 
-			{
+
+		while (true) {
+			try {
 				LCD.clear();
 				LCD.drawString("Waiting for", 0, 0);
 				LCD.drawString("Bluetooth...", 0, 1);
@@ -93,13 +85,11 @@ public class BluetoothNXT {
 					LCD.drawString("oc: " + opcode[0], 0, 5);
 
 					// End of connection
-					if (opcode[0] == 0)
-					{
+					if (opcode[0] == 0) {
 						Sound.twoBeeps();
 
 						dis.close();
 						dos.close();
-
 						break;
 					}
 
@@ -107,15 +97,18 @@ public class BluetoothNXT {
 					
 					// Return status of touch sensors
 					opcode[0] = 0;
-					if (sensor1.isPressed())
+					if (sensor1.isPressed()) {
 						opcode[0] |= (1 << 0);
+                    }
 					
-					if (sensor2.isPressed())
+					if (sensor2.isPressed()) {
 						opcode[0] |= (1 << 1);
+                    }
 					
-					if (sensor3.isPressed())
+					if (sensor3.isPressed()) {
 						opcode[0] |= (1 << 2);
-					
+                    }
+	
 					//TODO: Dirty workaround for detecting random disconnect
 					dos.write(opcode);
 					dos.flush();
@@ -124,15 +117,14 @@ public class BluetoothNXT {
 			} catch (Exception e) {
 				// Does not wait for user to notice
 				LCD.drawString("EXCEPTION1!", 0, 3);
+                e.printStackTrace();
 			}
 		}
 	}
 
-	static void handle_request(byte opcode) 
-	{
+	static void handle_request(byte opcode) {
 		try {
-			if (opcode == OP_SET_MOTOR_SPEEDS)
-			{
+			if (opcode == OP_SET_MOTOR_SPEEDS) {
 				byte[] motor_speeds = new byte[4 * 2];
 				dis.read(motor_speeds);
 
@@ -146,24 +138,21 @@ public class BluetoothNXT {
 				robot.set_speed(2, m3);
 				robot.set_speed(3, m4);
 
-				if (m1 == 0 && m2 == 0 && m3 == 0 && m4 == 0)
-				{
+				if (m1 == 0 && m2 == 0 && m3 == 0 && m4 == 0) {
 					robot.flt();
 				}
-
 
 				LCD.drawString("M1: " + m1 + "   ", 0, 3);
 				LCD.drawString("M2: " + m2 + "   ", 0, 4);
 				LCD.drawString("M3: " + m3 + "   ", 0, 5);
 				LCD.drawString("M4: " + m4 + "   ", 0, 6);
 			}
-			else if (opcode == THIS_IS_SPARTAAA)
-			{
+			else if (opcode == OP_KICK) {
 				// TODO: add to thread
 				kick();
-			}
-			else if (opcode == OP_ROTATE_RXT_MOTOR || opcode == OP_CHANGE_RXT_MOTOR_SPEED || opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
-			{
+			} else if (opcode == OP_ROTATE_RXT_MOTOR ||
+                       opcode == OP_CHANGE_RXT_MOTOR_SPEED || 
+                       opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
 				byte[] motor_params = new byte[2 * 2];
 				dis.read(motor_params);
 
@@ -173,25 +162,18 @@ public class BluetoothNXT {
 				LCD.drawString("mA: " + mA + "   ", 0, 3);
 				LCD.drawString("mB: " + mB + "   ", 0, 4);
 
-				if (opcode == OP_ROTATE_RXT_MOTOR)
-				{
+				if (opcode == OP_ROTATE_RXT_MOTOR) {
 					Motor.A.rotate(mA, true);
 					Motor.B.rotate(mB, true);
-				}
-				else if (opcode == OP_CHANGE_RXT_MOTOR_SPEED)
-				{
+				} else if (opcode == OP_CHANGE_RXT_MOTOR_SPEED) {
 					Motor.A.setSpeed(mA);
 					Motor.B.setSpeed(mB);
-				}
-				else if (opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION)
-				{
+				} else if (opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
 					Motor.A.setAcceleration(mA);
 					Motor.B.setAcceleration(mB);
 				}
-
 			}
-			else
-			{
+			else {
 				LCD.drawString("UNDEF OPCODE: " + opcode, 0, 3);
 				dos.flush();
 				dis.skip(99999);
@@ -199,20 +181,22 @@ public class BluetoothNXT {
 		}
 		catch (Exception e) {
 			LCD.drawString("EXCEPTION2!", 0, 3);
-			System.err.println(e.getMessage());
+            e.printStackTrace();
 		}
-
 	}
 
-	static void kick()
-	{
+	static void kick() {
 		// Kick
 		Motor.C.rotate(KICK_ANGLE * -KICK_DIRECTION, true);
 
-		try{Thread.sleep(600);}catch(Exception e) {}
+		try {
+            Thread.sleep(600);
+        } catch(Exception e) {
+            LCD.drawString("SLEEP EXCEPTION!")!
+            e.printStackTrace();
+        }
 
 		// Reset kicker to original position
 		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
 	}
 }
-
