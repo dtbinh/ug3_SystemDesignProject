@@ -35,8 +35,8 @@ export PATH="$lejos_bin:$PATH"
 export LD_LIBRARY_PATH="$lib_dir:$ldlib_dir:$LD_LIBRAR_PATH"
 
 java_class=
-bluetooth_address=
-bluetooth_name=
+bluetooth_address="00:16:53:07:D5:5F"
+bluetooth_name="G5"
 program_nxt=
 run_server=
 use_dummy=
@@ -49,8 +49,6 @@ while [ "$1" != "" ]; do
             ;;
         program-nxt)
             program_nxt=1
-            bluetooth_address="00:16:53:07:D5:5F"
-            bluetooth_name="G5"
             ;;
         server)
             run_server=1
