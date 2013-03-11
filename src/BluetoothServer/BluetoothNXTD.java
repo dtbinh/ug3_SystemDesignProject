@@ -168,7 +168,7 @@ public class BluetoothNXTD {
 		try {
             Thread.sleep(600);
         } catch(Exception e) {
-            LCD.drawString("SLEEP EXCEPTION!");
+            LCD.drawString("SLEEP EXCEPTION!", 0, 3);
             e.printStackTrace();
         }
 

@@ -102,7 +102,7 @@ elif [ "42$program_nxt" != "42" ]; then
                $java_package.$java_class && \
     echo "Uploading to the brick over bluetooth..."  && \
     nxjupload -b -n $bluetooth_name -d $bluetooth_address \
-              -r $java_package/$java_class.nxj  && \
+              -r $bin_dir/$java_package/$java_class.nxj  && \
     echo "Done!" && \
     exit 0
 

@@ -32,7 +32,8 @@ public class BluetoothNXT {
 	public static final byte OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final byte OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
 	// M1 - kick
-	public static final int KICK_ANGLE = 130; // in "ticks"
+	public static final int KICK_ANGLE = 80; // in "ticks"
+	public static final int KICK_ANGLE_IDLE = -5;
 	public static final int KICK_DIRECTION = 1; // change to -1, to change direction
 	// M1 - drive
 	public static final int DRIVE_DISTANCE = 2500; // in "ticks"
@@ -43,25 +44,27 @@ public class BluetoothNXT {
 	private static Motormux robot;
 	private static InputStream dis;
 	private static OutputStream dos;
-    private static TouchSensor sensor1;
-    private static TouchSensor sensor2;
-    private static TouchSensor sensor3;
-	
+	private static TouchSensor sensor1;
+	private static TouchSensor sensor2;
+	private static TouchSensor sensor3;
+
 	public static void main(String[] args) {
 		robot = new Motormux(SensorPort.S4);
-		
-        sensor1 = new TouchSensor(SensorPort.S1);
-        sensor2 = new TouchSensor(SensorPort.S2);
-        sensor3 = new TouchSensor(SensorPort.S3);
+
+		sensor1 = new TouchSensor(SensorPort.S1);
+		sensor2 = new TouchSensor(SensorPort.S2);
+		sensor3 = new TouchSensor(SensorPort.S3);
 
 		// Sound.setVolume(50);
 
 		// Max kicker speed
-		Motor.C.setSpeed(12000);
-		Motor.A.setSpeed(6000);
-		Motor.B.setSpeed(6000);
-		Motor.A.setAcceleration(6000);
-		Motor.B.setAcceleration(6000);
+		Motor.C.setSpeed(Motor.C.getMaxSpeed());
+		Motor.C.setAcceleration(12000);
+
+		//Motor.A.setSpeed(6000);
+		//Motor.B.setSpeed(6000);
+		//Motor.A.setAcceleration(6000);
+		//Motor.B.setAcceleration(6000);
 
 		while (true) {
 			try {
@@ -72,6 +75,10 @@ public class BluetoothNXT {
 				NXTConnection connection = Bluetooth.waitForConnection();
 				dis = connection.openInputStream();
 				dos = connection.openOutputStream();
+
+				Motor.C.rotate(10, true);
+				//Motor.C.resetTachoCount(); 
+				//Motor.C.stop();
 
 				Sound.beep();
 				LCD.clear();
@@ -94,21 +101,21 @@ public class BluetoothNXT {
 					}
 
 					handle_request(opcode[0]);
-					
+
 					// Return status of touch sensors
 					opcode[0] = 0;
 					if (sensor1.isPressed()) {
 						opcode[0] |= (1 << 0);
-                    }
-					
+					}
+
 					if (sensor2.isPressed()) {
 						opcode[0] |= (1 << 1);
-                    }
-					
+					}
+
 					if (sensor3.isPressed()) {
 						opcode[0] |= (1 << 2);
-                    }
-	
+					}
+
 					//TODO: Dirty workaround for detecting random disconnect
 					dos.write(opcode);
 					dos.flush();
@@ -117,7 +124,7 @@ public class BluetoothNXT {
 			} catch (Exception e) {
 				// Does not wait for user to notice
 				LCD.drawString("EXCEPTION1!", 0, 3);
-                e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -151,8 +158,8 @@ public class BluetoothNXT {
 				// TODO: add to thread
 				kick();
 			} else if (opcode == OP_ROTATE_RXT_MOTOR ||
-                       opcode == OP_CHANGE_RXT_MOTOR_SPEED || 
-                       opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
+					opcode == OP_CHANGE_RXT_MOTOR_SPEED || 
+					opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
 				byte[] motor_params = new byte[2 * 2];
 				dis.read(motor_params);
 
@@ -176,27 +183,35 @@ public class BluetoothNXT {
 			else {
 				LCD.drawString("UNDEF OPCODE: " + opcode, 0, 3);
 				dos.flush();
-				dis.skip(99999);
+				dis.skip(999);
 			}
 		}
 		catch (Exception e) {
 			LCD.drawString("EXCEPTION2!", 0, 3);
-            e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
 	static void kick() {
 		// Kick
-		Motor.C.rotate(KICK_ANGLE * -KICK_DIRECTION, true);
+		Motor.C.rotateTo(KICK_ANGLE * -KICK_DIRECTION, false);
+
 
 		try {
-            Thread.sleep(600);
-        } catch(Exception e) {
-            LCD.drawString("SLEEP EXCEPTION!")!
-            e.printStackTrace();
-        }
+			Thread.sleep(25);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		// Reset kicker to original position
-		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
+		Motor.C.rotateTo(KICK_ANGLE_IDLE, false);
+
+		try {
+			Thread.sleep(25);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		//Motor.C.rotate(10, true);
 	}
 }
