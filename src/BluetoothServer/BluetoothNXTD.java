@@ -53,7 +53,8 @@ public class BluetoothNXTD {
 
 	public static void main(String[] args) {
 		Motormux robot = new Motormux(SensorPort.S4);
-		Sound.setVolume(50);
+
+		// Sound.setVolume(50);
 
 		// Max kicker speed
 		Motor.A.setAcceleration(6000);

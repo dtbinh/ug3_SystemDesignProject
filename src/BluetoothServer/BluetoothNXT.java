@@ -60,7 +60,7 @@ public class BluetoothNXT {
         sensor2 = new TouchSensor(SensorPort.S2);
         sensor3 = new TouchSensor(SensorPort.S3);
         
-		Sound.setVolume(50);
+		// Sound.setVolume(50);
 
 		// Max kicker speed
 		Motor.C.setSpeed(12000);
