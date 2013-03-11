@@ -71,6 +71,7 @@ public class GeneralPlanningScript extends Thread {
 		shootingRight = args[1].equals("right");
 		System.out.println(shootingRight);
 		
+		
 		if (!shootingRight){
 			ourGoal	= rmaths.goalR.getCoors();
 			theirGoal = rmaths.goalL.getCoors();
