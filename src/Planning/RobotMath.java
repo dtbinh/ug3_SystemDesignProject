@@ -372,8 +372,11 @@ public class RobotMath {
 	     *
 	     */
 	
-	 public Position pointBehindBall(Robot goal, Position ball){
-	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goal, ball)+Math.PI;
+	 public Position pointBehindBall(Position goal, Position ball){
+		 	Robot goalRobot = new Robot();
+		 	goalRobot.setCoors(goal);
+		 	goalRobot.setAngle(0);
+	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball)+Math.PI;
 	         Position goPoint;
 	        
 	         goPoint = projectPoint(ball, rvrsBallToGoal, 100);
