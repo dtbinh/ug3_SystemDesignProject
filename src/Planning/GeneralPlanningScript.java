@@ -48,13 +48,12 @@ public class GeneralPlanningScript extends Thread {
 	static CommandStack plannedCommands;
 	static boolean skipNextPlanningPhase;
 	private static Position safePoint;
-	static float theirGoalAngle;
+//	static float theirGoalAngle;
 	static float ourGoalAngle;
 	
 	static boolean playMode;
 	static boolean penaltyDefMode;
 	static boolean penaltyAtkMode;
-	static double penaltyAngle;
 	
 	static int timeToTakePenalty = 20000;
 	static long matchStartTime;
@@ -76,22 +75,21 @@ public class GeneralPlanningScript extends Thread {
 			ourGoal	= rmaths.goalR.getCoors();
 			theirGoal = rmaths.goalL.getCoors();
 			ourGoalAngle = rmaths.goalR.getAngle();
-			theirGoalAngle = rmaths.goalL.getAngle();
+//			theirGoalAngle = rmaths.goalL.getAngle();
 		} else {
 			ourGoal	= rmaths.goalL.getCoors();
 			theirGoal = rmaths.goalR.getCoors();
 			ourGoalAngle = rmaths.goalL.getAngle();
-			theirGoalAngle = rmaths.goalR.getAngle();
+//			theirGoalAngle = rmaths.goalR.getAngle();
 		}
 		plannedCommands = new CommandStack();
 		skipNextPlanningPhase = false;
 		optimumGP = theirGoal;
-		safePoint = RobotMath.projectPoint(ourGoal, ourGoalAngle, 70 );
+		safePoint = RobotMath.projectPoint(ourGoal, ourGoalAngle, 70);
 		
 		playMode = argc < 3;
 		penaltyDefMode = argc == 3 && args[2].equalsIgnoreCase("defendPenalty");
 		penaltyAtkMode = argc == 3 && args[2].equalsIgnoreCase("shootPenalty");
-		penaltyAngle = Math.random() > 0.5 ? 0 : Math.PI;
 
 		matchStartTime = System.currentTimeMillis();
 		
@@ -114,9 +112,8 @@ public class GeneralPlanningScript extends Thread {
 			else if (penaltyDefMode) {
 				System.out.println("********* Start Defend Penalty *********");
 				penaltyDefMode();
-				boolean timeUp = matchStartTime + timeToTakePenalty > System.currentTimeMillis();
-				boolean theyShot = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) < 40;
-				if (timeUp || theyShot) {
+				boolean timeUp = System.currentTimeMillis() > matchStartTime + timeToTakePenalty;
+				if (timeUp || ball.isMoving()) {
 					penaltyDefMode = false;
 					playMode = true;
 					System.out.println("********* End Defend Penalty *********");
@@ -125,9 +122,8 @@ public class GeneralPlanningScript extends Thread {
 			else if (penaltyAtkMode) {
 				System.out.println("********* Start Attack Penalty *********");
 				penaltyAtkMode();
-				boolean timeUp = matchStartTime + timeToTakePenalty > System.currentTimeMillis();
-				boolean weShot = !haveBall();
-				if (timeUp || weShot) {
+				boolean timeUp = System.currentTimeMillis() > matchStartTime + timeToTakePenalty;
+				if (timeUp || !haveBall()) {
 					penaltyAtkMode = false;
 					playMode = true;
 					System.out.println("********* End Attack Penalty *********");
@@ -153,15 +149,10 @@ public class GeneralPlanningScript extends Thread {
 		if (!skipNextPlanningPhase) {
 			if (END_MOVE_START_ROTATE_DISTANCE_THRESHOLD > 
 					RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) 
-					&& (!(rmaths.isFacing(ourRobot, theirGoal)))) {
+					&& (!(RobotMath.isFacing(ourRobot, theirGoal)))) {
 				//shimmy();
-				Robot goalRobot = new Robot();
-				goalRobot.setAngle(theirGoalAngle);
-				goalRobot.setCoors(theirGoal);
-				move(rmaths.pointBehindBall(goalRobot, ball.getCoors()), ball.getCoors(),theirGoalAngle);
-				//System.out.println("SHIMMEHYEHE");
-				
-				
+				move(rmaths.pointBehindBall(theirGoal, ball.getCoors()), ball.getCoors(), 0);
+//				System.out.println("SHIMMEHYEHE");
 			} else if (haveBall()) {
 				System.out.println("We have ball");
 				// opportunistic strategy:
@@ -173,7 +164,7 @@ public class GeneralPlanningScript extends Thread {
 					if (opponentIsInWay()) {
 						System.out.println("We want to kick but opponent in way");
 							//move to the optimum position
-							move(optimumGP);
+							move(theirGoal);
 					} else {
 						System.out.println("We want to kick and have clear shot");
 						plannedCommands.pushKickCommand(ourRobot.getCoors(),
@@ -181,7 +172,7 @@ public class GeneralPlanningScript extends Thread {
 						skipNextPlanningPhase = true;
 					}	
 				} else {
-					move(optimumGP);
+					move(theirGoal);
 					//plannedCommands.pushMoveCommand(ourRobot.getCoors(), optimumGP, true);
 				}
 			} else {
@@ -326,7 +317,7 @@ public class GeneralPlanningScript extends Thread {
 	static boolean haveBall() {
 		double distToBall = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
 		boolean closeToBall = distToBall < HAS_BALL_DISTANCE_THRESHOLD;
-		boolean facingBall = rmaths.isFacing(ourRobot, ball.getCoors());
+		boolean facingBall = RobotMath.isFacing(ourRobot, ball.getCoors());
 		
 		return closeToBall && facingBall;
 	}
@@ -378,28 +369,46 @@ public class GeneralPlanningScript extends Thread {
 	}
 	
 	static void penaltyDefMode() {
-		if (ourRobot.getCoors().getY() > ball.getCoors().getY()) {
+		Position frontOfUs = RobotMath.projectPoint(ourRobot.getCoors(), ourRobot.getAngle(), 30);
+		Position projectedPoint = RobotMath.projectPoint(theirRobot.getCoors(), theirRobot.getAngle(),
+				 (int) RobotMath.euclidDist(ourRobot.getCoors(), theirRobot.getCoors()));
+		if (ourRobot.getCoors().getY() > projectedPoint.getY()) {
 			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
-					ourRobot.getCoors(), 0.0, 100),
-					ball.getCoors(), false));
+					ourRobot.getCoors(), Math.PI, 100),
+					frontOfUs, false));
+			Position p = RobotMath.projectPoint(ourRobot.getCoors(), 0.0, 100);
+			System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
+			System.out.println("going to: " + p.getX() + " y: " + p.getY());
 		} else {
 			sendMoveCommand(new MoveCommand(RobotMath.projectPoint
-					(ourRobot.getCoors(), Math.PI, 100),
-					ball.getCoors(), false));
+					(ourRobot.getCoors(), 0.0, 100),
+					frontOfUs, false));
+			Position p = RobotMath.projectPoint(ourRobot.getCoors(), Math.PI, 100);
+			System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
+			System.out.println("going to: " + p.getX() + " y: " + p.getY());
 		}
+//		if (ourRobot.getCoors().getY() > ball.getCoors().getY()) {
+//			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
+//					ourRobot.getCoors(), 0.0, 100),
+//					ball.getCoors(), false));
+//		} else {
+//			sendMoveCommand(new MoveCommand(RobotMath.projectPoint
+//					(ourRobot.getCoors(), Math.PI, 100),
+//					ball.getCoors(), false));
+//		}
 	}
 	
 	static void penaltyAtkMode() {
-		Position target = RobotMath.projectPoint(
-			theirGoal,
-			penaltyAngle,
-			30);
-		boolean facingTarget = rmaths.isFacing(ourRobot, target);
-		if (!facingTarget) {
-			sendMoveCommand(new MoveCommand(ourRobot.getCoors(), target, true));
-		}
-		else {
+//		Position target = RobotMath.projectPoint(
+//			theirGoal,
+//			penaltyAngle,
+//			30);
+//		boolean facingTarget = rmaths.isFacing(ourRobot, target);
+//		if (!facingTarget) {
+//			sendMoveCommand(new MoveCommand(ourRobot.getCoors(), target, true));
+//		}
+//		else {
 			sendKickCommand(new KickCommand());
-		}
+//		}
 	}
 }
