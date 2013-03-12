@@ -182,7 +182,7 @@ public class RobotMath {
     public int[] getMotorValues(double rotationfactor, double angle, boolean hardRotate){
          double[] motors = {0,0,0,0};
          int[] returnvalues = {0,0,0,0};
-         double multfactor = 150;
+         double multfactor = 255;
          double maxval = 0.0001;
          if (wantsToRotate) {
                  for (int i = 0; i<4;i++){

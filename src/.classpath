@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="Augsrc/src/" kind="src" path=""/>
+	<classpathentry kind="src" path="Augsrc/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/2012-5-2/lib/v4l4j.jar"/>
+	<classpathentry kind="output" path="Augsrc/bin"/>
+</classpath>

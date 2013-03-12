@@ -8,6 +8,10 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
+import Commands.Command;
+import Commands.CommandStack;
+import Commands.KickCommand;
+import Commands.MoveCommand;
 import JavaVision.Position;
 
 /**
@@ -25,11 +29,10 @@ import JavaVision.Position;
  * @author      Caithan Moore s1024940
  * @author		c-w
  */
-public class GeneralPlanningScript extends Thread {
+public class TestGPS extends Thread {
 	public static double HAS_BALL_DISTANCE_THRESHOLD = 60.0;
 	public static double END_MOVE_START_ROTATE_DISTANCE_THRESHOLD = 100.0;
 	
-	static VisionReader vision;
 	static RobotMath rmaths;
 	
 	private static Context context;
@@ -61,16 +64,10 @@ public class GeneralPlanningScript extends Thread {
 	
 	public static void main(String[] args) {
 		int argc = args.length;
-		vision = new VisionReader(args[0]); //Our Colour - MAKE GUI 4 DIS
 		rmaths = new RobotMath(); rmaths.init();
-		context = ZMQ.context(1);
-		socket = context.socket(ZMQ.REQ);
-        socket.connect("tcp://127.0.0.1:5555");
-        sendZeros();
-        System.out.println(args[1].toString());
+		System.out.println(args[1].toString());
 		shootingRight = args[1].equals("right");
 		System.out.println(shootingRight);
-		
 		
 		if (!shootingRight){
 			ourGoal	= rmaths.goalR.getCoors();
@@ -83,6 +80,7 @@ public class GeneralPlanningScript extends Thread {
 			ourGoalAngle = rmaths.goalL.getAngle();
 			theirGoalAngle = rmaths.goalR.getAngle();
 		}
+		
 		plannedCommands = new CommandStack();
 		skipNextPlanningPhase = false;
 		optimumGP = theirGoal;
@@ -94,15 +92,24 @@ public class GeneralPlanningScript extends Thread {
 		penaltyAngle = Math.random() > 0.5 ? 0 : Math.PI;
 
 		matchStartTime = System.currentTimeMillis();
+		ourRobot = new Robot();
+		ourRobot.setCoors(new Position (100,100));
+		ourRobot.setAngle((float) Math.PI);
+		theirRobot = new Robot();
+		theirRobot.setCoors(new Position(400,400));
+		theirRobot.setAngle(0);
+		ball = new Ball();
+		ball.setCoors(new Position(600,200));
 		
 		while (true) {
+			
 			try {
-				sleep(40);
+				sleep(400);
 			} catch (InterruptedException e) {
 				System.err.println("Sleep interruption in Planning script");
 				e.printStackTrace();
 			}
-			if (!vision.readable()) {
+			if (false) {
 				continue;
 			}
 			
@@ -138,9 +145,6 @@ public class GeneralPlanningScript extends Thread {
 	
 	static void updateWorldState() {
 		// update state of world
-		ourRobot = vision.getOurRobot();
-		theirRobot = vision.getTheirRobot();
-		ball = vision.getBall();
 		rmaths.initLoop();
 	}
 	
@@ -153,12 +157,12 @@ public class GeneralPlanningScript extends Thread {
 		if (!skipNextPlanningPhase) {
 			if (END_MOVE_START_ROTATE_DISTANCE_THRESHOLD > 
 					RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) 
-					&& (!(rmaths.isFacing(ourRobot, theirGoal)))) {
-				//shimmy();
+					&& (!(RobotMath.isFacing(ourRobot, theirGoal)))) {
+				shimmy();
 				Robot goalRobot = new Robot();
 				goalRobot.setAngle(theirGoalAngle);
 				goalRobot.setCoors(theirGoal);
-				move(rmaths.pointBehindBall(goalRobot, ball.getCoors()), ball.getCoors(),theirGoalAngle);
+				//move(rmaths.pointBehindBall(goalRobot, ball.getCoors()), ball.getCoors(),0);
 				//System.out.println("SHIMMEHYEHE");
 				
 				
@@ -232,7 +236,7 @@ public class GeneralPlanningScript extends Thread {
 				sendMoveCommand(moveCommand);
 				if (dist < HAS_BALL_DISTANCE_THRESHOLD && 
 						(!moveCommand.getHardRotate() || 
-						 rmaths.isFacing(ourRobot, moveCommand.getRotateTowardsPoint()))) {
+						 RobotMath.isFacing(ourRobot, moveCommand.getRotateTowardsPoint()))) {
 					plannedCommands.pop();
 				}
 			}
@@ -272,7 +276,7 @@ public class GeneralPlanningScript extends Thread {
 		Position ballPos = ball.getCoors();
 		double distToBall = RobotMath.euclidDist(theirRobot.getCoors(), ballPos);
 		boolean closeToBall = distToBall <= HAS_BALL_DISTANCE_THRESHOLD;
-		boolean facingBall = rmaths.isFacing(theirRobot, ballPos);
+		boolean facingBall = RobotMath.isFacing(theirRobot, ballPos);
 		
 		return closeToBall && facingBall;
 	}
@@ -291,9 +295,9 @@ public class GeneralPlanningScript extends Thread {
 	
 	static boolean wantToKick() {
 		double positionScore = rmaths.getPositionScore(ourRobot.getCoors(),
-													!shootingRight, 0.5);
+													!shootingRight, 0.1);
 		System.out.println(positionScore);
-		return positionScore > 0.8;
+		return positionScore > 0.9;
 	//Makes kicking much more unlikely - was generating 
 	//~ 5 kicks a second before at terrible positions.
 											
@@ -301,17 +305,20 @@ public class GeneralPlanningScript extends Thread {
 	
 	static void sendMoveCommand(Command command) {
 		MoveCommand moveCommand = (MoveCommand) command;
-		String signal = rmaths.getSigToPoint(
-				ourRobot,
-				moveCommand.moveTowardsPoint,
-				moveCommand.rotateTowardsPoint,
-				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
-		sendreceive(signal);
+		Position dest = moveCommand.moveTowardsPoint;
+		int newx = ourRobot.getCoors().getX() + ((dest.getX()-ourRobot.getCoors().getX())/10) ;
+		int newy = ourRobot.getCoors().getY() + ((dest.getY()-ourRobot.getCoors().getY())/10) ;
+		ourRobot.setCoors(new Position(newx,newy));
+		Position rpoint = moveCommand.rotateTowardsPoint;
+		float newangle = (float) (ourRobot.getAngle() + RobotMath.getAngleFromRobotToPoint(ourRobot,rpoint)/10);
+		ourRobot.setAngle(newangle);
+		System.out.println(newx + " " + newy + " " + newangle);
 	}
 	
 	static void sendKickCommand(Command c) {
-		sendZeros();
-		sendreceive("3");
+		System.out.println("KICK");
+		//sendZeros();
+		//sendreceive("3");
 	}
 
 	static void sendreceive(String signal) {
@@ -326,7 +333,7 @@ public class GeneralPlanningScript extends Thread {
 	static boolean haveBall() {
 		double distToBall = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
 		boolean closeToBall = distToBall < HAS_BALL_DISTANCE_THRESHOLD;
-		boolean facingBall = rmaths.isFacing(ourRobot, ball.getCoors());
+		boolean facingBall = RobotMath.isFacing(ourRobot, ball.getCoors());
 		
 		return closeToBall && facingBall;
 	}
@@ -394,7 +401,7 @@ public class GeneralPlanningScript extends Thread {
 			theirGoal,
 			penaltyAngle,
 			30);
-		boolean facingTarget = rmaths.isFacing(ourRobot, target);
+		boolean facingTarget = RobotMath.isFacing(ourRobot, target);
 		if (!facingTarget) {
 			sendMoveCommand(new MoveCommand(ourRobot.getCoors(), target, true));
 		}
