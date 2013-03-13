@@ -41,15 +41,15 @@ public class GeneralPlanningScriptB extends Thread {
 	static Robot theirRobot;
 	static Ball ball;
 	static long kickTimeOut;
+	final static int kickAllowance = 2000;
+	static long penaltyTimeOut;
+	final static int penaltyAllowance = 20000;
 	
 	static CommandStack plannedCommands;
 
 	static boolean playMode;
 	static boolean penaltyDefMode;
 	static boolean penaltyAtkMode;
-	
-	static int penaltyTimeOut = 20000;
-	static long matchStartTime;
 	
 	public static void main(String[] args) {
 		int argc = args.length;
@@ -62,19 +62,14 @@ public class GeneralPlanningScriptB extends Thread {
 		shootingRight = args[1].equals("right");
 		System.out.println("Shooting right: " + shootingRight);
 		
+		theirGoal = shootingRight ? robotMath.goalR.getCoors() : robotMath.goalL.getCoors();
 		
-		if (!shootingRight){
-			theirGoal = robotMath.goalL.getCoors();
-		} else {
-			theirGoal = robotMath.goalR.getCoors();
-		}
 		plannedCommands = new CommandStack();
 		
 		playMode = argc < 3;
 		penaltyDefMode = argc == 3 && args[2].equalsIgnoreCase("defendPenalty");
 		penaltyAtkMode = argc == 3 && args[2].equalsIgnoreCase("shootPenalty");
-
-		matchStartTime = System.currentTimeMillis();
+		penaltyTimeOut = System.currentTimeMillis() + penaltyAllowance;
 		
 		while (true) {
 			try {
@@ -93,23 +88,23 @@ public class GeneralPlanningScriptB extends Thread {
 			}
 			else {
 				// penalty mode
-				boolean timeUp = System.currentTimeMillis() > matchStartTime + penaltyTimeOut;
+				boolean timeUp = System.currentTimeMillis() > penaltyTimeOut;
 				if (penaltyDefMode) {
-					System.out.println("********* Start Defend Penalty *********");
+					// System.out.println("********* Start Defend Penalty *********");
 					penaltyDefMode();
 					if (timeUp || ball.isMoving()) {
 						penaltyDefMode = false;
 						playMode = true;
-						System.out.println("********* End Defend Penalty *********");
+						// System.out.println("********* End Defend Penalty *********");
 					}
 				}
 				else {
-					System.out.println("********* Start Attack Penalty *********");
+					// System.out.println("********* Start Attack Penalty *********");
 					penaltyAtkMode();
 					if (timeUp || !haveBall()) {
 						penaltyAtkMode = false;
 						playMode = true;
-						System.out.println("********* End Attack Penalty *********");
+						// System.out.println("********* End Attack Penalty *********");
 					}
 				}
 			}
@@ -125,39 +120,51 @@ public class GeneralPlanningScriptB extends Thread {
 	}
 	
 	static void playMode() {
+		// System.out.println(robotMath.getPositionScore(ourRobot.getCoors(),
+		// 											shootingRight, 0.5));
+		// System.out.println("hitScore: "+robotMath.getHitScore(ourRobot, shootingRight));
+		System.out.println(robotMath.getHitScore(ourRobot, shootingRight));
 		// !!!! planning phase !!!!
 		if (!haveBall()) {
 			Position target = robotMath.pointBehindBall(theirGoal, ball.getCoors(), BEHIND_BALL_DIST);
-			// Robot obstacle = new Robot(ball.getCoors(), ball.getAngle());
+			// System.out.println("  BALL X: " + ball.getCoors().getX() + " Y: " + ball.getCoors().getY());
+			// System.out.println("TARGET X: " + target.getX() + " Y: " + target.getY());
 			planMove(target, theirGoal);
 		} 
 		else {
+			System.out.println("we have ball X: " + ball.getCoors().getX() + " Y: " + ball.getCoors().getY());
 			if (wantToKick()) {
 				plannedCommands.push(new KickCommand());
+				// System.out.println("planning to kick");
 			}
 			else {
 				planMove(theirGoal);
+				// System.out.println("planning to DRIBBLE");
 			}
 		}
-		
 		// !!!! execution phase !!!!
-		Command commandContainer = plannedCommands.getFirst();
-		if (commandContainer instanceof KickCommand) {
-			sendKickCommand(plannedCommands.pop());
-			kickTimeOut = System.currentTimeMillis() + 2000;
-		}
-		else {
-			boolean wantToMove = true;
-			MoveCommand moveCommand = (MoveCommand) plannedCommands.pop();
-			while (RobotMath.euclidDist(ourRobot.getCoors(), moveCommand.moveTowardsPoint) < GOT_THERE_DIST) {
-				if (plannedCommands.isEmpty()) {
-					wantToMove = false;
-					break;
+		playExecute();
+	}
+	
+	static void playExecute() {
+		if (!plannedCommands.isEmpty()) {
+			System.out.println("Size of cmst: "+plannedCommands.size());
+			Command commandContainer = plannedCommands.pop();
+			if (commandContainer instanceof KickCommand) {
+				sendKickCommand(commandContainer);
+				kickTimeOut = System.currentTimeMillis() + kickAllowance;
+				// System.out.println("--and we kick");
+			}
+			else {
+				MoveCommand moveCommand = (MoveCommand) commandContainer;
+				if (RobotMath.euclidDist(ourRobot.getCoors(), moveCommand.moveTowardsPoint) < GOT_THERE_DIST) {
+					System.out.println("-----fuck this shit");
+					playExecute();
 				}
-				moveCommand = (MoveCommand) plannedCommands.pop();
-			} 
-			if (wantToMove) {
-				sendMoveCommand(moveCommand);
+				else {
+					// System.out.println("--and we GOOO");
+					sendMoveCommand(moveCommand);
+				}
 			}
 		}
 	}
@@ -168,18 +175,16 @@ public class GeneralPlanningScriptB extends Thread {
 				 (int) RobotMath.euclidDist(ourRobot.getCoors(), theirRobot.getCoors()));
 		if (ourRobot.getCoors().getY() > projectedPoint.getY()) {
 			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
-					ourRobot.getCoors(), Math.PI, 100),
-					frontOfUs, false));
-			Position p = RobotMath.projectPoint(ourRobot.getCoors(), 0.0, 100);
-			System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
-			System.out.println("going to: " + p.getX() + " y: " + p.getY());
+					ourRobot.getCoors(), Math.PI, 100), frontOfUs, false));
+			// Position p = RobotMath.projectPoint(ourRobot.getCoors(), Math.PI, 100);
+			// System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
+			// System.out.println("going to: " + p.getX() + " y: " + p.getY());
 		} else {
-			sendMoveCommand(new MoveCommand(RobotMath.projectPoint
-					(ourRobot.getCoors(), 0.0, 100),
-					frontOfUs, false));
-			Position p = RobotMath.projectPoint(ourRobot.getCoors(), Math.PI, 100);
-			System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
-			System.out.println("going to: " + p.getX() + " y: " + p.getY());
+			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
+					ourRobot.getCoors(), 0.0, 100), frontOfUs, false));
+			// Position p = RobotMath.projectPoint(ourRobot.getCoors(), 0.0, 100);
+			// System.out.println("robot is: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
+			// System.out.println("going to: " + p.getX() + " y: " + p.getY());
 		}
 	}
 	
@@ -187,7 +192,7 @@ public class GeneralPlanningScriptB extends Thread {
 		sendKickCommand(new KickCommand());
 	}
 	
-	private static void planMove(Position coors, Robot obstacle, Position toFace) {
+	private static void planMove(Position coors, Robot obstacle, Position coorsToFace) {
 		ArrayList<Point> path = PathSearchHolly.getPath2(
 				new Point(coors.getX(), coors.getY()), 
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()), 
@@ -196,7 +201,8 @@ public class GeneralPlanningScriptB extends Thread {
 				(int) Math.toDegrees(obstacle.getAngle()), 
 				shootingRight ? PathSearchHolly.LEFT : PathSearchHolly.RIGHT);
 		        // if we're shootingRight, *our* side is LEFT
-		plannedCommands.pushMoveCommand(path, toFace, false);
+		plannedCommands.pushMoveCommand(path, coorsToFace);
+		System.out.println("Size of path: "+path.size());
 	}
 	
 	private static void planMove(Position coors, Robot obstacle) {
@@ -210,16 +216,23 @@ public class GeneralPlanningScriptB extends Thread {
 	private static void planMove(Position coors) {
 		planMove(coors, theirRobot);
 	}
+	
+	static boolean haveBall() {
+		double distToBall = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
+		boolean closeToBall = distToBall < DRIBBLE_DIST;
+		boolean facingBall = RobotMath.isFacing(ourRobot, ball.getCoors());
+		// boolean targetingBall = RobotMath.isTargeting(ourRobot, ball.getCoors());
+		
+		return closeToBall && facingBall;
+	}
 
 	static boolean wantToKick() {
 		double positionScore = robotMath.getPositionScore(ourRobot.getCoors(),
-													!shootingRight, 0.5);
-		System.out.println(positionScore);
-		return (System.currentTimeMillis() > kickTimeOut && positionScore > 0.5);
-	//Makes kicking much more unlikely - was generating 
-	//~ 5 kicks a second before at terrible positions.
-											
+													shootingRight, 0.5);
+		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
+		return kickingAllowed && positionScore > 0.75;								
 	}
+
 	
 	static void sendMoveCommand(Command command) {
 		MoveCommand moveCommand = (MoveCommand) command;
@@ -230,27 +243,19 @@ public class GeneralPlanningScriptB extends Thread {
 				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
 		sendreceive(signal);
 	}
-	
-	static void sendKickCommand(Command c) {
-		sendZeros();
-		sendreceive("3");
-	}
 
 	static void sendreceive(String signal) {
-		///*
+		/*
 		socket.send(signal, 0);
         System.out.println("Sending OK");
         socket.recv(0);
         System.out.println("Receiving OK");
-		// */
+		 */
 	}
 	
-	static boolean haveBall() {
-		double distToBall = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
-		boolean closeToBall = distToBall < DRIBBLE_DIST;
-		boolean facingBall = RobotMath.isFacing(ourRobot, ball.getCoors());
-		
-		return closeToBall && facingBall;
+	static void sendKickCommand(Command c) {
+		sendZeros();
+		sendreceive("3");
 	}
 
 	static void sendZeros() {
