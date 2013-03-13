@@ -122,11 +122,11 @@ public class RobotMath {
     public static double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
-                 if (((Math.PI*2) - angle) > (Math.PI/5)) {
+                 if (((Math.PI*2) - angle) > (Math.PI/7)) {
                          value = 0.3;
                  }
                 
-         } else if (angle > Math.PI/5) {
+         } else if (angle > Math.PI/7) {
                  value = -0.3;
          }
          //TODO:Remove.
@@ -419,7 +419,7 @@ public class RobotMath {
 	     */
 	 public static Position projectPoint(Position pos, double ang, int dist){
 	 	int newX = (int) (pos.getX() + (dist*Math.sin(ang)));
-	     int newY = (int) (pos.getY() + (dist*Math.cos(ang)));
+	     int newY = (int) (pos.getY() - (dist*Math.cos(ang)));
 	     Position goPoint = new Position(newX,newY);
 	     return goPoint;
 	}
