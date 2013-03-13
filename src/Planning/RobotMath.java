@@ -135,9 +135,9 @@ public class RobotMath {
          return value;
     }
 
-    public boolean isTargeting(Robot robot, Position point) {
+    public static boolean isTargeting(Robot robot, Position point) {
         double angle = getAngleFromRobotToPoint(robot,point);
-        double value = 0;;
+        double value = 0;
         if (angle > (Math.PI) ){
             if (((Math.PI*2) - angle) > (Math.PI/6)) {
                     value = 0.3;
@@ -393,7 +393,7 @@ public class RobotMath {
 		 	Robot goalRobot = new Robot();
 		 	goalRobot.setCoors(goal);
 		 	goalRobot.setAngle(0);
-	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball)+Math.PI;
+	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball);//+Math.PI;
 	         Position goPoint;
 	        
 	         goPoint = projectPoint(ball, rvrsBallToGoal, distance);
@@ -544,11 +544,11 @@ public class RobotMath {
 	public double getAngleScore(Position robot, boolean shootingRight){
 		double angle = getAngleToGoal(robot, shootingRight);
 		
-		double maxangle = getAngleToGoal(shootingRight ? goalR.getCoors() : goalL.getCoors(), shootingRight);
-		double maxa = Math.max(maxangle, angle);
-		double mina = Math.min(maxangle, angle);
+		double minangle = getAngleToGoal(shootingRight ? goalR.getCoors() : goalL.getCoors(), shootingRight);
+		double maxa = Math.max(minangle, angle);
+		double mina = Math.min(minangle, angle);
 		
-		return 1 - (mina / maxa);
+		return mina / maxa;
 	}
 	
 	/**
@@ -610,4 +610,20 @@ public class RobotMath {
 		double weightedScore = distanceScore * preferDistanceBy + angleScore * (1 - preferDistanceBy);
 		return weightedScore;
 	}
+	
+	public double getHitScore(Robot robot, boolean r) {
+		int goalX = r ? goalR.getCoors().getX() : goalL.getCoors().getX();
+		int topY = r ? goalR_top.getCoors().getY() : goalL_top.getCoors().getY();
+		int botY = r ? goalR_bottom.getCoors().getY() : goalL_bottom.getCoors().getY();
+		double tan = Math.tan(r ? 
+				robot.getAngle() - goalR.getAngle() : 
+				goalL.getAngle() - robot.getAngle());
+		int hitY = robot.getCoors().getY() + (int) (Math.abs(robot.getCoors().getX() - goalX)* tan);
+		System.out.println(hitY);
+		// supposing topY < botY
+		int d1 = botY - hitY;
+		int d2 = hitY - topY;
+		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
+	}
+	
 }
