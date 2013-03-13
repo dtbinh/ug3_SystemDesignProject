@@ -65,7 +65,7 @@ public class ObjectAvoidance{
 		Position initial;
 		
 		if(getDist(robot.getCoors(),opposition.getCoors()) < 60){
-			initial =  rmaths.pointBehindBall(goal, opposition.getCoors());
+			initial =  rmaths.pointBehindBall(goal.getCoors(), opposition.getCoors());
 		}else{
 			initial = null;
 		}
@@ -84,7 +84,7 @@ public class ObjectAvoidance{
 			int endX = ballX;
 			int endY = ballY;
 			ballPoint = new Position(endX,endY);
-			endPoint = rmaths.pointBehindBall(goal, ballPoint);
+			endPoint = rmaths.pointBehindBall(goal.getCoors(), ballPoint);
 		}else{
 			//not right
 			int endX = (int) (2 * (dist*Math.sin(usObsAngle)));
