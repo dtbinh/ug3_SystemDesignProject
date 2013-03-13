@@ -389,6 +389,24 @@ public class RobotMath {
 	         return goPoint;
 	        
 	}
+	 public Position pointBehindBall(Position goal, Position ball, int distance){
+		 	Robot goalRobot = new Robot();
+		 	goalRobot.setCoors(goal);
+		 	goalRobot.setAngle(0);
+	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball)+Math.PI;
+	         Position goPoint;
+	        
+	         goPoint = projectPoint(ball, rvrsBallToGoal, distance);
+	        
+	        
+	         if (!withinPitch(goPoint)){
+	                 goPoint.setX((ball.getX()));
+	                 goPoint.setY((ball.getY()));
+	         }
+	         return goPoint;
+	        
+	}
+	 
 	 
 	 /**
 	     *Projects a point behind a point at a given angle and distance
