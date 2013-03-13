@@ -55,6 +55,7 @@ public class BluetoothPC extends Thread {
 		String new_req = null;
 		String reply_string = null;
 
+
 		while (true) {
 			last_req = null;
 			new_req = null;
@@ -68,24 +69,29 @@ public class BluetoothPC extends Thread {
 			// TODO: check for syntax?
 
 			synchronized(req_queue) {
-				// Get last element of the queue
-				if (!req_queue.isEmpty())
-					last_req = req_queue.getLast();
 
-				// Check if queue is empty
-				if (last_req != null) {
-					// Compare and remove if opcode matches
-					if (split(new_req, " ")[0].equals(split(last_req, " ")[0])) {
-						System.out.println("\tUpdate!");
+				if (req_queue.size() <= 5) {
+					// Get last element of the queue
+					if (!req_queue.isEmpty())
+						last_req = req_queue.getLast();
 
-						// The last pushed op is the same as new one, only update parameters
-						// Remove last element from the queue
-						req_queue.removeLast();
+					// Check if queue is empty
+					if (last_req != null) {
+						// Compare and remove if opcode matches
+						if (split(new_req, " ")[0].equals(split(last_req, " ")[0])) {
+							System.out.println("\tUpdate!");
+
+							// The last pushed op is the same as new one, only update parameters
+							// Remove last element from the queue
+							req_queue.removeLast();
+						}
 					}
-				}
 
-				// Push (or "update") with new request
-				req_queue.push(new_req);
+					// Push (or "update") with new request
+					req_queue.push(new_req); 
+				} else {
+					System.out.println("\tDrop!");
+				}
 			}
 
 			// Reply with status and touch sensor data
@@ -140,6 +146,7 @@ public class BluetoothPC extends Thread {
 			//in.close();
 			//out.close();
 			int ack = 0;
+			String request = null;
 
 			while (true) {
 				// Parse request from request queue
@@ -148,8 +155,10 @@ public class BluetoothPC extends Thread {
 				if (!req_queue.isEmpty()) {
 					synchronized(req_queue) {
 						// Send request to robot
-						handle_request(req_queue.pop());
+						request = req_queue.pop();
 					}
+
+					handle_request(request);
 
 					// Read ACK (status of touch sensors)
 					ack = in.read();
