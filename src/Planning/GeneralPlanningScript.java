@@ -48,7 +48,7 @@ public class GeneralPlanningScript extends Thread {
 	static CommandStack plannedCommands;
 	static boolean skipNextPlanningPhase;
 	private static Position safePoint;
-//	static float theirGoalAngle;
+	static float theirGoalAngle;
 	static float ourGoalAngle;
 	
 	static boolean playMode;
@@ -75,12 +75,12 @@ public class GeneralPlanningScript extends Thread {
 			ourGoal	= rmaths.goalR.getCoors();
 			theirGoal = rmaths.goalL.getCoors();
 			ourGoalAngle = rmaths.goalR.getAngle();
-//			theirGoalAngle = rmaths.goalL.getAngle();
+			theirGoalAngle = rmaths.goalL.getAngle();
 		} else {
 			ourGoal	= rmaths.goalL.getCoors();
 			theirGoal = rmaths.goalR.getCoors();
 			ourGoalAngle = rmaths.goalL.getAngle();
-//			theirGoalAngle = rmaths.goalR.getAngle();
+			theirGoalAngle = rmaths.goalR.getAngle();
 		}
 		plannedCommands = new CommandStack();
 		skipNextPlanningPhase = false;
@@ -151,8 +151,9 @@ public class GeneralPlanningScript extends Thread {
 					RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors()) 
 					&& (!(RobotMath.isFacing(ourRobot, theirGoal)))) {
 				//shimmy();
-				move(rmaths.pointBehindBall(theirGoal, ball.getCoors()), ball.getCoors(), 0);
-//				System.out.println("SHIMMEHYEHE");
+				Robot obstacle = new Robot(ball.getCoors(), theirGoalAngle);
+				move(rmaths.pointBehindBall(theirGoal, ball.getCoors()), obstacle, theirGoal);
+				System.out.println("SHIMMEHYEHE");
 			} else if (haveBall()) {
 				System.out.println("We have ball");
 				// opportunistic strategy:
@@ -172,6 +173,7 @@ public class GeneralPlanningScript extends Thread {
 						skipNextPlanningPhase = true;
 					}	
 				} else {
+					System.out.println("We don't want to kick");
 					move(theirGoal);
 					//plannedCommands.pushMoveCommand(ourRobot.getCoors(), optimumGP, true);
 				}
@@ -182,7 +184,7 @@ public class GeneralPlanningScript extends Thread {
 					if (opponentIsCloserToOurGoal()) {
 						System.out.println("They are closer to our goal than us");
 						//Run to da goal.
-						move(safePoint, ball.getCoors(), false);
+						move(safePoint, ball.getCoors());
 					}
 					else {
 						if (weAreBlocking()){
@@ -205,6 +207,8 @@ public class GeneralPlanningScript extends Thread {
 //					else                     { move(ball.getCoors()); }
 				}
 			}
+		} else {
+			System.out.println("Skipped this planning phase");
 		}
 		
 		// !!!! execution phase !!!!
@@ -223,7 +227,7 @@ public class GeneralPlanningScript extends Thread {
 				sendMoveCommand(moveCommand);
 				if (dist < HAS_BALL_DISTANCE_THRESHOLD && 
 						(!moveCommand.getHardRotate() || 
-						 rmaths.isFacing(ourRobot, moveCommand.getRotateTowardsPoint()))) {
+						 RobotMath.isFacing(ourRobot, moveCommand.getRotateTowardsPoint()))) {
 					plannedCommands.pop();
 				}
 			}
@@ -233,23 +237,28 @@ public class GeneralPlanningScript extends Thread {
 		}
 	}
 	
-	private static void move(Position p1, Position p2, boolean hardRotate) {
-		//TODO: implement
-	}
-	
-	private static void move(Position coors, Position obsCoors, float obsAngle) {
+	private static void move(Position coors, Robot obstacle, Position toFace) {
 		ArrayList<Point> path = PathSearchHolly.getPath2(
 				new Point(coors.getX(), coors.getY()), 
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()), 
 				(int) Math.toDegrees(ourRobot.getAngle()), 
-				new Point(obsCoors.getX(), obsCoors.getY()), 
-				(int) Math.toDegrees(obsAngle), 
+				new Point(obstacle.getCoors().getX(), obstacle.getCoors().getY()), 
+				(int) Math.toDegrees(obstacle.getAngle()), 
 				shootingRight ? PathSearchHolly.LEFT : PathSearchHolly.RIGHT);
 		        // if we're shootingRight, *our* side is LEFT
-		plannedCommands.pushMoveCommand(path);
+		plannedCommands.pushMoveCommand(path, toFace, false);
 	}
+	
+	private static void move(Position coors, Robot obstacle) {
+		move(coors, obstacle, coors);
+	}
+	
+	private static void move(Position coors, Position toFace) {
+		move(coors, theirRobot, toFace);
+	}
+	
 	private static void move(Position coors) {
-		move(coors, theirRobot.getCoors(), theirRobot.getAngle());
+		move(coors, theirRobot);
 	}
 
 	static boolean opponentIsCloserToOurGoal() {
@@ -284,7 +293,7 @@ public class GeneralPlanningScript extends Thread {
 		double positionScore = rmaths.getPositionScore(ourRobot.getCoors(),
 													!shootingRight, 0.5);
 		System.out.println(positionScore);
-		return positionScore > 0.8;
+		return positionScore > 0.5;
 	//Makes kicking much more unlikely - was generating 
 	//~ 5 kicks a second before at terrible positions.
 											
