@@ -390,21 +390,14 @@ public class RobotMath {
 	        
 	}
 	 public Position pointBehindBall(Position goal, Position ball, int distance){
-		 	Robot goalRobot = new Robot();
-		 	goalRobot.setCoors(goal);
-		 	goalRobot.setAngle(0);
-	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball);//+Math.PI;
-	         Position goPoint;
-	        
-	         goPoint = projectPoint(ball, rvrsBallToGoal, distance);
-	        
-	        
-	         if (!withinPitch(goPoint)){
-	                 goPoint.setX((ball.getX()));
-	                 goPoint.setY((ball.getY()));
-	         }
-	         return goPoint;
-	        
+		double rvrsBallToGoal = getAngleFromRobotToPoint(new Robot(goal, 0), ball);
+		Position goPoint = projectPoint(ball, rvrsBallToGoal, distance);
+
+		if (!withinPitch(goPoint)){
+			goPoint.setX((ball.getX()));
+		    goPoint.setY((ball.getY()));
+		}
+		return goPoint;
 	}
 	 
 	 
@@ -619,8 +612,6 @@ public class RobotMath {
 				robot.getAngle() - goalR.getAngle() : 
 				goalL.getAngle() - robot.getAngle());
 		int hitY = robot.getCoors().getY() + (int) (Math.abs(robot.getCoors().getX() - goalX)* tan);
-		System.out.println(hitY);
-		// supposing topY < botY
 		int d1 = botY - hitY;
 		int d2 = hitY - topY;
 		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
