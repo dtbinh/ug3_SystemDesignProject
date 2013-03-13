@@ -22,8 +22,7 @@ public class CommandStack {
 		this.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
 	}
 	
-	public void pushMoveCommand(List<Point> points, Position rotatePoint,
-			boolean hardRotate) {
+	public void pushMoveCommand(List<Point> points, Position rotatePoint) {
 		int numel = points.size();
 		// Skip first element of list (current robot coordinates) - we're there already
 		for (int i = numel - 1; i > 0; i--) {
@@ -32,14 +31,8 @@ public class CommandStack {
 	}
 	
 	public void pushMoveCommand(List<Point> points) {
-		int numel = points.size();
-		Position lastPosition = new Position(points.get(numel - 1));
-		// Skip first element of list (current robot coordinates) - we're there already
-		for (int i = numel - 1; i > 0; i--) {
-			this.pushMoveCommand(new Position(points.get(i)), lastPosition, i == 1);
-		}
+		pushMoveCommand(points, new Position(points.get(points.size() -1)));
 	}
-
 
 	public void pushKickCommand(Position kickPoint, Position ballPoint) {
 		KickCommand kickCommand = new KickCommand();
