@@ -26,7 +26,7 @@ public class CommandStack {
 		int numel = points.size();
 		// Skip first element of list (current robot coordinates) - we're there already
 		for (int i = numel - 1; i > 0; i--) {
-			this.pushMoveCommand(new Position(points.get(i)), rotatePoint, i == 1);
+			this.pushMoveCommand(new Position(points.get(i)), rotatePoint, true);//i == 1);
 		}
 	}
 	
@@ -39,6 +39,13 @@ public class CommandStack {
 		if (!this.contains(kickCommand)) {
 			this.push(kickCommand);
 			this.push(new MoveCommand(kickPoint, ballPoint, true));
+		}
+	}
+	
+	public void pushKickCommand() {
+		KickCommand kickCommand = new KickCommand();
+		if (!this.contains(kickCommand)) {
+			this.push(kickCommand);
 		}
 	}
 
