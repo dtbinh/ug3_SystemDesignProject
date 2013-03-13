@@ -63,7 +63,6 @@ public class Ball extends ObjectDetails {
 		return new RealVector(speedX, speedY);
 	}
 	public boolean isMoving() {
-		System.out.println(this.getVelocity().abs());
 		return (this.getVelocity().abs() > 0.05);
 	}
 	/**
