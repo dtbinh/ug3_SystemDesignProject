@@ -17,6 +17,20 @@ public class CommandStack {
 		stack = new Stack<Command>();
 	}
 
+	public void pushMoveCommand(Position movePoint, Position rotatePoint,
+								boolean hardRotate) {
+		this.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
+	}
+	
+	public void pushMoveCommand(List<Point> points, Position rotatePoint,
+			boolean hardRotate) {
+		int numel = points.size();
+		// Skip first element of list (current robot coordinates) - we're there already
+		for (int i = numel - 1; i > 0; i--) {
+			this.pushMoveCommand(new Position(points.get(i)), rotatePoint, i == 1);
+		}
+	}
+	
 	public void pushMoveCommand(List<Point> points) {
 		int numel = points.size();
 		Position lastPosition = new Position(points.get(numel - 1));
@@ -26,10 +40,6 @@ public class CommandStack {
 		}
 	}
 
-	public void pushMoveCommand(Position movePoint, Position rotatePoint,
-								boolean hardRotate) {
-		this.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
-	}
 
 	public void pushKickCommand(Position kickPoint, Position ballPoint) {
 		KickCommand kickCommand = new KickCommand();
