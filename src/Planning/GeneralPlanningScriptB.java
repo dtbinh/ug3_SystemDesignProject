@@ -115,7 +115,7 @@ public class GeneralPlanningScriptB extends Thread {
 		ourRobot = vision.getOurRobot();
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
-		// robotMath.initLoop();
+		robotMath.initLoop();
 	}
 	
 	static void playMode() {
@@ -163,16 +163,20 @@ public class GeneralPlanningScriptB extends Thread {
 	}
 	
 	static void penaltyDefMode() {
+		System.out.println("ourRobot x: " + ourRobot.getCoors().getX() + " y: " + ourRobot.getCoors().getY());
 		Position frontOfUs = RobotMath.projectPoint(ourRobot.getCoors(), ourRobot.getAngle(), 30);
-		Position projectedPoint = RobotMath.projectPoint(theirRobot.getCoors(), theirRobot.getAngle(),
+		System.out.println("frontOfUs x: " + frontOfUs.getX() + " y: " + frontOfUs.getY());
+		Position defendCoors = RobotMath.projectPoint(theirRobot.getCoors(), theirRobot.getAngle(),
 				 (int) RobotMath.euclidDist(ourRobot.getCoors(), theirRobot.getCoors()));
-		if (ourRobot.getCoors().getY() > projectedPoint.getY()) {
-			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
-					ourRobot.getCoors(), Math.PI, 100), frontOfUs, false));
-		} else {
-			sendMoveCommand(new MoveCommand(RobotMath.projectPoint(
-					ourRobot.getCoors(), 0.0, 100), frontOfUs, false));
+		System.out.println("defendCoors x: " + defendCoors.getX() + " y: " + defendCoors.getY());
+		if (ourRobot.getCoors().getY() - defendCoors.getY() > GOT_THERE_DIST) {
+			Position target = RobotMath.projectPoint(ourRobot.getCoors(), 0.0, 100);
+			sendMoveCommand(new MoveCommand(target, frontOfUs, false));
+		} else if (defendCoors.getY() - ourRobot.getCoors().getY() > GOT_THERE_DIST) {
+			Position target = RobotMath.projectPoint(ourRobot.getCoors(), Math.PI, 100);
+			sendMoveCommand(new MoveCommand(target, frontOfUs, false));
 		}
+		
 	}
 	
 	static void penaltyAtkMode() {
@@ -216,7 +220,7 @@ public class GeneralPlanningScriptB extends Thread {
 													shootingRight, 0.5);
 		double hitScore = robotMath.getHitScore(ourRobot, shootingRight);
 		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
-		return kickingAllowed && (positionScore + hitScore > 0.6);								
+		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.32);								
 	}
 
 	static void sendreceive(String signal) {
