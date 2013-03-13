@@ -246,7 +246,7 @@ public class GeneralPlanningScript extends Thread {
 				(int) Math.toDegrees(obstacle.getAngle()), 
 				shootingRight ? PathSearchHolly.LEFT : PathSearchHolly.RIGHT);
 		        // if we're shootingRight, *our* side is LEFT
-		plannedCommands.pushMoveCommand(path, toFace, false);
+		plannedCommands.pushMoveCommand(path, toFace);
 	}
 	
 	private static void move(Position coors, Robot obstacle) {
