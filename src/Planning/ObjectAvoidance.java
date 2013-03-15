@@ -11,6 +11,9 @@ public class ObjectAvoidance{
 	 * otherwise false
 	 */
 	public static boolean obstacleDetection(Position ourcoors, Position theirCoors, Position ball){
+		return obstacleDetection(ourcoors, theirCoors, ball, 50);
+	}
+	public static boolean obstacleDetection(Position ourcoors, Position theirCoors, Position ball, int width){
 		int ourX = ourcoors.getX();
 		int ourY = ourcoors.getY();
 		int obsX = theirCoors.getX();
@@ -32,11 +35,11 @@ public class ObjectAvoidance{
 		//System.out.println("Them " + obsX + " , " + obsY);
 		//System.out.println("Ball: " + destX + " , " + destY);
 		
-		if((dist > 50)){
+		if((dist > width)){
 			return false;
-		}else if((dist <50) && (mag2 > mag1)){
+		}else if((dist <width) && (mag2 > mag1)){
 			return false;
-		}else if((dist < 50) && (mag3 > mag1)){
+		}else if((dist < width) && (mag3 > mag1)){
 			return false;
 		}else{
 			return true;

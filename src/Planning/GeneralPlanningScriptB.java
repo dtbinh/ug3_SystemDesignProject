@@ -54,6 +54,7 @@ public class GeneralPlanningScriptB extends Thread {
 	public static void main(String[] args) {
 		int argc = args.length;
 		vision = new VisionReader(args[0]); // Our Colour - MAKE GUI 4 DIS
+		//vision = new VisionReader("yellow");;
 		robotMath = new RobotMath(); robotMath.init();
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
