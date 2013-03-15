@@ -1,7 +1,5 @@
 package Script;
 
-import Command.*;
-
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -11,10 +9,8 @@ import org.zeromq.ZMQ.Socket;
 
 import JavaVision.VisionReader;
 import PathSearch.AStar;
-import PitchObject.Ball;
-import PitchObject.Position;
-import PitchObject.Robot;
-import PitchObject.RobotMath;
+import Command.*;
+import PitchObject.*;
 
 public abstract class AbstractBaseScript extends Thread {
 	public final static int GOT_THERE_DIST = 10;
@@ -27,28 +23,23 @@ public abstract class AbstractBaseScript extends Thread {
     private static volatile Socket socket;
 
 	static volatile boolean shootingRight;
-	static volatile Position theirGoal;
-	static volatile Position ourGoal;
+	static volatile Goal theirGoal;
+	static volatile Goal ourGoal;
 	static volatile Robot ourRobot;
 	static volatile Robot theirRobot;
 	static volatile Ball ball;
 	static volatile long kickTimeOut;
 
-	static CommandStack plannedCommands;
+	static volatile CommandStack plannedCommands;
 
 	public AbstractBaseScript(String[] args) {
 		String ourColor = args[0];
 		String ourDirection = args[1];
 		vision = new VisionReader(ourColor);
 		robotMath = new RobotMath();
-		robotMath.init();
 		shootingRight = ourDirection.equals("right");
-		theirGoal = shootingRight ?
-			robotMath.getGoalR().getCoors() :
-			robotMath.getGoalL().getCoors();
-		ourGoal = !shootingRight ?
-			robotMath.getGoalL().getCoors() :
-			robotMath.getGoalR().getCoors() ;
+		theirGoal = shootingRight ? Goal.goalR() : Goal.goalL();
+		ourGoal = shootingRight ? Goal.goalL() : Goal.goalR();
 		plannedCommands = new CommandStack();	
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);

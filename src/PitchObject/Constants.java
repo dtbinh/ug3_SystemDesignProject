@@ -1,6 +1,5 @@
 package PitchObject;
 
-
 public class Constants {
 	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 128;

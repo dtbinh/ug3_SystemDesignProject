@@ -9,35 +9,9 @@ package PitchObject;
  *
   */
 public class RobotMath {
-	Robot goalL = new Robot();
-    Robot goalR = new Robot();
-    Robot goalL_top = new Robot();
-    Robot goalL_bottom = new Robot();
-    Robot goalR_top = new Robot();
-    Robot goalR_bottom = new Robot();
-    static double TENPI = Math.PI*10;
-    static double TWOPI = Math.PI*2;
     private static boolean wantsToRotate;
     private boolean wantsToStop;
-       
-    //Set the values of the goals, init must be called just after we make a new instance
-    public void init() {
-    	goalR.setAngle((float) (3*Math.PI/2));
-    	goalR.setCoors(new Position(603,240));
-    	goalL.setAngle((float) Math.PI/2);
-    	goalL.setCoors(new Position(35,240));
-    	
-    	goalR_top.setAngle( (float) (3*Math.PI/2));
-    	goalL_top.setCoors(new Position(35,171));
-    	goalR_bottom.setAngle((float) (3*Math.PI/2));
-    	goalL_bottom.setCoors(new Position(35, 325));
-    	
-    	goalL_top.setAngle((float) Math.PI/2);
-    	goalR_top.setCoors(new Position(603,166));
-    	goalL_bottom.setAngle((float) Math.PI/2);
-    	goalR_bottom.setCoors(new Position(603, 312));
-     }
-    
+
     public void initLoop() {
        	wantsToRotate = false;
         wantsToStop = false;
@@ -197,7 +171,6 @@ public class RobotMath {
     	for (int i = 0;i<4;i++) {
    		 	motors[i] += directionOfRotation;
     	}
-    	
     	return normalisedSignal(motors,Constants.MAX_SPEED);	
     }
     
@@ -227,7 +200,6 @@ public class RobotMath {
      * @author      Caithan Moore - S1024940
      *
      */
-
  	public static String createSignal(int[] codes){
  			String sig = "1 "+codes[0]+" "+codes[1]+" "+codes[2]+" "+codes[3];
  			return sig;
@@ -252,12 +224,12 @@ public class RobotMath {
      * @author      Caithan Moore - S1024940
      *
      */
-
-	 public String getSigToPoint(Robot robot, Position destination, Position rotation, boolean hardRotate){
-	         double movementangle = robot.getAngleFromRobotToPoint(destination);
-	         double rotationangle = robot.getAngleFromRobotToPoint(rotation);
-	         return createSignal(getMotorValues(getRotationValue(rotationangle),movementangle, hardRotate));
-	        
+	 public String getSigToPoint(Robot robot, Position destination,
+			 				     Position rotation, boolean hardRotate){
+         double movementangle = robot.getAngleFromRobotToPoint(destination);
+         double rotationangle = robot.getAngleFromRobotToPoint(rotation);
+         return createSignal(getMotorValues(getRotationValue(rotationangle),
+        		                            movementangle, hardRotate));
 	}
 	 
 	public void toggleWantsToStop(){
@@ -291,21 +263,11 @@ public class RobotMath {
      *
      */
 	public double getAngleToGoal(Position robot, boolean shootingRight){
-		Position topOfGoal;
-		Position bottomOfGoal;
-		
-		if (shootingRight){
-			topOfGoal = goalR_top.getCoors();
-			bottomOfGoal = goalR_bottom.getCoors();
-		} else {
-			topOfGoal = goalL_top.getCoors();
-			bottomOfGoal = goalL_bottom.getCoors();
-		}
-		double a = topOfGoal.euclidDistTo(robot);
-		double c = bottomOfGoal.euclidDistTo(robot);
-		double b = topOfGoal.euclidDistTo(bottomOfGoal);
-		double angle = Math.acos((a * a + c * c - b * b) / (2 * a * c));
-		return angle;
+		Goal goal = shootingRight ? Goal.goalR() : Goal.goalL();
+		double a = goal.getTop().euclidDistTo(robot);
+		double c = goal.getBottom().euclidDistTo(robot);
+		double b = goal.getTop().euclidDistTo(goal.getBottom());
+		return Math.acos((a * a + c * c - b * b) / (2 * a * c));
 	}
 	
 	/**
@@ -326,8 +288,10 @@ public class RobotMath {
 	 */
 	public double getAngleScore(Position robot, boolean shootingRight){
 		double angle = getAngleToGoal(robot, shootingRight);
-		
-		double minangle = getAngleToGoal(shootingRight ? goalR.getCoors() : goalL.getCoors(), shootingRight);
+		double minangle = getAngleToGoal(shootingRight ?
+											Goal.goalR().getCoors() :
+											Goal.goalL().getCoors(),
+										 shootingRight);
 		double maxa = Math.max(minangle, angle);
 		double mina = Math.min(minangle, angle);
 		
@@ -351,13 +315,11 @@ public class RobotMath {
      * @author Clemens Wolff
 	 */
 	public double getDistanceScore(Position robot, boolean shootingRight) {
-		int xR = goalR.getCoors().getX();
-		int xL = goalL.getCoors().getX();
+		int xR = Goal.goalR().getCoors().getX();
+		int xL = Goal.goalL().getCoors().getX();
 		int pitchLen = Math.abs(xR - xL);
-		
 		int goalX = shootingRight ? xR : xL;
 		int dist = Math.abs(goalX - robot.getX());
-		
 		double distRatio = (double) dist / pitchLen;
 		double score = Math.cos(distRatio * Math.PI / 2);
 		return score;
@@ -395,23 +357,15 @@ public class RobotMath {
 	}
 	
 	public double getHitScore(Robot robot, boolean r) {
-		int goalX = r ? goalR.getCoors().getX() : goalL.getCoors().getX();
-		int topY = r ? goalR_top.getCoors().getY() : goalL_top.getCoors().getY();
-		int botY = r ? goalR_bottom.getCoors().getY() : goalL_bottom.getCoors().getY();
-		double tan = Math.tan(r ? 
-				robot.getAngle() - goalR.getAngle() : 
-				goalL.getAngle() - robot.getAngle());
+		Goal goal = r ? Goal.goalR() : Goal.goalL();
+		int goalX = goal.getCoors().getX();
+		int topY = goal.getTop().getY();
+		int botY = goal.getBottom().getY();
+		double tan = Math.tan(r ? robot.getAngle() - goal.getAngle() :
+								  goal.getAngle() - robot.getAngle());
 		int hitY = robot.getCoors().getY() + (int) (Math.abs(robot.getCoors().getX() - goalX)* tan);
 		int d1 = botY - hitY;
 		int d2 = hitY - topY;
 		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
-	}
-	
-	public Robot getGoalL() {
-		return goalL;
-	}
-	
-	public Robot getGoalR() {
-		return goalR;
 	}
 }
