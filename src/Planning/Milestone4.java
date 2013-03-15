@@ -1,12 +1,5 @@
 package Planning;
 
-import java.awt.Point;
-import java.util.ArrayList;
-
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Context;
-import org.zeromq.ZMQ.Socket;
-
 import JavaVision.Position;
 
 /**

@@ -8,15 +8,8 @@ import lejos.nxt.Sound;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import lejos.nxt.*;
-import lejos.nxt.Button;
 import lejos.nxt.Motor;
-import lejos.nxt.SensorPort;
-
+// import lejos.nxt.SensorPort;
 
 public class BluetoothNXTD {
 	// Error codes
@@ -41,12 +34,12 @@ public class BluetoothNXTD {
 	public static final int RIGHT_DIRECTION = -1; // change to 1, to change direction
 	public static final int ACCELERATION = 2500; // Default 6000
 	// Privates
-	private static Motormux robot;
+	// private static Motormux robot;
 	private static InputStream dis;
 	private static OutputStream dos;
 
 	public static void main(String[] args) {
-		Motormux robot = new Motormux(SensorPort.S4);
+		// Motormux robot = new Motormux(SensorPort.S4);
 
 		// Sound.setVolume(50);
 

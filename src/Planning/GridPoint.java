@@ -2,7 +2,8 @@ package Planning;
 
 import java.awt.Point;
 public class GridPoint extends Point{
-	
+	private static final long serialVersionUID = -657474009882885518L;
+
 	GridPoint parent;
 	int movementCost;
 	int heuristicCost;

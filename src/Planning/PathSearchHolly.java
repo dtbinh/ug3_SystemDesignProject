@@ -1,9 +1,7 @@
 package Planning;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
-
 
 /**
  *
@@ -38,8 +36,7 @@ import java.util.ArrayList;
 **/
 
 public class PathSearchHolly {
-
-	private static Dimension robotDimension = new Dimension(54,60);
+	// private static Dimension robotDimension = new Dimension(54,60);
 
 	public static GridPoint ourGridPosition;
 	public static GridPoint oppGridPosition;
@@ -47,12 +44,12 @@ public class PathSearchHolly {
 	public static int ourAngle = 0;
 	public static int oppAngle;
 
-	//dimensions from vision are 752 * 418
-	//pathsearch uses 760 * 420 for convenient integer divisions
-	//Divide pitch into a 38x21 grid (each grid is 20 x 20)
+	// dimensions from vision are 752 * 418
+	// pathsearch uses 760 * 420 for convenient integer divisions
+	// Divide pitch into a 38x21 grid (each grid is 20 x 20)
 
-//	public static int PITCH_HEIGHT = 374;
-//	public static int PITCH_WIDTH = 714;
+	// public static int PITCH_HEIGHT = 374;
+	// public static int PITCH_WIDTH = 714;
 	public static int PITCH_WIDTH = 760;
 	public static int PITCH_HEIGHT = 420;
 
@@ -66,7 +63,7 @@ public class PathSearchHolly {
 
 	private static Point startCoorPoint;
 	private static Point endCoorPoint;
-	private static boolean strafingEnabled;
+	// private static boolean strafingEnabled;
 
 	private static ArrayList<GridPoint> path;
 	private static ArrayList<GridPoint> validGrids;
@@ -112,14 +109,13 @@ public class PathSearchHolly {
 		return waypoints;
 	}
 
+	/*
 	private boolean nearWall(GridPoint robotPosition) {
-
-
 		return false;
 	}
+	*/
 
 	private static ArrayList<GridPoint> optimisePath(ArrayList<GridPoint> path) {
-
 		ArrayList<GridPoint> newPath = path;
 		for (int i = 0; i < newPath.size() - 1; i++) {
 			//remove points that are too close to each other
@@ -246,7 +242,13 @@ public class PathSearchHolly {
 		}
 	}
 
-	//takes two coordinates and get the distance and angle between them
+	/**
+	 * takes two coordinates and get the distance and angle between them
+	 * @param currentCoord
+	 * @param nextCoord
+	 * @return
+	 */
+	/*
 	private static int[] getDistanceAndAngle(Point currentCoord, Point nextCoord) {
 		int[] distanceAndAngle = new int[2];
 
@@ -266,6 +268,7 @@ public class PathSearchHolly {
         }
 		return distanceAndAngle;
 	}
+	*/
 
 	private static GridPoint translateCoordinatesToGrid(Point pt) {
 		int gridX = (int) Math.ceil(pt.getX() / gridWidth);
@@ -293,6 +296,7 @@ public class PathSearchHolly {
 		return coordinateList;
 	}
 
+	/*
 	//TODO: Remove?
 	private static ArrayList<int[]> optimizeCommands(ArrayList<int[]> oldCommands){
 		ArrayList<int[]> newCommands = new ArrayList<int[]>();
@@ -320,13 +324,14 @@ public class PathSearchHolly {
 		//newCommands.add(lastCommand);
 		return oldCommands;
 	}
+	*/
 
-	public static ArrayList<GridPoint> getInvalid(){
-		
+	public static ArrayList<GridPoint> getInvalid() {
         return invalidGrids;
     }
 
-	/*public static void main(String args[]) {
+	/*
+	public static void main(String args[]) {
 		Point ourPosition = new Point(275,350);
         Point oppPosition = new Point (300,350);
         Point ballPosition = new Point(400,351);
@@ -345,6 +350,7 @@ public class PathSearchHolly {
 		} 
 	}
 	*/
+
 	public static double getAngle(GridPoint a, GridPoint b) {
 		return Math.toDegrees(Math.atan2((a.getY() - b.getY()), (b.getX() - a.getX())));
 	}

@@ -1,6 +1,6 @@
 package Planning;
 
-import Commands.*;
+import Command.*;
 
 import java.awt.Point;
 import java.util.ArrayList;

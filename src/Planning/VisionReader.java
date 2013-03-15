@@ -16,8 +16,6 @@ public class VisionReader extends Thread {
 	private static volatile Vision vision;
 	private static volatile Ball ball;
 	private static volatile int colour;
-	private static volatile Robot ourRobot;
-	private static volatile Robot theirRobot;
 
 	static int iterations = 0;
 	
@@ -89,14 +87,6 @@ public class VisionReader extends Thread {
 		yellowRobot.setCoors(new Position(state.getYellowX(), state.getYellowY()));
 		blueRobot.setAngle(state.getBlueOrientation());
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
-
-		if (colour == YELLOW) {
-			ourRobot = yellowRobot;
-			theirRobot = blueRobot;
-		} else {
-			ourRobot = blueRobot;
-			theirRobot = yellowRobot;
-		}
 	}
 
 	//getters for planning thread.

@@ -1,4 +1,4 @@
-package Commands;
+package Command;
 
 
 public class KickCommand extends Command {

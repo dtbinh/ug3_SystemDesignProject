@@ -1,15 +1,7 @@
 package Planning;
-import au.edu.jcu.v4l4j.V4L4JConstants;
-import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import JavaVision.*;
-//import Runner;
-
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.*;
-
 
 public class BallCalculator extends Thread{
-	
 	private static Position coors1;
 	private static Position coors2;
 	static long time1;

@@ -1,12 +1,10 @@
-
 package Planning;
 
-import Commands.*;
-
+import Command.*;
 import JavaVision.Position;
 
 public class ObjectAvoidance{
-	/*
+	/**
 	 * Gets the line between us and the target (ball)
 	 * calculates the distance between us and the obstacle/opposition
 	 * if distance is less than 2*(max robot radius) then obstacle in path
@@ -15,6 +13,7 @@ public class ObjectAvoidance{
 	public static boolean obstacleDetection(Position ourcoors, Position theirCoors, Position ball){
 		return obstacleDetection(ourcoors, theirCoors, ball, 50);
 	}
+
 	public static boolean obstacleDetection(Position ourcoors, Position theirCoors, Position ball, int width){
 		int ourX = ourcoors.getX();
 		int ourY = ourcoors.getY();
@@ -47,16 +46,19 @@ public class ObjectAvoidance{
 			return true;
 		}	
 	}
-//Dont know why this takes an angle ask Caithan
-//Caithan says for later implementations we might want a more refined circle around the obstacle. 
-//but we can see what happens eh.
+	
+	/**
+     * Don't know why this takes an angle ask Caithan
+     * Caithan says for later implementations we might want a more refined circle
+     * around the obstacle. but we can see what happens eh.
+     */
 	public static CommandStack planAvoidance(Robot robot, Robot opposition, double angle, 
 												boolean endBall, Robot goal, Ball ball,
 												CommandStack plannedCommands) {
 		RobotMath rmaths = new RobotMath();
 		rmaths.init();
-		int obsX = opposition.getCoors().getX();
-		int obsY = opposition.getCoors().getY();
+		// int obsX = opposition.getCoors().getX();
+		// int obsY = opposition.getCoors().getY();
 		int ballX = ball.getCoors().getX();
 		int ballY = ball.getCoors().getY();
 		Robot obsForAngle = new Robot();

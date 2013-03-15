@@ -3,14 +3,14 @@ package BluetoothServer;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataInputStream;
+//import java.io.DataOutputStream;
+// import java.io.IOException;
 
 import lejos.nxt.*;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
-import lejos.nxt.Button;
+// import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 

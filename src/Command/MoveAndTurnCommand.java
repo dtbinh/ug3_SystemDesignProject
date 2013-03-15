@@ -1,4 +1,4 @@
-package Commands;
+package Command;
 
 import JavaVision.Position;
 

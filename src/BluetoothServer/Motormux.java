@@ -2,7 +2,7 @@ package BluetoothServer;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
-import lejos.nxt.SensorPort;
+// import lejos.nxt.SensorPort;
 
 public class Motormux extends I2CSensor{
 
@@ -15,6 +15,7 @@ public class Motormux extends I2CSensor{
 	public static final byte REVERSE = (byte)0x02;
 	public static final byte BRAKE = (byte)0x03;
 
+	@SuppressWarnings("deprecation")
 	public Motormux(I2CPort port) {
 		super(port);
 		setAddress(MOTORMUX_ADD);

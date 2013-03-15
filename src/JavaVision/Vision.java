@@ -7,7 +7,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,9 +31,8 @@ public class Vision extends WindowAdapter {
 	private JLabel label;
 	private JFrame windowFrame;
 	private FrameGrabber frameGrabber;
-	private Thread captureThread;
-	private boolean stop;
-	private int width, height;
+	private int width;
+	private int height;
 	private WorldState worldState;
 	private ThresholdsState thresholdsState;
 	private PitchConstants pitchConstants;
@@ -171,6 +169,7 @@ public class Vision extends WindowAdapter {
 		System.exit(0);
 	}
 
+	/*
     private static BufferedImage simpleWhiteBalance(BufferedImage image,
         float s1, float s2) {
         // http://www.ipol.im/pub/art/2011/llmps-scb/
@@ -276,6 +275,7 @@ public class Vision extends WindowAdapter {
         }
         return image;
     }
+    */
 
 	/**
 	 * Processes an input image, extracting the ball and robot positions and
@@ -314,10 +314,10 @@ public class Vision extends WindowAdapter {
 		int bottomBuffer = pitchConstants.bottomBuffer;
 		int leftBuffer = pitchConstants.leftBuffer;
 		int rightBuffer = pitchConstants.rightBuffer;
-		int indexi = -1;
-		int indexj = -1;
-		int maxRed = 0;
-		int minGreen = Integer.MAX_VALUE;
+		// int indexi = -1;
+		// int indexj = -1;
+		// int maxRed = 0;
+		// int minGreen = Integer.MAX_VALUE;
 
 		/*
 		 * For every pixel within the pitch, test to see if it belongs to the
@@ -344,7 +344,7 @@ public class Vision extends WindowAdapter {
 				int green = c.getGreen();
 				int blue = c.getBlue();
 				double justB = blue - red / 2 - green / 2;
-				double justR = red - blue/2 - green/2;
+				// double justR = red - blue/2 - green/2;
 				
 				double[][] transform = new double[2][2];
 				double rotateAngle = Math.toRadians(5);
@@ -352,10 +352,10 @@ public class Vision extends WindowAdapter {
 				transform[0][1] = Math.sin(rotateAngle);
 				transform[1][0] = -Math.sin(rotateAngle);
 				transform[1][1] = Math.cos(rotateAngle);
-				int actualX =(int) (transform[0][0] * column + transform[0][1] * row);
-				int actualY =(int) (transform[1][0] * column + transform[1][1] * row);
-				//column = actualX;
-				//row = actualY;
+				// int actualX =(int) (transform[0][0] * column + transform[0][1] * row);
+				// int actualY =(int) (transform[1][0] * column + transform[1][1] * row);
+				// column = actualX;
+				// row = actualY;
 				
 
 		
@@ -642,8 +642,7 @@ public class Vision extends WindowAdapter {
 		point[0] = pixi;
 		point[1] = pixj;
 		return point;
-		}
-	
+	}
 	
 	/**
 	 * Determines if a pixel is part of the blue T, based on input RGB colours
@@ -657,6 +656,7 @@ public class Vision extends WindowAdapter {
 	 * @return True if the RGB and HSV values are within the defined thresholds
 	 *         (and thus the pixel is part of the blue T), false otherwise.
 	 */
+	/*
 	private boolean isBlue(Color color, float[] hsbvals) {
 		return hsbvals[0] <= thresholdsState.getBlue_h_high()
 				&& hsbvals[0] >= thresholdsState.getBlue_h_low()
@@ -671,6 +671,7 @@ public class Vision extends WindowAdapter {
 				&& color.getBlue() <= thresholdsState.getBlue_b_high()
 				&& color.getBlue() >= thresholdsState.getBlue_b_low();
 	}
+	*/
 
 	public Position[] findFurthest(Position centroid,
 			ArrayList<Integer> xpoints, ArrayList<Integer> ypoints, int distT,
@@ -1120,7 +1121,8 @@ public class Vision extends WindowAdapter {
 		float angle = (float) Math.acos(ax);
 
 		if (frontY < meanY) {
-			angle = angle;
+			// FIXME: what is this supposed to do?
+			// angle = angle;
 		}
 
 		// Look in a cone in the opposite direction to try to find the grey

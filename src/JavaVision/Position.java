@@ -1,13 +1,8 @@
 package JavaVision;
+
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-/**
- * Represents the centre point of an object, for example the ball or a robot.
- * 
- * @author s0840449
- */
 public class Position {
 	
 	private int x;
@@ -17,12 +12,6 @@ public class Position {
 		return new String("(" + this.getX() + ", " + this.getY() + ")");
 	}
 	
-	/**
-	 * Default constructor.
-	 * 
-	 * @param x		The x-coordinate of the object.
-	 * @param y		The y-coordinate of the object.
-	 */
 	public Position(int x, int y) {
 		super();
 		this.x = x;
@@ -35,42 +24,21 @@ public class Position {
 		this.y = point.y;
 	}
 	
-	/**
-	 * Return the x-coordinate.
-	 * 
-	 * @return 		The x-coordinate of the object.
-	 */
 	public int getX() {
 		return x;
 	}
 	
-	/**
-	 * Set the x-coordinate.
-	 * 
-	 * @param x 	The value to set as the x-coordinate.
-	 */
 	public void setX(int x) {
 		this.x = x;
 	}
 	
-	/**
-	 * Return the y-coordinate.
-	 * 
-	 * @return 		The y-coordinate of the object.
-	 */
 	public int getY() {
 		return y;
 	}
 	
-	/**
-	 * Set the y-coordinate.
-	 * 
-	 * @param y 	The value to set as the y-coordinate.
-	 */
 	public void setY(int y) {
 		this.y = y;
 	}
-	
 	
 	/**
 	 * Compares the current x and y co-ordinates to another set
@@ -97,7 +65,6 @@ public class Position {
     		this.setX(oldX);
     		this.setY(oldY);
     	}
-    	
 	}
 	
 	/**
@@ -150,14 +117,12 @@ public class Position {
 	    	this.fixValues(oldX, oldY);
     	}
     }
-    
-    
-    public static ArrayList<Point> removeOutliers(ArrayList<Integer> xs, ArrayList<Integer> ys, Point centroid){
+
+    public static ArrayList<Point> removeOutliers(ArrayList<Integer> xs,
+    		                                      ArrayList<Integer> ys, Point centroid){
     	ArrayList<Point> goodPoints = new ArrayList<Point>();
-	if (xs.size() > 0) {
-    		
+    	if (xs.size() > 0) {
 	    	int stdev = 0;
-	    	
 	    	/* Standard deviation */
 	    	for (int i = 0; i < xs.size(); i++) {
 	    		int x = xs.get(i);
@@ -165,8 +130,7 @@ public class Position {
 	    		
 	    		stdev += Math.pow(Math.sqrt(sqrdEuclidDist(x, y, (int) centroid.getX(), (int)centroid.getY())), 2);
 	    	}
-	    	stdev  = (int) Math.sqrt(stdev / xs.size());
-	    		    	
+	    	stdev  = (int) Math.sqrt(stdev / xs.size());	
 	    	/* Remove points further than standard deviation */
 	    	for (int i = 0; i < xs.size(); i++) {
 	    		int x = xs.get(i);
@@ -175,14 +139,11 @@ public class Position {
 	    			Point p = new Point(x, y);
 	    			goodPoints.add(p);
 	    		}
-	    	}
-	    	
+	    	}	
     	}
-    	
 		return goodPoints;
-    	
     }
-    
+   
     /**
      * Calculates the squared euclidean distance between two 2D points.
      * 
@@ -194,7 +155,9 @@ public class Position {
      * @return			The squared euclidean distance between the two points.
      */
 	public static float sqrdEuclidDist(int x1, int y1, int x2, int y2) {
-		return (float) (Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+		int dx = x1 - x2;
+		int dy = y1 - y2;
+		return (float) (dx * dx + dy * dy);
 	}
 	
 }
