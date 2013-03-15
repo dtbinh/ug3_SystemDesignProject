@@ -1,6 +1,5 @@
-package Planning;
+package PitchObject;
 
-import JavaVision.Position;
 /**
  * RobotMath is a class that does all manner of calculations.
  * It has methods that abstract the task of movement given holonomics
@@ -45,62 +44,6 @@ public class RobotMath {
     }
     
     /**
-     * getRobotAngle gives a normalised (between 0 and 2PI) angle 
-     * of the robot to the lab doors.
-     * 
-     * @param robot 	The robot of which to get the angle.
-     * 
-     * @return 			The normalised angle. 	
-     * 
-     * @author      Caithan Moore s1024940
-     * @author		Ozgur Osman
-     * @author		Clemens Wolff
-     * 
-      */
-	
-    public static double getRobotAngle(Robot robot){
-         // robot.getAngle() returns the angle between the robot and the left bottom
-         // corner of the screen
-         double robAngle = robot.getAngle();
-         // we rotate robAngle by 90 degrees in order to have the angle between the robot and
-         // the top left corner of the screen
-         // remember: top left corner of screen = (0, 0)
-         robAngle = robAngle - Math.PI/2;
-         robAngle += TENPI;
-         robAngle = robAngle % TWOPI;
-        
-        
-         return robAngle;
-        
-    }
-
-    /**
-     * getAngleFromRobotToPoint gets the angle from a robot to a point.
-     * 
-     * 
-     * @param robot 	The robot of which to get the angle from.
-     * @param point 	The coordinates of the point to get the angle to.
-     * 
-     * @return 			The angle (in radians) from robot to point in the positive direction of the X axis. 	
-     * 
-     * @author      Caithan Moore s1024940
-     * @author      Ozgur Osman
-     * @author		Clemens Wolff
-     */
-    public static double getAngleFromRobotToPoint(Robot robot, Position point) {
-         // angleToPoint is the angle between the top left corner of the pitch and the point
-         // angleToRobot is the angle between the top left corner of the pitch and the robot
-         // angleBetweenRobotAndPoint is the clockwise angle between the robot and the point
-         double angleToPoint = Math.atan2( point.getY() - robot.getCoors().getY(), point.getX()-robot.getCoors().getX());
-         double angleToRobot = getRobotAngle(robot);
-         double angleBetweenRobotAndPoint = angleToPoint - angleToRobot;
-         //it was giving a weird slightly negative number here in the robot north, ball in q2 case. Resolved.
-         angleBetweenRobotAndPoint += TENPI;
-         angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % TWOPI;
-         return angleBetweenRobotAndPoint;
-    }
-    
-    /**
      * getRotationValue gets the rotation vector for holonomic movement.
      * value can be changed closer to 1/-1  to make the rotation faster,
      * or closer to 0 to make the rotation slower.
@@ -118,7 +61,6 @@ public class RobotMath {
      * @author      
      *
      */
-
     public static double getRotationValue(double angle){
          double value = 0;;
          if (angle > (Math.PI) ){
@@ -129,26 +71,10 @@ public class RobotMath {
          } else if (angle > Math.PI/7) {
                  value = -0.3;
          }
-         //TODO:Remove.
+         //TODO: Remove.
          wantsToRotate = (!(value == 0)) ;
-
          return value;
     }
-
-    public static boolean isTargeting(Robot robot, Position point) {
-        double angle = getAngleFromRobotToPoint(robot,point);
-        double value = 0;
-        if (angle > (Math.PI) ){
-            if (((Math.PI*2) - angle) > (Math.PI/6)) {
-                    value = 0.3;
-            }
-	            
-	     } else if (angle > Math.PI/6) {
-	             value = -0.3;
-	     }
-
-        return (value == 0);
-	}	
     
     
     /**
@@ -228,12 +154,12 @@ public class RobotMath {
          motors[3] += (Math.cos(angle));
     	 return motors;
     }
+    
     //TODO: Do constants ASAP
     public static String moveStraight(Position destination){
-    	double angle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, destination);
+    	double angle = Constants.OUR_ROBOT.getAngleFromRobotToPoint(destination);
     	double[] motors = getMovementRatio(angle);
-    	return (normalisedSignal(motors,GameConstants.MAX_SPEED));
-   
+    	return (normalisedSignal(motors,Constants.MAX_SPEED));
     }
     
     public static String normalisedSignal(double[] motors,int maxspeed){
@@ -254,30 +180,30 @@ public class RobotMath {
     }
     
     public static String rotate(Position toFace){
-    	double angle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT,toFace);
+    	double angle = Constants.OUR_ROBOT.getAngleFromRobotToPoint(toFace);
     	double direction = getRotationValue(angle);
     	double[] motors = {direction, direction, direction,direction};
     	
-    	return(normalisedSignal(motors,GameConstants.TURN_SPEED));    	
+    	return(normalisedSignal(motors,Constants.TURN_SPEED));    	
     }
     
     public static String moveAndTurn(Position movePos, Position rotatePos){	
-    	double moveAngle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, movePos);	
+    	double moveAngle = Constants.OUR_ROBOT.getAngleFromRobotToPoint(movePos);	
     	double[] motors = getMovementRatio(moveAngle);    	
     	
-    	double rotateAngle = getAngleFromRobotToPoint(GameConstants.OUR_ROBOT, rotatePos);
+    	double rotateAngle = Constants.OUR_ROBOT.getAngleFromRobotToPoint(rotatePos);
     	double directionOfRotation = getRotationValue(rotateAngle);
     	
     	for (int i = 0;i<4;i++) {
    		 	motors[i] += directionOfRotation;
     	}
     	
-    	return normalisedSignal(motors,GameConstants.MAX_SPEED);    	
-    	
+    	return normalisedSignal(motors,Constants.MAX_SPEED);	
     }
+    
     public static String moveToFace(Position movePos, Position rotatePos){
-    	if ((euclidDist(GameConstants.OUR_ROBOT_COORS, movePos) < GameConstants.NEAR_RANGE) &&
-    			!(isFacing(GameConstants.OUR_ROBOT, rotatePos))){
+    	if ((Constants.OUR_ROBOT_COORS.euclidDistTo(movePos) < Constants.NEAR_RANGE)
+    		  && !Constants.OUR_ROBOT.isFacing(rotatePos)) {
     		return rotate(rotatePos);
     	} else {
     		return moveAndTurn(movePos, rotatePos);
@@ -304,7 +230,6 @@ public class RobotMath {
 
  	public static String createSignal(int[] codes){
  			String sig = "1 "+codes[0]+" "+codes[1]+" "+codes[2]+" "+codes[3];
-        
  			return sig;
  	}
  	
@@ -329,143 +254,14 @@ public class RobotMath {
      */
 
 	 public String getSigToPoint(Robot robot, Position destination, Position rotation, boolean hardRotate){
-	         double movementangle = getAngleFromRobotToPoint(robot,destination);
-	         double rotationangle = getAngleFromRobotToPoint(robot,rotation);
+	         double movementangle = robot.getAngleFromRobotToPoint(destination);
+	         double rotationangle = robot.getAngleFromRobotToPoint(rotation);
 	         return createSignal(getMotorValues(getRotationValue(rotationangle),movementangle, hardRotate));
 	        
-	}
-		/**
-	     *Determines if the robot is facing a point.
-	     *   
-	     * 
-	     * @param robot			the robot in question
-	     * @param point	 		the point to check
-	     * 
-	     * @return true if angle between is less than +/- PI/10 (set in getRotationValues) 
-	     * 
-	     * @see getRotationValues
-	     * 
-	     * @author      Caithan Moore - S1024940
-	     *
-	     */
-	 public static boolean isFacing(Robot robot, Position point) {
-	         double angle = getAngleFromRobotToPoint(robot,point);
-	         double value = getRotationValue(angle);
-	        
-	         return (value == 0);
-	}
-	 
-	 /**
-	     *Projects a point behind the ball in the direction of the desired goal.
-	     *   
-	     * 
-	     * @param goal			the goal in question set as a robot (opponent's goal) 
-	     * @param ball	 		coordiantes of the ball.
-	     * 
-	     * @return projected point 100 pixels away. 
-	     * 
-	     * @see projectPoint
-	     * 
-	     * @author Caithan Moore - S1024940
-	     * @author Jamie Ironside
-	     * @author Sarah McGillion
-	     *
-	     */
-	
-	 public Position pointBehindBall(Position goal, Position ball){
-		 	Robot goalRobot = new Robot();
-		 	goalRobot.setCoors(goal);
-		 	goalRobot.setAngle(0);
-	 	    double rvrsBallToGoal = getAngleFromRobotToPoint(goalRobot, ball)+Math.PI;
-	         Position goPoint;
-	        
-	         goPoint = projectPoint(ball, rvrsBallToGoal, 100);
-	        
-	        
-	         if (!withinPitch(goPoint)){
-	                 goPoint.setX((ball.getX()));
-	                 goPoint.setY((ball.getY()));
-	         }
-	         return goPoint;
-	        
-	}
-	 public Position pointBehindBall(Position goal, Position ball, int distance){
-		double rvrsBallToGoal = getAngleFromRobotToPoint(new Robot(goal, 0), ball);
-		Position goPoint = projectPoint(ball, rvrsBallToGoal, distance);
-
-		if (!withinPitch(goPoint)){
-			goPoint.setX((ball.getX()));
-		    goPoint.setY((ball.getY()));
-		}
-		return goPoint;
-	}
-	 
-	 
-	 /**
-	     *Projects a point behind a point at a given angle and distance
-	     *   
-	     * 
-	     * @param pos			point you want to rotate from.
-	     * @param ang	 		rotation (in radians) from the lab door
-	     * @param dist 			how far you want to project the point.
-	     * 
-	     * @return projected point <b>dist</b> pixels away at angle of <b>ang</b>. 
-	     * 
-	     * 
-	     * @author Caithan Moore - S1024940
-	     * @author Jamie Ironside
-	     * @author Sarah McGillion
-	     *
-	     */
-	 public static Position projectPoint(Position pos, double ang, int dist){
-	 	int newX = (int) (pos.getX() + (dist*Math.sin(ang)));
-	     int newY = (int) (pos.getY() - (dist*Math.cos(ang)));
-	     Position goPoint = new Position(newX,newY);
-	     return goPoint;
-	}
-	 /**
-	     *Checks if a point is in the pitch
-	     *   
-	     * 
-	     * @param coors			point you want to check.
-	     * 
-	     * @return <code>true</code> if point is in the pitch, <code>false</code> otherwise.
-	     * 
-	     * 
-	     * @author Jamie Ironside
-	     * @author Sarah McGillion
-	     *
-	     */
-	 public static boolean withinPitch(Position coors){
-	         int coorX = coors.getX();
-	         int coorY = coors.getY();
-	        
-	         if(coorX > 39 && coorX < 602 && coorY > 100 && coorY < 389) return true;
-	         return false;
 	}
 	 
 	public void toggleWantsToStop(){
 		wantsToStop = true;
-	}
-	
-	/**
-     *Gets the euclidean distance of two positions
-     *   
-     * 
-     * @param a, b			two positions.
-     * 
-     * @return the euclidean distance between the points.
-     * 
-     * 
-     * @author Caithan Moore - s1024940
-     * @author Clemens Wolff
-     *
-     */
-	
-	public static double euclidDist(Position a, Position b ) {
-		double ans = Math.sqrt(squared(a.getX() - b.getX()) +
-				               squared(a.getY() - b.getY()));
-		return ans;
 	}
 	
 	/**
@@ -505,18 +301,11 @@ public class RobotMath {
 			topOfGoal = goalL_top.getCoors();
 			bottomOfGoal = goalL_bottom.getCoors();
 		}
-		double a = euclidDist(topOfGoal, robot);
-		double c = euclidDist(bottomOfGoal, robot);
-		double b = euclidDist(topOfGoal, bottomOfGoal);
-		double angle = Math.acos((squared(a)+squared(c)-squared(b))/(2*a*c));
+		double a = topOfGoal.euclidDistTo(robot);
+		double c = bottomOfGoal.euclidDistTo(robot);
+		double b = topOfGoal.euclidDistTo(bottomOfGoal);
+		double angle = Math.acos((a * a + c * c - b * b) / (2 * a * c));
 		return angle;
-	}
-	
-	public static double squared(double x){
-		return Math.pow(x, 2);
-	}
-	public static double squared(int x){
-		return Math.pow(x, 2);
 	}
 	
 	/**
@@ -618,4 +407,11 @@ public class RobotMath {
 		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
 	}
 	
+	public Robot getGoalL() {
+		return goalL;
+	}
+	
+	public Robot getGoalR() {
+		return goalR;
+	}
 }

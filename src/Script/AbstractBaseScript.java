@@ -1,4 +1,4 @@
-package Planning;
+package Script;
 
 import Command.*;
 
@@ -9,9 +9,14 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
-import JavaVision.Position;
+import JavaVision.VisionReader;
+import PathSearch.AStar;
+import PitchObject.Ball;
+import PitchObject.Position;
+import PitchObject.Robot;
+import PitchObject.RobotMath;
 
-public abstract class RobotScript extends Thread {
+public abstract class AbstractBaseScript extends Thread {
 	public final static int GOT_THERE_DIST = 10;
 	final static int kickAllowance = 1500;
 
@@ -31,15 +36,19 @@ public abstract class RobotScript extends Thread {
 
 	static CommandStack plannedCommands;
 
-	public RobotScript(String[] args) {
+	public AbstractBaseScript(String[] args) {
 		String ourColor = args[0];
 		String ourDirection = args[1];
 		vision = new VisionReader(ourColor);
 		robotMath = new RobotMath();
 		robotMath.init();
 		shootingRight = ourDirection.equals("right");
-		theirGoal = shootingRight ? robotMath.goalR.getCoors() : robotMath.goalL.getCoors();
-		ourGoal = !shootingRight ? robotMath.goalL.getCoors() : robotMath.goalR.getCoors() ;
+		theirGoal = shootingRight ?
+			robotMath.getGoalR().getCoors() :
+			robotMath.getGoalL().getCoors();
+		ourGoal = !shootingRight ?
+			robotMath.getGoalL().getCoors() :
+			robotMath.getGoalR().getCoors() ;
 		plannedCommands = new CommandStack();	
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
@@ -50,7 +59,6 @@ public abstract class RobotScript extends Thread {
 	}
 
 	static void updateWorldState() {
-		// update state of world
 		ourRobot = vision.getOurRobot();
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
@@ -66,9 +74,8 @@ public abstract class RobotScript extends Thread {
 			}
 			else if (commandContainer instanceof MoveCommand) {
 				MoveCommand moveCommand = (MoveCommand) commandContainer;
-				if (RobotMath.euclidDist(ourRobot.getCoors(), moveCommand.moveTowardsPoint) 
-						< GOT_THERE_DIST) {
-					System.out.println("-----been there, done that");
+				double distToMovePoint = ourRobot.getCoors().euclidDistTo(moveCommand.moveTowardsPoint); 
+				if (distToMovePoint < GOT_THERE_DIST) {
 					playExecute();
 				}
 				else {
@@ -84,13 +91,13 @@ public abstract class RobotScript extends Thread {
 		if (coors == null) {
 			return;
 		}
-		ArrayList<Point> path = PathSearchHolly.getPath2(
+		ArrayList<Point> path = AStar.getPath2(
 				new Point(coors.getX(), coors.getY()), 
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()), 
 				(int) Math.toDegrees(ourRobot.getAngle()), 
 				new Point(obstacle.getCoors().getX(), obstacle.getCoors().getY()), 
 				(int) Math.toDegrees(obstacle.getAngle()), 
-				shootingRight ? PathSearchHolly.LEFT : PathSearchHolly.RIGHT);
+				shootingRight ? AStar.LEFT : AStar.RIGHT);
 		        // if we're shootingRight, *our* side is LEFT
 		plannedCommands.pushMoveCommand(path, coorsToFace);
 	}
@@ -133,5 +140,9 @@ public abstract class RobotScript extends Thread {
 				moveCommand.rotateTowardsPoint,
 				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
 		sendreceive(signal);
+	}
+	
+	public static VisionReader getVision() {
+		return vision;
 	}
 }

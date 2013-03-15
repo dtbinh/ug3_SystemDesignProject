@@ -1,4 +1,4 @@
-package Planning;
+package PathSearch;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,37 +1,34 @@
-package JavaVision;
+package PitchObject;
 
 import java.awt.Point;
 import java.util.ArrayList;
 
 public class Position {
-	
 	private int x;
 	private int y;
-	
+
 	@Override public String toString() {
 		return new String("(" + this.getX() + ", " + this.getY() + ")");
 	}
-	
+
 	public Position(int x, int y) {
-		super();
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public Position(Point point) {
-		super();
 		this.x = point.x;
 		this.y = point.y;
 	}
-	
+
 	public int getX() {
 		return x;
 	}
-	
+
 	public void setX(int x) {
 		this.x = x;
 	}
-	
+
 	public int getY() {
 		return y;
 	}
@@ -39,7 +36,7 @@ public class Position {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
 	/**
 	 * Compares the current x and y co-ordinates to another set
 	 * of co-ordinates (usually the previous co-ordinates for the
@@ -143,21 +140,32 @@ public class Position {
     	}
 		return goodPoints;
     }
-   
-    /**
-     * Calculates the squared euclidean distance between two 2D points.
-     * 
-     * @param x1		The x-coordinate of the first point.
-     * @param y1		The y-coordinate of the first point.
-     * @param x2		The x-coordinate of the second point.
-     * @param y2		The y-coordinate of the second point.
-     * 
-     * @return			The squared euclidean distance between the two points.
-     */
+
 	public static float sqrdEuclidDist(int x1, int y1, int x2, int y2) {
 		int dx = x1 - x2;
 		int dy = y1 - y2;
 		return (float) (dx * dx + dy * dy);
 	}
-	
+
+    public double euclidDistTo(Position other) {
+    	int dx = this.getX() - other.getX();
+    	int dy = this.getY() - other.getY();
+    	return Math.sqrt(dx * dx + dy * dy);
+    }
+
+	public Position projectPoint(double ang, int dist){
+	 	int newX = (int) (this.getX() + (dist * Math.sin(ang)));
+	    int newY = (int) (this.getY() - (dist * Math.cos(ang)));
+	    Position goPoint = new Position(newX, newY);
+	    return goPoint;
+	}
+
+	public boolean withinPitch() {
+		int coorX = this.getX();
+		int coorY = this.getY();
+		if (coorX > 39 && coorX < 602 && coorY > 100 && coorY < 389) {
+			return true;
+		}
+		return false;
+	}
 }

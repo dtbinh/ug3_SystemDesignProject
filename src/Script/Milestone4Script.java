@@ -1,6 +1,8 @@
-package Planning;
+package Script;
 
-import JavaVision.Position;
+import PitchObject.PitchObject;
+import PitchObject.Position;
+import PitchObject.RobotMath;
 
 /**
  * GeneralPlanningScript is an outline for how all 
@@ -12,19 +14,19 @@ import JavaVision.Position;
  * 
  * @see RobotMath
  * @see ObjectAvoidance
- * @see ObjectDetails
+ * @see PitchObject
  * 
  * @author		c-w
  */
-public class Milestone4 extends RobotScript {
+public class Milestone4Script extends AbstractBaseScript {
 	private int taskNo;
 
 	public static void main(String[] args) {
-		Milestone4 m4 = new Milestone4(args);
+		Milestone4Script m4 = new Milestone4Script(args);
 		m4.run();
 	}
 
-	public Milestone4(String[] args) {
+	public Milestone4Script(String[] args) {
 		super(args);
 		taskNo = Integer.parseInt(args[2]);
 	}
@@ -43,7 +45,7 @@ public class Milestone4 extends RobotScript {
 		 * For part 3 do we have to score past the robot?
 		 */
 		if(!ball.robotHasBall(ourRobot)) {
-			Position intersectionPoint = ball.getReachableCoors(ourRobot);
+			Position intersectionPoint = ball.intersectinPosition(ourRobot);
 			planMove(intersectionPoint);
 			System.out.println("Moving to predicted point " + intersectionPoint);
 		} else {

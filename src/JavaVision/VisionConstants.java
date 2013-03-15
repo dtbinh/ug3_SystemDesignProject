@@ -1,4 +1,5 @@
 package JavaVision;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -9,7 +10,7 @@ import java.util.Scanner;
  * 
  * @author s0840449
  */
-public class PitchConstants {
+public class VisionConstants {
 	
 	/* The pitch number. 0 is the main pitch, 1 is the side pitch. */
 	private int pitchNum;
@@ -98,7 +99,7 @@ public class PitchConstants {
 	 * 
 	 * @param pitchNum		The pitch that we are on.
 	 */
-	public PitchConstants(int pitchNum) {
+	public VisionConstants(int pitchNum) {
 		
 		/* Just call the setPitchNum method to load in the constants. */
 		setPitchNum(pitchNum);

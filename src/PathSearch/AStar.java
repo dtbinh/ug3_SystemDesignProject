@@ -1,4 +1,4 @@
-package Planning;
+package PathSearch;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
  *	COMMAND format: [command type,command value,angle to turn,way-point x,way-point y, speed]
 **/
 
-public class PathSearchHolly {
+public class AStar {
 	// private static Dimension robotDimension = new Dimension(54,60);
 
 	public static GridPoint ourGridPosition;
@@ -130,8 +130,8 @@ public class PathSearchHolly {
 		for (int j = 0; j < 3; j++) {
 			for (int i = 0; i < newPath.size() - 2; i++) {
 				//remove points that hardly change in gradient
-				if (Math.abs(  (PathSearchHolly.getAngle(newPath.get(i), newPath.get(i+1))) -
-						(PathSearchHolly.getAngle(newPath.get(i+1), newPath.get(i+2)))) < 30)
+				if (Math.abs(  (AStar.getAngle(newPath.get(i), newPath.get(i+1))) -
+						(AStar.getAngle(newPath.get(i+1), newPath.get(i+2)))) < 30)
 					newPath.remove(i+2);
 			}
 		}

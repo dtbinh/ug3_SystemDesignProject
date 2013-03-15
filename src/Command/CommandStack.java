@@ -1,6 +1,6 @@
 package Command;
 
-import JavaVision.Position;
+import PitchObject.Position;
 
 import java.awt.Point;
 import java.util.List;

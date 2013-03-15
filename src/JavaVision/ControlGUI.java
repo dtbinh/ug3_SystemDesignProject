@@ -30,7 +30,7 @@ public class ControlGUI implements ChangeListener {
 	
 	/* A PitchConstants class used to load/save constants
 	 * for the pitch. */
-	private PitchConstants pitchConstants;
+	private VisionConstants pitchConstants;
 	
 	/* The thresholds state class stores the current state 
  	 * of the thresholds. */
@@ -113,7 +113,7 @@ public class ControlGUI implements ChangeListener {
 	 * 							direction, etc.
 	 * @param pitchConstants	A PitchConstants object to allow saving/loading of data.
 	 */
-	public ControlGUI(ThresholdsState thresholdsState, WorldState worldState, PitchConstants pitchConstants) {
+	public ControlGUI(ThresholdsState thresholdsState, WorldState worldState, VisionConstants pitchConstants) {
 		
 		/* All three state objects must not be null. */
 		assert (thresholdsState != null);

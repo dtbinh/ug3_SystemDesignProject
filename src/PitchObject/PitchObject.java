@@ -1,8 +1,9 @@
-package Planning;
+package PitchObject;
+
 import JavaVision.*;
+import Script.AbstractBaseScript;	
 
-
-public abstract class ObjectDetails {
+public abstract class PitchObject {
 	protected Position coors;
 	protected float angle;
 	
@@ -17,7 +18,7 @@ public abstract class ObjectDetails {
 	static double distance;
 	static double speed1;
 	static double speed2;
-	private RealVector lastVelocity = null;
+	private Vector lastVelocity = null;
 	
 	public Position getCoors() {
 		return coors;
@@ -50,9 +51,9 @@ public abstract class ObjectDetails {
 	* then get the current velocity at times 3 and 4. So two types of get velocity methods.
 	* Makes acceleration accurate?
 	*/
-	public RealVector getVelocity() {
+	public Vector getVelocity() {
 		if (this.coors == null || coors2 == null || coors3 == null) {
-			return new RealVector(0, 0);
+			return new Vector(0, 0);
 		}
 		double interval = (double) Math.abs(time1 - time2);
 		double speedX = (coors2.getX() - this.coors.getX()) / interval;
@@ -60,7 +61,7 @@ public abstract class ObjectDetails {
 		double interval2 = (double) Math.abs(time2 - time3);
 		speedX = 0.7 * speedX + (0.3 * (coors3.getX() - coors2.getX()) / interval2);
 		speedY = 0.7 * speedY + (0.3 * (coors3.getY() - coors2.getY()) / interval2);
-		return new RealVector(speedX, speedY);
+		return new Vector(speedX, speedY);
 	}
 	
 	public boolean isMoving() {
@@ -71,16 +72,16 @@ public abstract class ObjectDetails {
 	* @return	2-D vector representing acceleration of ball. 
 	* Acceleration = change in velocity over change in time
 	*/
-	public RealVector getAcceleration() {
+	public Vector getAcceleration() {
 		if (lastVelocity == null) {
 			lastVelocity = this.getVelocity();
-			return new RealVector(0, 0);
+			return new Vector(0, 0);
 		} else {
-			RealVector curVelocity = this.getVelocity();
+			Vector curVelocity = this.getVelocity();
 			double interval = (double) Math.abs(time1 - time2);
 			double accelX = (curVelocity.getX() - lastVelocity.getX()) / interval;
 			double accelY = (curVelocity.getY() - lastVelocity.getY()) / interval;
-			return new RealVector(accelX, accelY);
+			return new Vector(accelX, accelY);
 		}
 	}
 	
@@ -100,18 +101,18 @@ public abstract class ObjectDetails {
 	public Position getReachableCoors(Position robotCoors, double robotSpeed) {
 		// get variables for predicting position
 		Position c = this.getCoors();
-		RealVector v = this.getVelocity();
-		RealVector a = this.getAcceleration();
+		Vector v = this.getVelocity();
+		Vector a = this.getAcceleration();
 		// get variables for keeping position within boundaries
-		int minX = RobotScript.vision.getMinX(); 
-		int maxX = RobotScript.vision.getMaxX();
-		int minY = RobotScript.vision.getMinY(); 
-		int maxY = RobotScript.vision.getMaxY();
+		int minX = AbstractBaseScript.getVision().getMinX(); 
+		int maxX = AbstractBaseScript.getVision().getMaxX();
+		int minY = AbstractBaseScript.getVision().getMinY(); 
+		int maxY = AbstractBaseScript.getVision().getMaxY();
 		// main loop that tries to find a reachable position
 		for (int t = 400; t < 8001; t+=400) {
 			Position ballCoors = getPredictedCoors(t, c, v, a, false); 
 			ballCoors = reflectInside(ballCoors, minX, maxX, minY, maxY);
-			int timeToBall = (int) (RobotMath.euclidDist(robotCoors, ballCoors) / robotSpeed);
+			int timeToBall = (int) (robotCoors.euclidDistTo(ballCoors) / robotSpeed);
 			if (timeToBall <= t) return ballCoors;
 		}
 		return null;
@@ -140,7 +141,7 @@ public abstract class ObjectDetails {
 	* @return Predicted position of object.
 	*/
 	public static Position getPredictedCoors(int timespan, Position objCoors, 
-			RealVector velocity, RealVector acceler, boolean reflect) {
+			Vector velocity, Vector acceler, boolean reflect) {
 		// if object velocity reaches 0 within timespan
 		if (Math.abs(velocity.getX()) < Math.abs(acceler.getX() * timespan)) {
 			// reduce time span to "when the object stops"
@@ -151,7 +152,7 @@ public abstract class ObjectDetails {
 		
 		Position predictedCoors = new Position(x, y);
 		if (reflect) { 
-			predictedCoors = reflectInside(predictedCoors, RobotScript.vision); 
+			predictedCoors = reflectInside(predictedCoors, AbstractBaseScript.getVision()); 
 		}
 		return predictedCoors;
 	}
@@ -195,14 +196,19 @@ public abstract class ObjectDetails {
 	public static Position reflectInside(Position coors, int minX, int maxX, int minY, int maxY) {
 		Position rCoors = new Position(coors.getX(), coors.getY());
 		while (rCoors.getX() < minX || rCoors.getX() > maxX) {
-			if (rCoors.getX() < minX) { rCoors.setX(2*minX - rCoors.getX()); }
-			else { rCoors.setX(2*maxX - rCoors.getX()); }
+			if (rCoors.getX() < minX) {
+				rCoors.setX(2*minX - rCoors.getX());
+			} else {
+				rCoors.setX(2*maxX - rCoors.getX());
+			}
 		}
 		while (rCoors.getY() < minY || rCoors.getY() > maxY) {
-			if (rCoors.getY() < minY) { rCoors.setY(2*minY - rCoors.getY()); }
-			else { rCoors.setY(2*maxY - rCoors.getY()); }
+			if (rCoors.getY() < minY) {
+				rCoors.setY(2*minY - rCoors.getY());
+			} else {
+				rCoors.setY(2*maxY - rCoors.getY());
+			}
 		}
 		return rCoors;
 	}
-
 }

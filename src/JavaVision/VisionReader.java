@@ -1,9 +1,11 @@
-package Planning;
+package JavaVision;
 
 import au.edu.jcu.v4l4j.V4L4JConstants;
 import au.edu.jcu.v4l4j.exceptions.V4L4JException;
-import JavaVision.*;
 
+import PitchObject.Ball;
+import PitchObject.Position;
+import PitchObject.Robot;
 
 public class VisionReader extends Thread {
 	private static final int YELLOW = 0;
@@ -16,8 +18,6 @@ public class VisionReader extends Thread {
 	private static volatile Vision vision;
 	private static volatile Ball ball;
 	private static volatile int colour;
-
-	static int iterations = 0;
 	
 	public static void main(String args[]) {
 		VisionReader vr = new VisionReader(args[0]);
@@ -49,7 +49,7 @@ public class VisionReader extends Thread {
 		ThresholdsState thresholdsState = new ThresholdsState();
 
 		/* Default to main pitch. */
-		PitchConstants pitchConstants = new PitchConstants(0);
+		VisionConstants pitchConstants = new VisionConstants(0);
 
 		/* Default values for the main vision window. */
 		String videoDevice = "/dev/video0";
@@ -108,13 +108,6 @@ public class VisionReader extends Thread {
 	
 	public Ball getBall() {
 		return ball;
-	}
-	
-	public boolean readable() {
-		// WTF is this supposed to do?! - test without it for now
-		// TODO: find the fuck out what this is doing
-		// asdjlhasbfrasdfg
-		return true; //iterations > 30;
 	}
 	
 	public int getDirection() {

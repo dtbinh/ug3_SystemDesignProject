@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import PitchObject.Position;
 import au.edu.jcu.v4l4j.CaptureCallback;
 import au.edu.jcu.v4l4j.DeviceInfo;
 import au.edu.jcu.v4l4j.FrameGrabber;
@@ -35,7 +36,7 @@ public class Vision extends WindowAdapter {
 	private int height;
 	private WorldState worldState;
 	private ThresholdsState thresholdsState;
-	private PitchConstants pitchConstants;
+	private VisionConstants pitchConstants;
 	private static final double barrelCorrectionX = -0.016;	
 	private static final double barrelCorrectionY = -0.06;
 	BufferedImage frameImage;
@@ -66,7 +67,7 @@ public class Vision extends WindowAdapter {
 	 */
 	public Vision(String videoDevice, int width, int height, int channel,
 			int videoStandard, int compressionQuality, WorldState worldState,
-			ThresholdsState thresholdsState, PitchConstants pitchConstants)
+			ThresholdsState thresholdsState, VisionConstants pitchConstants)
 			throws V4L4JException {
 
 		/* Set the state fields. */

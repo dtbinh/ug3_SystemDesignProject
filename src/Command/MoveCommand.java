@@ -1,6 +1,6 @@
 package Command;
 
-import JavaVision.Position;
+import PitchObject.Position;
 
 public class MoveCommand extends Command {
 	//TODO: Delete errything.
