@@ -58,7 +58,7 @@ public class BluetoothNXT {
 		// Sound.setVolume(50);
 
 		// Max kicker speed
-		Motor.C.setSpeed(Motor.C.getMaxSpeed());
+		Motor.C.setSpeed((int) Motor.C.getMaxSpeed());
 		Motor.C.setAcceleration(12000);
 
 		//Motor.A.setSpeed(6000);
