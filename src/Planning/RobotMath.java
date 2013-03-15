@@ -462,8 +462,9 @@ public class RobotMath {
      *
      */
 	
-	public static double euclidDist(Position a, Position b ){
-		double ans = Math.sqrt(squared(a.getX()- b.getX())+ squared(a.getY() - b.getY()));
+	public static double euclidDist(Position a, Position b ) {
+		double ans = Math.sqrt(squared(a.getX() - b.getX()) +
+				               squared(a.getY() - b.getY()));
 		return ans;
 	}
 	

@@ -76,7 +76,7 @@ public abstract class ObjectDetails {
 			lastVelocity = this.getVelocity();
 			return new RealVector(0, 0);
 		} else {
-		RealVector curVelocity = this.getVelocity();
+			RealVector curVelocity = this.getVelocity();
 			double interval = (double) Math.abs(time1 - time2);
 			double accelX = (curVelocity.getX() - lastVelocity.getX()) / interval;
 			double accelY = (curVelocity.getY() - lastVelocity.getY()) / interval;
@@ -103,10 +103,10 @@ public abstract class ObjectDetails {
 		RealVector v = this.getVelocity();
 		RealVector a = this.getAcceleration();
 		// get variables for keeping position within boundaries
-		int minX = GeneralPlanningScript.vision.getMinX(); 
-		int maxX = GeneralPlanningScript.vision.getMaxX();
-		int minY = GeneralPlanningScript.vision.getMinY(); 
-		int maxY = GeneralPlanningScript.vision.getMaxY();
+		int minX = RobotScript.vision.getMinX(); 
+		int maxX = RobotScript.vision.getMaxX();
+		int minY = RobotScript.vision.getMinY(); 
+		int maxY = RobotScript.vision.getMaxY();
 		// main loop that tries to find a reachable position
 		for (int t = 400; t < 8001; t+=400) {
 			Position ballCoors = getPredictedCoors(t, c, v, a, false); 
@@ -151,7 +151,7 @@ public abstract class ObjectDetails {
 		
 		Position predictedCoors = new Position(x, y);
 		if (reflect) { 
-			predictedCoors = reflectInside(predictedCoors, GeneralPlanningScript.vision); 
+			predictedCoors = reflectInside(predictedCoors, RobotScript.vision); 
 		}
 		return predictedCoors;
 	}

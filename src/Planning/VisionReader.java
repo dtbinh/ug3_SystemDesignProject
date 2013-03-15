@@ -6,64 +6,44 @@ import JavaVision.*;
 
 
 public class VisionReader extends Thread {
+	private static final int YELLOW = 0;
+	private static final int BLUE = 1;
 	// Objects
-	private Ball ball;
-	private WorldState state;
-	static VisionReader instance = null;
-	private Robot blueRobot;
-	private Robot yellowRobot;
-	private ControlGUI thresholdsGUI;
-	private Vision vision;
-	private static String colour;
-	private Robot ourRobot;
-	private Robot theirRobot;
+	private static volatile WorldState state;
+	private static volatile ControlGUI thresholdsGUI;
+	private static volatile Robot blueRobot;
+	private static volatile Robot yellowRobot;
+	private static volatile Vision vision;
+	private static volatile Ball ball;
+	private static volatile int colour;
+	private static volatile Robot ourRobot;
+	private static volatile Robot theirRobot;
 
 	static int iterations = 0;
 	
 	public static void main(String args[]) {
-		
-		instance = new VisionReader(args[0]);
-
+		VisionReader vr = new VisionReader(args[0]);
+		vr.run();
 	}
 
-	/**
-	 * Instantiate objects and start the planning thread
-	 * @param string 
-	 */
 	public VisionReader(String string) {
-		colour = string;
+		colour = string.equalsIgnoreCase("yellow") ? YELLOW : BLUE;
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
 		ball = new Ball();
-		
 		start();
 	}
 
-	
-	public void run() {		
+	public void run() {
 		startVision();
 		
 		while (true) {
-			// WHY!!!? Why do we sleep here?
-			// TODO: find out why we are sleeping here
-			/*
-			try {
-				sleep(40);
-			} catch (InterruptedException e) {
-				System.out.println("Sleep interrupted");
-				e.printStackTrace();
-			}
-			*/
-			iterations++;
 			updatePitchVariables();
 		}
 	}
 
-	/**
-	 * Method to initiate the vision
-	 */
 	private void startVision() {	    
-		/**
+		/*
 		 * Creates the control
 		 * GUI, and initialises the image processing.
 		 */
@@ -104,13 +84,13 @@ public class VisionReader extends Thread {
 		// Get pitch information from vision
 		state = vision.getWorldState();
 		ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
-		
+
 		yellowRobot.setAngle(state.getYellowOrientation());
 		yellowRobot.setCoors(new Position(state.getYellowX(), state.getYellowY()));
 		blueRobot.setAngle(state.getBlueOrientation());
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
-		
-		if (colour.equals("yellow")) {
+
+		if (colour == YELLOW) {
 			ourRobot = yellowRobot;
 			theirRobot = blueRobot;
 		} else {
@@ -118,10 +98,10 @@ public class VisionReader extends Thread {
 			theirRobot = yellowRobot;
 		}
 	}
-	
+
 	//getters for planning thread.
 	public Robot getOurRobot(){
-		if (colour.equals("yellow")) {
+		if (colour == YELLOW) {
 			return yellowRobot;
 		} else {
 			return blueRobot;
@@ -129,7 +109,7 @@ public class VisionReader extends Thread {
 	}
 	
 	public Robot getTheirRobot(){
-		if (colour.equals("yellow")) {
+		if (colour == YELLOW) {
 			return blueRobot;
 		} else {
 			return yellowRobot;
@@ -137,12 +117,13 @@ public class VisionReader extends Thread {
 	}
 	
 	public Ball getBall() {
-		return this.ball;
+		return ball;
 	}
 	
 	public boolean readable() {
 		// WTF is this supposed to do?! - test without it for now
 		// TODO: find the fuck out what this is doing
+		// asdjlhasbfrasdfg
 		return true; //iterations > 30;
 	}
 	
@@ -156,11 +137,3 @@ public class VisionReader extends Thread {
 	public int getMinY() { return vision.getMinY(); }
 	public int getMaxY() { return vision.getMaxY(); }
 }
-
-
-	
-	
-
-	
-
-

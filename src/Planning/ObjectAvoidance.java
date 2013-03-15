@@ -1,6 +1,8 @@
 
 package Planning;
 
+import Commands.*;
+
 import JavaVision.Position;
 
 public class ObjectAvoidance{

@@ -19,11 +19,14 @@ public class CommandStack {
 	}
 
 	public void pushMoveCommand(List<Point> points) {
-		int numel = points.size();
-		Position lastPosition = new Position(points.get(numel - 1));
+		Position lastPosition = new Position(points.get(points.size() - 1));
+		pushMoveCommand(points, lastPosition);
+	}
+
+	public void pushMoveCommand(List<Point> points, Position positionToFace) {
 		// Skip first element of list (current robot coordinates) - we're there already
-		for (int i = numel - 1; i > 0; i--) {
-			this.pushMoveCommand(new Position(points.get(i)), lastPosition, i == 1);
+		for (int i = points.size() - 1; i > 0; i--) {
+			this.pushMoveCommand(new Position(points.get(i)), positionToFace, i == 1);
 		}
 	}
 
