@@ -168,4 +168,11 @@ public class Position {
 		}
 		return false;
 	}
+	
+	public double getAngleToGoal(Goal goal) {
+		double a = goal.getTop().euclidDistTo(this);
+		double c = goal.getBottom().euclidDistTo(this);
+		double b = goal.getTop().euclidDistTo(goal.getBottom());
+		return Math.acos((a * a + c * c - b * b) / (2 * a * c));
+	}
 }

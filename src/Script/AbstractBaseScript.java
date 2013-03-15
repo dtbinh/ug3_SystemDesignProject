@@ -17,7 +17,6 @@ public abstract class AbstractBaseScript extends Thread {
 	final static int kickAllowance = 1500;
 
 	static volatile VisionReader vision;
-	static volatile RobotMath robotMath;
 
 	private static volatile Context context;
     private static volatile Socket socket;
@@ -36,7 +35,6 @@ public abstract class AbstractBaseScript extends Thread {
 		String ourColor = args[0];
 		String ourDirection = args[1];
 		vision = new VisionReader(ourColor);
-		robotMath = new RobotMath();
 		shootingRight = ourDirection.equals("right");
 		theirGoal = shootingRight ? Goal.goalR() : Goal.goalL();
 		ourGoal = shootingRight ? Goal.goalL() : Goal.goalR();
@@ -53,7 +51,8 @@ public abstract class AbstractBaseScript extends Thread {
 		ourRobot = vision.getOurRobot();
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
-		robotMath.initLoop();
+		ourRobot.setWantsToRotate(false);
+		ourRobot.setWantsToStop(false);
 	}
 
 	static void playExecute() {
@@ -125,8 +124,7 @@ public abstract class AbstractBaseScript extends Thread {
 
 	static void sendMoveCommand(Command command) {
 		MoveCommand moveCommand = (MoveCommand) command;
-		String signal = robotMath.getSigToPoint(
-				ourRobot,
+		String signal = ourRobot.getSigToPoint(
 				moveCommand.moveTowardsPoint,
 				moveCommand.rotateTowardsPoint,
 				moveCommand.shouldMovementEndFacingRotateTowardsPoint);

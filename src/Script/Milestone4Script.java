@@ -2,7 +2,6 @@ package Script;
 
 import PitchObject.PitchObject;
 import PitchObject.Position;
-import PitchObject.RobotMath;
 
 /**
  * GeneralPlanningScript is an outline for how all 
