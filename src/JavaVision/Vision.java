@@ -167,7 +167,7 @@ public class Vision extends WindowAdapter {
 		videoDev.releaseFrameGrabber();
 
 		windowFrame.dispose();
-
+		// TODO: clear Bluetooth on window close
 		System.exit(0);
 	}
 

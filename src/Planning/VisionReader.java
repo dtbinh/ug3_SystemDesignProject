@@ -18,7 +18,7 @@ public class VisionReader extends Thread {
 	private Robot ourRobot;
 	private Robot theirRobot;
 
-	static int its = 0;
+	static int iterations = 0;
 	
 	public static void main(String args[]) {
 		
@@ -35,7 +35,7 @@ public class VisionReader extends Thread {
 		blueRobot = new Robot();
 		yellowRobot = new Robot();
 		ball = new Ball();
-			
+		
 		start();
 	}
 
@@ -43,16 +43,20 @@ public class VisionReader extends Thread {
 	public void run() {		
 		startVision();
 		
-		do {
-		try {
-			sleep(40);
-		} catch (InterruptedException e) {
-			System.out.println("Sleep interrupted");
-			e.printStackTrace();
+		while (true) {
+			// WHY!!!? Why do we sleep here?
+			// TODO: find out why we are sleeping here
+			/*
+			try {
+				sleep(40);
+			} catch (InterruptedException e) {
+				System.out.println("Sleep interrupted");
+				e.printStackTrace();
+			}
+			*/
+			iterations++;
+			updatePitchVariables();
 		}
-		its++;
-		getPitchInfo();
-		}while(true);
 	}
 
 	/**
@@ -96,52 +100,53 @@ public class VisionReader extends Thread {
 	/**
 	 * Get the most recent information from vision
 	 */
-	public void getPitchInfo() {
-
-		
+	public void updatePitchVariables() {
 		// Get pitch information from vision
 		state = vision.getWorldState();
 		ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
 		
 		yellowRobot.setAngle(state.getYellowOrientation());
 		yellowRobot.setCoors(new Position(state.getYellowX(), state.getYellowY()));
-		
 		blueRobot.setAngle(state.getBlueOrientation());
 		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
-		if (colour.equals("yellow")){
+		
+		if (colour.equals("yellow")) {
 			ourRobot = yellowRobot;
 			theirRobot = blueRobot;
-		} else{
+		} else {
 			ourRobot = blueRobot;
 			theirRobot = yellowRobot;
 		}
-			
 	}
+	
 	//getters for planning thread.
 	public Robot getOurRobot(){
-		if (colour.equals("yellow")){
+		if (colour.equals("yellow")) {
 			return yellowRobot;
-		} else{
+		} else {
 			return blueRobot;
 		}
 	}
 	
 	public Robot getTheirRobot(){
-		if (colour.equals("yellow")){
+		if (colour.equals("yellow")) {
 			return blueRobot;
-		} else{
+		} else {
 			return yellowRobot;
 		}
 	}
 	
-	public Ball getBall(){
+	public Ball getBall() {
 		return this.ball;
 	}
 	
-	public boolean readable(){
-		return (its>30);
+	public boolean readable() {
+		// WTF is this supposed to do?! - test without it for now
+		// TODO: find the fuck out what this is doing
+		return true; //iterations > 30;
 	}
-	public int getDirection(){
+	
+	public int getDirection() {
 		return state.getDirection();
 		// 0 = right, 1 = left.
 	}
@@ -150,7 +155,6 @@ public class VisionReader extends Thread {
 	public int getMaxX() { return vision.getMaxX(); }
 	public int getMinY() { return vision.getMinY(); }
 	public int getMaxY() { return vision.getMaxY(); }
-		
 }
 
 

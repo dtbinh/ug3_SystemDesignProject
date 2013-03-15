@@ -27,7 +27,6 @@ import JavaVision.Position;
 public class Milestone4 extends Thread {
 	public final static int GOT_THERE_DIST = 10;
 	public final static int BEHIND_BALL_DIST = 50;
-	public final static int DRIBBLE_DIST = 60;
 
 	static VisionReader vision;
 	static RobotMath robotMath;
@@ -47,30 +46,24 @@ public class Milestone4 extends Thread {
 	static CommandStack plannedCommands;
 	
 	public static void main(String[] args) {
-		vision = new VisionReader(args[0]); // Our Colour - MAKE GUI 4 DIS
-		//vision = new VisionReader("yellow");;
+		// general planning script setup
+		vision = new VisionReader(args[0]);
 		robotMath = new RobotMath(); robotMath.init();
-		
+		shootingRight = args[1].equals("right");
+		theirGoal = shootingRight ? robotMath.goalR.getCoors() : robotMath.goalL.getCoors();
+		ourGoal = !shootingRight ? robotMath.goalL.getCoors() : robotMath.goalR.getCoors() ;
+		plannedCommands = new CommandStack();	
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
         socket.connect("tcp://127.0.0.1:5555");
-        
+        // first thing we do is send zeros to make robot stop if it
+        // had previous commands on the stack
         sendZeros();
-        
-		shootingRight = args[1].equals("right");
-		System.out.println("Shooting right: " + shootingRight);
 		
+        // specific to this one
 		int taskNo = Integer.parseInt(args[2]); // Milestone task number
 		
-		theirGoal = shootingRight ? robotMath.goalR.getCoors() : robotMath.goalL.getCoors();
-		ourGoal = !shootingRight ? robotMath.goalL.getCoors() : robotMath.goalR.getCoors() ;
-		plannedCommands = new CommandStack();
-		
 		while (true) {
-			if (!vision.readable()) {
-				continue;
-			}
-			
 			updateWorldState();
 			doTask(taskNo);
 		}
@@ -90,31 +83,28 @@ public class Milestone4 extends Thread {
 		 * start going towards it?
 		 * For part 3 do we have to score past the robot?
 		 */
-		if(!haveBall()){
+		if(!ball.robotHasIt(ourRobot)) {
 			Position intersectionPoint = ball.getReachableCoors(ourRobot);
 			planMove(intersectionPoint);
 			System.out.println("Moving to predicted point " + intersectionPoint);
 		}
 		else {
 			if (taskNo == 1 || taskNo == 2) {
-				// just stop when we have the ball
+				// TODO: test
+				// just stop when we have the ball- this should be enough
 				sendZeros();
 			} else if (taskNo == 3) {
-				// TODO: score a goal
-				if (wantToKick()) {
-					plannedCommands.pushKickCommand();
-					System.out.println("planning to kick");
-				}
-				else {
-					planMove(theirGoal);
-					System.out.println("planning to DRIBBLE");
-				}
+				// TODO: implement
+				// score a goal
+				// 1) move to a point where the opponent doesn't intersect
+				//    the line from our robot to goal centre
+				// 2) move closer to goal
+				// 3) shoot
 			} else {
 				System.err.println("Task not specified.");
 				System.exit(0);
 			}
 		}
-		
 		playExecute();
 	}
 	
@@ -164,47 +154,14 @@ public class Milestone4 extends Thread {
 	private static void planMove(Position coors) {
 		planMove(coors, theirRobot);
 	}
-	
-	static boolean haveBall() {
-		double distToBall = RobotMath.euclidDist(ourRobot.getCoors(), ball.getCoors());
-		boolean closeToBall = distToBall < DRIBBLE_DIST;
-		boolean facingBall = RobotMath.isTargeting(ourRobot, ball.getCoors());
-		
-		return closeToBall && facingBall;
-	}
-
-	static boolean wantToKick() {
-		double positionScore = robotMath.getPositionScore(ourRobot.getCoors(),
-													shootingRight, 0.5);
-		double hitScore = robotMath.getHitScore(ourRobot, shootingRight);
-		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
-		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.32);								
-	}
-	
-	static boolean opponentHasBall() {
-		Position ballPos = ball.getCoors();
-		double distToBall = RobotMath.euclidDist(theirRobot.getCoors(), ballPos);
-		boolean closeToBall = distToBall <= DRIBBLE_DIST;
-		boolean facingBall = RobotMath.isTargeting(theirRobot, ballPos);
-		
-		return closeToBall && facingBall;
-	}
-	
-	static boolean opponentHasClearShot(){
-			if(opponentHasBall() && ObjectAvoidance.obstacleDetection
-					(theirRobot.getCoors(), ourRobot.getCoors(), ourGoal)){
-				return true;
-			}
-		return false;
-	}
 
 	static void sendreceive(String signal) {
-		///*
+		/*
 		socket.send(signal, 0);
         System.out.println("Sending OK");
         socket.recv(0);
         System.out.println("Receiving OK");
-		// */
+		*/
 	}
 
 	static void sendZeros() {

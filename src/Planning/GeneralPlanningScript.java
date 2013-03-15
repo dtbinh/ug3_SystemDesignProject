@@ -1,3 +1,5 @@
+// DEPRECIATED - DO NOT USE --- ONLY FOR REFERENCE
+
 package Planning;
 
 // TODO: remove ArrayList legacy

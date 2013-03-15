@@ -3,10 +3,8 @@ import JavaVision.*;
 
 
 public abstract class ObjectDetails {
-
 	protected Position coors;
 	protected float angle;
-	
 	
 	private static Position coors2 = null;
 	private static Position coors3 = null;
