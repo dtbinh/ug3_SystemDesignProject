@@ -57,8 +57,29 @@ public class Milestone4Script extends AbstractBaseScript {
 				// score a goal
 				// 1) move to a point where the opponent doesn't intersect
 				//    the line from our robot to goal centre
+				
+				if(!ourRobot.isFacing(theirGoal.getOptimalPosition()))
+				{
+					planMove(ourRobot.getCoors(), theirGoal.getOptimalPosition()); //face the enemy goal
+					System.out.println("Rotating to face enemy goal... " + theirGoal.getOptimalPosition());
+				}
+				
 				// 2) move closer to goal
+				
+				//*do some object avoidance here*
+				//we also need to make sure the ball continues to be in our possession during movement
+				
+				planMove(theirGoal.getOptimalPosition(), theirGoal.getOptimalPosition());
+				
 				// 3) shoot
+				
+				if(ball.robotHasBall(ourRobot)) 
+				{
+					sendKickCommand(plannedCommands.pop());
+					System.out.println("Kick!");
+				}
+				
+				sendZeros();
 			} else {
 				System.err.println("Task not specified.");
 				System.exit(0);
