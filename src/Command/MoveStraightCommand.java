@@ -2,7 +2,7 @@ package Command;
 
 import PitchObject.Position;
 
-public class MoveStraightCommand {
+public class MoveStraightCommand extends Command {
 	private Position movePoint;
 
 	public MoveStraightCommand(Position movePoint){

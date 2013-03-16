@@ -42,6 +42,22 @@ public class CommandStack {
 			this.push(new MoveCommand(kickPoint, ballPoint, true));
 		}
 	}
+	
+	public void pushMoveStraightCommand(Position destination){
+		this.push(new MoveStraightCommand(destination));
+	}
+	
+	public void pushMoveAndTurnCommand(Position destination, Position rotation){
+		this.push(new MoveAndTurnCommand(destination,rotation));
+	}
+	
+	public void pushMoveToFaceCommand(Position destination, Position rotation){
+		this.push(new MoveToFaceCommand(destination,rotation));
+	}
+	
+	public void pushRotateCommand(Position rotation){
+		this.push(new MoveStraightCommand(rotation));
+	}
 
 	public void push(Command c) {
 		stack.push(c);

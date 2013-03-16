@@ -123,15 +123,43 @@ public abstract class AbstractBaseScript extends Thread {
 	}
 
 	static void sendMoveCommand(Command command) {
-		MoveCommand moveCommand = (MoveCommand) command;
-		String signal = ourRobot.getSigToPoint(
-				moveCommand.moveTowardsPoint,
-				moveCommand.rotateTowardsPoint,
-				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
+		String signal = getCommandSignal(command);
 		sendreceive(signal);
 	}
 	
 	public static VisionReader getVision() {
 		return vision;
+	}
+
+	static String getCommandSignal(Command command){
+		if (command instanceof MoveAndTurnCommand){
+			MoveAndTurnCommand container = (MoveAndTurnCommand) command;
+			Position move = container.getMovePoint();
+			Position rotate = container.getRotatePoint();
+			return ourRobot.moveAndTurn(move, rotate);
+		}
+		if (command instanceof MoveToFaceCommand){
+			MoveToFaceCommand container = (MoveToFaceCommand) command;
+			Position move = container.getMovePoint();
+			Position rotate = container.getRotatePoint();
+			return ourRobot.moveToFace(move, rotate);
+		}
+		if (command instanceof RotateCommand){
+			RotateCommand container = (RotateCommand) command;
+			Position rotate = container.getRotatePosition();
+			return ourRobot.rotate(rotate);
+		}
+		if (command instanceof MoveStraightCommand){
+			MoveStraightCommand container = (MoveStraightCommand) command;
+			Position move = container.getMovePoint();
+			return ourRobot.moveStraight(move);
+		} 
+		//TODO: Adapt to new movement, remove legacy MoveCommand
+		MoveCommand moveCommand = (MoveCommand) command;
+		String signal = ourRobot.getSigToPoint(
+				moveCommand.moveTowardsPoint,
+				moveCommand.rotateTowardsPoint,
+				moveCommand.shouldMovementEndFacingRotateTowardsPoint);
+		return signal;
 	}
 }

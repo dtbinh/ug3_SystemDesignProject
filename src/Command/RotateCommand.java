@@ -2,7 +2,7 @@ package Command;
 
 import PitchObject.Position;
 
-public class RotateCommand {
+public class RotateCommand extends Command{
 private Position rotatePosition;
 
 public RotateCommand(Position rotatePosition) {
