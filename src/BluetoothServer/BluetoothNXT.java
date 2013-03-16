@@ -32,7 +32,7 @@ public class BluetoothNXT {
 	public static final byte OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final byte OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
 	// M1 - kick
-	public static final int KICK_ANGLE = 80; // in "ticks"
+	public static final int KICK_ANGLE = 130; // in "ticks"
 	public static final int KICK_ANGLE_IDLE = -5;
 	public static final int KICK_DIRECTION = 1; // change to -1, to change direction
 	// M1 - drive
@@ -59,7 +59,6 @@ public class BluetoothNXT {
 
 		// Max kicker speed
 		Motor.C.setSpeed((int) Motor.C.getMaxSpeed());
-		Motor.C.setAcceleration(12000);
 
 		//Motor.A.setSpeed(6000);
 		//Motor.B.setSpeed(6000);
@@ -194,24 +193,17 @@ public class BluetoothNXT {
 
 	static void kick() {
 		// Kick
-		Motor.C.rotateTo(KICK_ANGLE * -KICK_DIRECTION, false);
-
+		Motor.C.rotate(KICK_ANGLE * -KICK_DIRECTION, true);
 
 		try {
-			Thread.sleep(25);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+			Thread.sleep(100);
+		} catch(Exception e) { }
 
 		// Reset kicker to original position
-		Motor.C.rotateTo(KICK_ANGLE_IDLE, false);
+		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
 
 		try {
-			Thread.sleep(25);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-
-		//Motor.C.rotate(10, true);
+			Thread.sleep(110);
+		} catch(Exception e) { }
 	}
 }
