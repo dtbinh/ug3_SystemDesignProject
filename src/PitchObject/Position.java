@@ -175,4 +175,9 @@ public class Position {
 		double b = goal.getTop().euclidDistTo(goal.getBottom());
 		return Math.acos((a * a + c * c - b * b) / (2 * a * c));
 	}
+	
+	public double getAngleToPosition(Position position) {
+		return Math.atan2(position.getY() - this.getY(),
+						  position.getX() - this.getX());
+	}
 }

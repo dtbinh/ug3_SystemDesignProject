@@ -2,22 +2,15 @@ package Command;
 
 import PitchObject.Position;
 
-public class MoveToFaceCommand extends Command {
-private Position movePoint;
-private Position rotatePoint; 
-
-public MoveToFaceCommand(Position movePoint, Position rotatePoint){
-	this.movePoint = movePoint;
-	this.rotatePoint = rotatePoint;
-}
-
-
-public Position getMovePoint(){
-	return this.movePoint;
-}
-
-public Position getRotatePoint(){
-	return this.rotatePoint;
-}
-
+public class MoveToFaceCommand extends MoveCommand {
+	private double direction; 
+	
+	public MoveToFaceCommand(Position movePoint, double direction){
+		super(movePoint);
+		this.direction = direction;
+	}
+	
+	public double getDirection(){
+		return this.direction;
+	}
 }

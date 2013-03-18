@@ -21,7 +21,7 @@ public class Ball extends PitchObject {
 		if (ballCoors == null) {
 			return false;
 		}
-		return robot.isTargeting(ballCoors);
+		return robot.isFacing(ballCoors);
 	}
 
 	public boolean robotIsCloseToBall(Robot robot) {
@@ -32,20 +32,6 @@ public class Ball extends PitchObject {
 		}
 		double distToBall = robotCoors.euclidDistTo(ballCoors);
 		return distToBall <= DRIBBLE_DIST;
-	}
-
-	public Position pointBehindBall(Position direction) {
-		Position ballPos = this.getCoors();
-	 	Robot goalRobot = new Robot();
-	 	goalRobot.setCoors(direction);
-	 	goalRobot.setAngle(0);
-	    double rvrsBallToGoal = goalRobot.getAngleFromRobotToPoint(ballPos) + Math.PI;
-	    Position goPoint = ballPos.projectPoint(rvrsBallToGoal, 100);
-	     if (!goPoint.withinPitch()){
-             goPoint.setX((ballPos.getX()));
-             goPoint.setY((ballPos.getY()));
-	     }
-	     return goPoint;
 	}
 
 	public Position pointBehindBall(Position direction, int distance) {

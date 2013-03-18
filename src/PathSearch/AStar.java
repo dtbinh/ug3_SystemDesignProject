@@ -2,6 +2,7 @@ package PathSearch;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import PitchObject.Position;
 
 /**
  *
@@ -78,7 +79,7 @@ public class AStar {
 
 	//return a list of coordinates to go through
 	//public static ArrayList<int[]> getPath(int startAngle,Point startPt, Point endPt) {
-	public static ArrayList<Point> getPath2(Point _ballPosition, Point _ourPosition, int _ourAngle, Point _oppPosition, int _oppAngle, int side) {
+	public static ArrayList<Position> getPath2(Point _ballPosition, Point _ourPosition, int _ourAngle, Point _oppPosition, int _oppAngle, int side) {
 
 		ourSide = side;
 
@@ -103,7 +104,8 @@ public class AStar {
 
 		path = optimisePath(path);
 
-		ArrayList<Point> waypoints = translateGridsToCoordinates(path);
+//		ArrayList<Point> waypoints = translateGridsToCoordinates(path);
+		ArrayList<Position> waypoints = translateGridsToCoordinatePositions(path);
 		
 
 		return waypoints;
@@ -277,22 +279,41 @@ public class AStar {
 		return gridPoint;
 	}
 
-	public static ArrayList<Point> translateGridsToCoordinates(ArrayList<GridPoint> foundPath) {
-		ArrayList<Point> coordinateList = new ArrayList<Point>();
+//	public static ArrayList<Point> translateGridsToCoordinates(ArrayList<GridPoint> foundPath) {
+//		ArrayList<Point> coordinateList = new ArrayList<Point>();
+//		//add starting coordinate to the list
+//		coordinateList.add(0, startCoorPoint);
+//		//translate every gridpoint except the first and last into coordinates
+//		if (foundPath.size() > 1) {
+//			for (int i = 1; i < foundPath.size()-1; ++i) {
+//				GridPoint gp = foundPath.get(i);
+//				Point gridMidPoint = new Point();
+//				gridMidPoint.x = (int) ((gp.getX()-1) * gridWidth) + gridWidth/2;
+//				gridMidPoint.y = (int) ((gp.getY()-1) * gridHeight) + gridHeight/2;
+//				coordinateList.add(gridMidPoint);
+//			}
+//		}
+//		//add end coordinate to the list
+//		coordinateList.add(coordinateList.size(), endCoorPoint);
+//		return coordinateList;
+//	}
+
+	public static ArrayList<Position> translateGridsToCoordinatePositions(ArrayList<GridPoint> foundPath) {
+		ArrayList<Position> coordinateList = new ArrayList<Position>();
 		//add starting coordinate to the list
-		coordinateList.add(0, startCoorPoint);
+		coordinateList.add(0, new Position(startCoorPoint));
 		//translate every gridpoint except the first and last into coordinates
 		if (foundPath.size() > 1) {
 			for (int i = 1; i < foundPath.size()-1; ++i) {
 				GridPoint gp = foundPath.get(i);
-				Point gridMidPoint = new Point();
-				gridMidPoint.x = (int) ((gp.getX()-1) * gridWidth) + gridWidth/2;
-				gridMidPoint.y = (int) ((gp.getY()-1) * gridHeight) + gridHeight/2;
-				coordinateList.add(gridMidPoint);
+				coordinateList.add(new Position(
+						(int) ((gp.getX()-1) * gridWidth) + gridWidth/2,
+						(int) ((gp.getY()-1) * gridHeight) + gridHeight/2)
+				);
 			}
 		}
 		//add end coordinate to the list
-		coordinateList.add(coordinateList.size(), endCoorPoint);
+		coordinateList.add(coordinateList.size(), new Position(endCoorPoint));
 		return coordinateList;
 	}
 

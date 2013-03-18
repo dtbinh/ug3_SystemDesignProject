@@ -4,29 +4,30 @@ public class Robot extends PitchObject {
 	// TODO: test to find good value for this
 	public static final double DEFAULT_VELOCITY = 100.0;
 	public final static int MAX_SPEED = 255;
-	public final static int TURN_SPEED = 128;
+	public final static int TURN_SPEED = 56;
 	public final static int NEAR_RANGE = 100;
 
-    private boolean wantsToRotate;
-    private boolean wantsToStop;
+//    private boolean wantsToRotate;
+	private int rotationSign = 0;
+//    private boolean wantsToStop;
 
 	public Robot() {
-		this.wantsToRotate = false;
-		this.wantsToStop = false;
-	}
-
-	public void setWantsToRotate(boolean b) {
-		this.wantsToRotate = b;
-	}
-
-	public void setWantsToStop(boolean b) {
-		this.wantsToStop = b;
+//		this.wantsToRotate = false;
+//		this.wantsToStop = false;
 	}
 
 	public Robot (Position coors, float angle) {
-		this.setCoors(coors);
-		this.setAngle(angle);
+		this.coors = coors;
+		this.angle = angle;
 	}
+
+//	public void setWantsToRotate(boolean b) {
+//		this.wantsToRotate = b;
+//	}
+//
+//	public void setWantsToStop(boolean b) {
+//		this.wantsToStop = b;
+//	}
 
 	public Position getReachableCoors() {
 		return super.getReachableCoors(this.coors, this.getSpeed());
@@ -61,41 +62,26 @@ public class Robot extends PitchObject {
           * remember: top left corner of screen = (0, 0)
           */
          robAngle = robAngle - Math.PI / 2;
-         robAngle += (Math.PI * 10);
-         robAngle = robAngle % (Math.PI * 2);
-         return robAngle;
+         return refitAngle(robAngle);
     }
 
     public double getAngleFromRobotToPoint(Position point) {
-         /*
-          * angleToPoint is the angle between the top left corner of the pitch and the point
-          * angleToRobot is the angle between the top left corner of the pitch and the robot
-          * angleBetweenRobotAndPoint is the clockwise angle between the robot and the point
-          */
-         double angleToPoint = Math.atan2(point.getY() - this.getCoors().getY(),
-        		                          point.getX() - this.getCoors().getX());
-         double angleToRobot = this.getRobotAngle();
-         double angleBetweenRobotAndPoint = angleToPoint - angleToRobot;
-         angleBetweenRobotAndPoint += (Math.PI * 10);
-         angleBetweenRobotAndPoint = angleBetweenRobotAndPoint % (Math.PI * 2);
-         return angleBetweenRobotAndPoint;
+         double angleToPoint = this.getCoors().getAngleToPosition(point);
+         return getRotationDifference(angleToPoint);
     }
-
-    public boolean isTargeting(Position point) {
-        double angle = this.getAngleFromRobotToPoint(point);
-        double value = 0;
-        if (angle > Math.PI) {
-	        if (((Math.PI * 2) - angle) > (Math.PI / 6)) {
-	        	value = 0.3;
-	        }   
-	    } else if (angle > Math.PI / 6) {
-	            value = -0.3;
-	    }
-        return (value == 0);
-	}
+    
+    public double getRotationDifference(double angle) {
+    	double result = angle - this.getRobotAngle();
+    	return refitAngle(result);
+    }
 
 	public boolean isFacing(Position point) {
 		double angle = this.getAngleFromRobotToPoint(point);
+	    double value = this.getRotationValue(angle);    
+	    return value == 0;
+	}
+	public boolean isFacing(double direction) {
+		double angle = this.getRotationDifference(direction);
 	    double value = this.getRotationValue(angle);    
 	    return value == 0;
 	}
@@ -119,18 +105,23 @@ public class Robot extends PitchObject {
      *
      */
     public double getRotationValue(double angle){
-         double value = 0;;
-         if (angle > (Math.PI) ){
-                 if (((Math.PI*2) - angle) > (Math.PI/7)) {
-                         value = 0.3;
-                 }
-                
-         } else if (angle > Math.PI/7) {
-                 value = -0.3;
+         double sign = 0;
+         // normalize angle and set sign
+         if (angle > Math.PI){
+        	 sign = +1;
+        	 angle = 2*Math.PI - angle;
          }
-         //TODO: Remove.
-         this.setWantsToRotate(!(value == 0));
-         return value;
+         else {
+        	 sign = -1;
+         }
+         // get the value -- tested! don't try larger values
+         // with TURN_SPEED = 56 and rotationSign up to 5
+         if (angle > Math.PI/7) { return sign * 0.3; }
+    	 else                   { return 0; }
+    }
+    
+    public double refitAngle(double angle) {
+    	return (angle + 8*Math.PI) % (2*Math.PI);
     }
 
     /**
@@ -161,44 +152,44 @@ public class Robot extends PitchObject {
      * @author      Caithan Moore - S1024940
      *
      */
-    public int[] getMotorValues(double rotationfactor, double angle, boolean hardRotate){
-         double[] motors = {0,0,0,0};
-         int[] returnvalues = {0,0,0,0};
-         double multfactor = 255;
-         double maxval = 0.0001;
-         if (wantsToRotate) {
-                 for (int i = 0; i<4;i++){
-                         motors[i] += rotationfactor;
-                 }
-         }
-         if  (!(wantsToRotate && hardRotate && wantsToStop))  {
-         //hardRotate tells us that we -need- to be facing the correct way.
-         //so, keep moving all the time if we don't really care about rotation.
-         //may need some testing here
-                 motors[0] -= (Math.cos(angle));
-                 motors[1] += (Math.sin(angle));
-                 motors[2] -= (Math.sin(angle));
-                 motors[3] += (Math.cos(angle));
-         }
-         if (wantsToStop && wantsToRotate && (hardRotate)){
-         //similar here, but reversed.
-         // if you want to stop and rotate, only slow down if you actually care about rotating.
-                 multfactor = (multfactor/Math.abs(rotationfactor))/4;
-         } else {
-                 for (int i = 0; i<4;i++){
-                         if (Math.abs(motors[i]) > maxval) maxval = Math.abs(motors[i]);
-                 }
-                 multfactor = (multfactor/maxval);
-                
-         }
-        
-         for (int i = 0;i<4;i++) {
-                 returnvalues[i] = (int) (motors[i]*multfactor);
-         }
-                        
-         return returnvalues;
-        
- 	}
+//    public int[] getMotorValues(double rotationfactor, double angle, boolean hardRotate){
+//         double[] motors = {0,0,0,0};
+//         int[] returnvalues = {0,0,0,0};
+//         double multfactor = 255;
+//         double maxval = 0.0001;
+//         if (wantsToRotate) {
+//                 for (int i = 0; i<4;i++){
+//                         motors[i] += rotationfactor;
+//                 }
+//         }
+//         if  (!(wantsToRotate && hardRotate && wantsToStop))  {
+//         //hardRotate tells us that we -need- to be facing the correct way.
+//         //so, keep moving all the time if we don't really care about rotation.
+//         //may need some testing here
+//                 motors[0] -= (Math.cos(angle));
+//                 motors[1] += (Math.sin(angle));
+//                 motors[2] -= (Math.sin(angle));
+//                 motors[3] += (Math.cos(angle));
+//         }
+//         if (wantsToStop && wantsToRotate && (hardRotate)){
+//         //similar here, but reversed.
+//         // if you want to stop and rotate, only slow down if you actually care about rotating.
+//                 multfactor = (multfactor/Math.abs(rotationfactor))/4;
+//         } else {
+//                 for (int i = 0; i<4;i++){
+//                         if (Math.abs(motors[i]) > maxval) maxval = Math.abs(motors[i]);
+//                 }
+//                 multfactor = (multfactor/maxval);
+//                
+//         }
+//        
+//         for (int i = 0;i<4;i++) {
+//                 returnvalues[i] = (int) (motors[i]*multfactor);
+//         }
+//                        
+//         return returnvalues;
+//        
+// 	}
 
     public static double[] getMovementRatio(double angle){
     	 double[] motors = {0,0,0,0};
@@ -210,53 +201,82 @@ public class Robot extends PitchObject {
     }
 
     public String moveStraight(Position destination) {
-    	// TODO: Do constants ASAP
     	double angle = this.getAngleFromRobotToPoint(destination);
     	double[] motors = getMovementRatio(angle);
     	return normalisedSignal(motors, MAX_SPEED);
     }
 
-    public static String normalisedSignal(double[] motors,int maxspeed){
-    	int maxVal = -1;
+    public static String normalisedSignal(double[] motors, int maxspeed){
+    	double maxVal = -1;
     	for (int i = 0; i<4;i++){
              if (Math.abs(motors[i]) > maxVal) {
-            	 maxVal = (int) Math.abs(motors[i]);
+            	 maxVal = Math.abs(motors[i]);
              }
     	}
-    	maxVal = (maxVal == 0) ? 1 : maxVal;
-    	maxspeed = (maxspeed/maxVal);
     	int[] returnvalues = new int[4];
-		for (int i = 0;i<4;i++) {
-    		 returnvalues[i] = (int) (motors[i]*maxspeed);
+    	if (maxVal != 0) {
+	    	maxspeed = (int) (maxspeed/maxVal);
+			for (int i = 0;i<4;i++) {
+	    		 returnvalues[i] = (int) (motors[i]*maxspeed);
+	    	}
     	}
-            
-    	 return createSignal(returnvalues);
+    	return createSignal(returnvalues);
     }
 
-    public String rotate(Position toFace){
-    	double angle = this.getAngleFromRobotToPoint(toFace);
-    	double direction = getRotationValue(angle);
-    	double[] motors = { direction, direction, direction,direction };
+    /**
+     * This method checks if we are rotating the same way as 
+     * we were when we last checked -- giving us time to recheck 
+     * whether we should stop; for this it needs to update a 
+     * history variable (rotationSign) 
+     * @param value rotation value
+     * @return value, possibly zeroed
+     */
+    private double processRotationValue(double value) {
+    	// if rotating same way for too long, stop
+		if ((value<0 && rotationSign<0) || (value>0 && rotationSign>0)) {
+			if (Math.abs(rotationSign) > 5) { value = 0; }
+		}
+		// if sudden change in rotation, will stop earlier (slows oscillation)
+		if ((value<0 && rotationSign>0) || (value>0 && rotationSign<0)) {
+			rotationSign = (value<0) ? -2 : +2;
+		}
+			
+		// update rotation sign
+		if      (value < 0) { rotationSign -= 1; } 
+		else if (value > 0) { rotationSign += 1; }
+		else                { rotationSign  = 0; }
+		
+		return value;
+	}
+	public String rotate(double direction){
+    	double angle = this.getRotationDifference(direction);
+    	double value = getRotationValue(angle);
+    	value = processRotationValue(value);
+    	double[] motors = { value, value, value, value };
     	return normalisedSignal(motors, TURN_SPEED);    	
     }
 
-    public String moveAndTurn(Position movePos, Position rotatePos){	
-    	double moveAngle = this.getAngleFromRobotToPoint(movePos);	
+    public String moveAndTurn(Position movePos, double direction){	
+    	double moveAngle = this.getAngleFromRobotToPoint(movePos);
     	double[] motors = getMovementRatio(moveAngle);    	
-    	double rotateAngle = this.getAngleFromRobotToPoint(rotatePos);
-    	double directionOfRotation = getRotationValue(rotateAngle);
+    	double rotateAngle = this.getRotationDifference(direction);
+    	double value = getRotationValue(refitAngle(rotateAngle));
+    	value = processRotationValue(value);
+    	System.out.println("Dir: " + direction + " ang: " + this.getRobotAngle() +
+    			" Ran: " + rotateAngle + " Rva: " + value);
     	for (int i = 0; i < 4; i++) {
-   		 	motors[i] += directionOfRotation;
+   		 	motors[i] += value;
     	}
     	return normalisedSignal(motors, MAX_SPEED);	
     }
 
-    public String moveToFace(Position movePos, Position rotatePos){
+    
+	public String moveToFace(Position movePos, double direction){
     	if ((this.getCoors().euclidDistTo(movePos) < NEAR_RANGE)
-    		 && !this.isFacing(rotatePos)) {
-    		return rotate(rotatePos);
+    		 && !this.isFacing(direction)) {
+    		return rotate(direction);
     	} else {
-    		return moveAndTurn(movePos, rotatePos);
+    		return moveAndTurn(movePos, direction);
     	}
     }
 
@@ -287,13 +307,13 @@ public class Robot extends PitchObject {
      * @see createSignal
      * @author      Caithan Moore - S1024940
      */
-	 public String getSigToPoint(Position destination, Position rotation,
-			                     boolean hardRotate){
-         double movementangle = this.getAngleFromRobotToPoint(destination);
-         double rotationangle = this.getAngleFromRobotToPoint(rotation);
-         return createSignal(getMotorValues(getRotationValue(rotationangle),
-        		                            movementangle, hardRotate));
-	}
+//	 public String getSigToPoint(Position destination, Position rotation,
+//			                     boolean hardRotate){
+//         double movementangle = this.getAngleFromRobotToPoint(destination);
+//         double rotationangle = this.getAngleFromRobotToPoint(rotation);
+//         return createSignal(getMotorValues(getRotationValue(rotationangle),
+//        		                            movementangle, hardRotate));
+//	}
 
 	/**
      * Gets the maximum angle the robot could make with the goal

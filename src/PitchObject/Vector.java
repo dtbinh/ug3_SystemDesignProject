@@ -22,7 +22,7 @@ public class Vector {
 		return y;
 	}
 	
-	public double norm()  {
+	public double getMagnitude()  {
 		return Math.sqrt(x * x + y * y);
     }
 }

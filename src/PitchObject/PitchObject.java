@@ -65,7 +65,7 @@ public abstract class PitchObject {
 	}
 	
 	public boolean isMoving() {
-		return this.getVelocity().norm() > 0.05;
+		return this.getVelocity().getMagnitude() > 0.05;
 	}
 
 	/**
@@ -86,7 +86,7 @@ public abstract class PitchObject {
 	}
 	
 	public double getSpeed() {
-		return this.getAcceleration().norm();
+		return this.getAcceleration().getMagnitude();
 	}
 	
 	/**

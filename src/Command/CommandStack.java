@@ -2,7 +2,7 @@ package Command;
 
 import PitchObject.Position;
 
-import java.awt.Point;
+//import java.awt.Point;
 import java.util.List;
 import java.util.Stack;
 
@@ -18,59 +18,79 @@ public class CommandStack {
 		stack = new Stack<Command>();
 	}
 
-	public void pushMoveCommand(List<Point> points) {
-		Position lastPosition = new Position(points.get(points.size() - 1));
-		pushMoveCommand(points, lastPosition);
+	// Methods for pushing particular command types
+	public void pushKickCommand() {
+		this.push(new KickCommand());
 	}
-
-	public void pushMoveCommand(List<Point> points, Position positionToFace) {
-		// Skip first element of list (current robot coordinates) - we're there already
-		for (int i = points.size() - 1; i > 1; i--) {
-			this.pushMoveStraightCommand(new Position(points.get(i)));
-		}
-		this.pushMoveToFaceCommand(new Position(points.get(1)), positionToFace);
-	}
-	
-
-	public void pushMoveCommand(Position movePoint, Position rotatePoint,
-								boolean hardRotate) {
-		this.push(new MoveCommand(movePoint, rotatePoint, hardRotate));
-	}
-
-	public void pushKickCommand(Position kickPoint, Position ballPoint) {
-		KickCommand kickCommand = new KickCommand();
-		if (!this.contains(kickCommand)) {
-			this.push(kickCommand);
-			this.push(new MoveCommand(kickPoint, ballPoint, true));
-		}
-	}
-	
 	public void pushMoveStraightCommand(Position destination){
 		this.push(new MoveStraightCommand(destination));
 	}
-	
-	public void pushMoveAndTurnCommand(Position destination, Position rotation){
-		this.push(new MoveAndTurnCommand(destination,rotation));
+	public void pushMoveAndTurnCommand(Position destination, double direction){
+		this.push(new MoveAndTurnCommand(destination, direction));
 	}
-	
-	public void pushMoveToFaceCommand(Position destination, Position rotation){
-		this.push(new MoveToFaceCommand(destination,rotation));
+	public void pushMoveToFaceCommand(Position destination, double direction){
+		this.push(new MoveToFaceCommand(destination, direction));
 	}
-	
-	public void pushRotateCommand(Position rotation){
-		this.push(new MoveStraightCommand(rotation));
+	public void pushRotateCommand(double direction) {
+		this.push(new RotateCommand(direction));
 	}
 
+	
+	/**
+	 * Push move commands along a path
+	 * @param points list of points in path
+	 */
+	public void pushMoveStraightPath(List<Position> points) {
+		this.pushMovePath(points, false, 0, false);
+	}
+	/**
+	 * Push move and turn commands along a path
+	 * @param points list of points in path
+	 * @param coorsToFace turn to face this Position
+	 */
+	public void pushMoveAndTurnPath(List<Position> points, Position coorsToFace) {
+		Position lastPos = points.get(points.size()-1);
+		double direction = lastPos.getAngleToPosition(coorsToFace);
+		this.pushMovePath(points, true, direction, false);
+	}
+	/**
+	 * Push move and turn commands along a path (+ at the end, take HARD turns)
+	 * @param points list of points in path
+	 * @param coorsToFace turn to face this Position
+	 */
+	public void pushMoveToFacePath(List<Position> points, Position coorsToFace) {
+		Position lastPos = points.get(points.size()-1);
+		double direction = lastPos.getAngleToPosition(coorsToFace);
+		this.pushMovePath(points, true, direction, true);
+	}
+	
+	/**
+	 * Push move/move&turn commands along a given path (most general method)
+	 * @param points list of points in path
+	 * @param rotate turn while moving?
+	 * @param direction if yes, towards which Position?
+	 * @param face if yes, HARD rotate?
+	 */
+	private void pushMovePath(List<Position> points, boolean rotate, double direction, boolean face) {
+		// Deal separately with last element of list
+		Position lastPoint = points.get(points.size()-1);
+		if (rotate) {
+			if (face) {	this.pushMoveToFaceCommand(lastPoint, direction); }
+			else      { this.pushMoveAndTurnCommand(lastPoint, direction); }
+		}
+		else          { this.pushMoveStraightCommand(lastPoint); }
+		// Skip first element of list (current robot coordinates) - we're there already
+		for (int i = points.size()-2; i > 0; i--) {
+			if (rotate) { this.pushMoveAndTurnCommand(points.get(i), direction); }
+			else        { this.pushMoveStraightCommand(points.get(i)); }
+		}
+		
+	}
+	
+	
+	
 	public void push(Command c) {
 		stack.push(c);
-	}
-
-	public Command getFirst() {
-		if (stack.isEmpty()) {
-			return null ;
-		} else {
-			return stack.peek();
-		}
 	}
 
 	public Command pop() {
@@ -79,10 +99,6 @@ public class CommandStack {
 
 	public void clear() {
 		stack.clear();
-	}
-
-	public boolean contains(Command c) {
-		return stack.search(c) != -1;
 	}
 
 	public boolean isEmpty() {

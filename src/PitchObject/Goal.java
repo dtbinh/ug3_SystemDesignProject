@@ -18,6 +18,7 @@ public class Goal extends PitchObject {
 		this.coors = center;
 		this.top = top;
 		this.bottom = bottom;
+		this.optimalPosition = optimalPosition;
 		this.angle = (float) (3 * Math.PI / 2);
 	}
 

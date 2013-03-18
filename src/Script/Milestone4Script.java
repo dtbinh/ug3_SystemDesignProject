@@ -45,7 +45,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		 */
 		if(!ball.robotHasBall(ourRobot)) {
 			Position intersectionPoint = ball.intersectinPosition(ourRobot);
-			planMove(intersectionPoint);
+			planMoveStraight(intersectionPoint);
 			System.out.println("Moving to predicted point " + intersectionPoint);
 		} else {
 			if (taskNo == 1 || taskNo == 2) {
@@ -60,7 +60,7 @@ public class Milestone4Script extends AbstractBaseScript {
 				
 				if(!ourRobot.isFacing(theirGoal.getOptimalPosition()))
 				{
-					planMove(ourRobot.getCoors(), theirGoal.getOptimalPosition()); //face the enemy goal
+					planMoveAndTurn(ourRobot.getCoors(), theirGoal.getOptimalPosition()); //face the enemy goal
 					System.out.println("Rotating to face enemy goal... " + theirGoal.getOptimalPosition());
 				}
 				
@@ -69,7 +69,7 @@ public class Milestone4Script extends AbstractBaseScript {
 				//*do some object avoidance here*
 				//we also need to make sure the ball continues to be in our possession during movement
 				
-				planMove(theirGoal.getOptimalPosition(), theirGoal.getOptimalPosition());
+				planMoveAndTurn(theirGoal.getOptimalPosition(), theirGoal.getOptimalPosition());
 				
 				// 3) shoot
 				
