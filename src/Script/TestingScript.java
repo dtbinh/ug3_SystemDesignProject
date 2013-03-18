@@ -48,6 +48,14 @@ public class TestingScript extends AbstractBaseScript {
 			planMoveAndTurn(behindBall, theirGoal.getCoors());
 		} else if (testCase==7) { // GO TO THA BALL, hard ROTATE TO THEIR GOAL
 			planMoveToFace(behindBall, theirGoal.getCoors());
+		} else if (testCase==8) { // ROTATE TO THE GOAL, KICK
+			if (ourRobot.getCoors() == null) { return; }
+			if (System.currentTimeMillis() > kickTimeOut && 
+					ourRobot.isFacing(theirGoal.getCoors())) {
+				planKick();
+			} else {
+				planRotate(theirGoal.getCoors());
+			}
 		}
 		playExecute();
 	}

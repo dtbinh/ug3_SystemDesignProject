@@ -42,6 +42,7 @@ public abstract class AbstractBaseScript extends Thread {
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
         socket.connect("tcp://127.0.0.1:5555");
+        kickTimeOut = System.currentTimeMillis();
         // first thing we do is send zeros to make robot stop if it
         // had previous commands on the stack
         sendZeros();
@@ -80,6 +81,10 @@ public abstract class AbstractBaseScript extends Thread {
 			System.out.println("GUUUUUUUUUUYYYS. THERE WAS AN UNRECOGNIZED COMMAND.");
 			playExecute();
 		}
+	}
+	
+	static void planKick() {
+		plannedCommands.pushKickCommand();
 	}
 	
 	/**
