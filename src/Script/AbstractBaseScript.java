@@ -187,6 +187,9 @@ public abstract class AbstractBaseScript extends Thread {
 			System.out.println("Sending OK: " + signal);
 			socket.recv(0);
 			System.out.println("Receiving OK");
+		} else {
+			socket.send("1 0 0 0 0", 0);
+			socket.recv(0);
 		}
 	}
 
