@@ -87,6 +87,10 @@ public class CommandStack {
 		
 	}
 	
+	public void pushMoveToFacePoint(Position destination, Position rotate){
+		double direction = destination.getAngleToPosition(rotate);
+		this.pushMoveToFaceCommand(destination, direction);
+	}
 	
 	
 	public void push(Command c) {

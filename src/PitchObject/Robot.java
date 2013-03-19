@@ -1,15 +1,17 @@
 package PitchObject;
 
+
 public class Robot extends PitchObject {
 	// TODO: test to find good value for this
 	public static final double DEFAULT_VELOCITY = 100.0;
 	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 56;
-	public final static int NEAR_RANGE = 100;
-
+	public final static int NEAR_RANGE = 20;
+	public final double SHOOTING_RANGE = 100;
 //    private boolean wantsToRotate;
 	private int rotationSign = 0;
 //    private boolean wantsToStop;
+	
 
 	public Robot() {
 //		this.wantsToRotate = false;
@@ -121,7 +123,7 @@ public class Robot extends PitchObject {
     }
     
     public double refitAngle(double angle) {
-    	return (angle + 8*Math.PI) % (2*Math.PI);
+    	return ((angle + (10*Math.PI)) % (2*Math.PI));
     }
 
     /**
@@ -274,8 +276,10 @@ public class Robot extends PitchObject {
 	public String moveToFace(Position movePos, double direction){
     	if ((this.getCoors().euclidDistTo(movePos) < NEAR_RANGE)
     		 && !this.isFacing(direction)) {
+    		System.out.println("ROTATE");
     		return rotate(direction);
     	} else {
+    		System.out.println(this.getCoors().euclidDistTo(movePos));
     		return moveAndTurn(movePos, direction);
     	}
     }
@@ -418,4 +422,34 @@ public class Robot extends PitchObject {
 		int d2 = hitY - topY;
 		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
 	}
+	
+	public boolean closeToPoint(Position position){
+		return this.getCoors().euclidDistTo(position) < NEAR_RANGE;
+	}
+
+	public boolean withinKickingRange(Position theirGoal) {
+		Position us = this.getCoors();
+		return us.euclidDistTo(theirGoal) < SHOOTING_RANGE;
+	}
+	
+	public Position getTarget(Goal goal){
+		int newY = 0;
+		int newX = goal.getOptimalPosition().getX();
+		int RobotY = this.getCoors().getY();
+		int TopGoalY = goal.getTop().getY();
+		int BottomGoalY = goal.getBottom().getY();
+		
+		int difference1 = TopGoalY - RobotY;
+		int difference2 = RobotY - BottomGoalY;
+		
+		if (difference1 > difference2){ 
+			newY = TopGoalY + difference1 - 20;
+		}
+		else{
+			newY = BottomGoalY - difference2 + 20;
+		}	
+		
+		return new Position(newX,newY);	
+	}
+	
 }

@@ -109,7 +109,7 @@ public abstract class PitchObject {
 		int minY = AbstractBaseScript.getVision().getMinY(); 
 		int maxY = AbstractBaseScript.getVision().getMaxY();
 		// main loop that tries to find a reachable position
-		for (int t = 400; t < 8001; t+=400) {
+		for (int t = 1000; t < 8001; t+=1000) {
 			Position ballCoors = getPredictedCoors(t, c, v, a, false); 
 			ballCoors = reflectInside(ballCoors, minX, maxX, minY, maxY);
 			int timeToBall = (int) (robotCoors.euclidDistTo(ballCoors) / robotSpeed);

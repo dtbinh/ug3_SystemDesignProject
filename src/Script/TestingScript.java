@@ -14,7 +14,7 @@ public class TestingScript extends AbstractBaseScript {
 	}
 
 	public void run() {
-		int testCase = 8;
+		int testCase = 5;
 		int stopTime = 12000;
 		long startTime = System.currentTimeMillis();
 		while (!timeOut(startTime, stopTime)) {
@@ -43,7 +43,7 @@ public class TestingScript extends AbstractBaseScript {
 		} else if (testCase==4) { // GO AND TURN TO THA BALL
 			planMoveAndTurn(behindBall, ball.getCoors());
 		} else if (testCase==5) { // GO AND hard TURN TO THA BALL
-			planMoveToFace(behindBall, ball.getCoors());
+			planMoveToFace(ball.getCoors(), ball.getCoors());
 		} else if (testCase==6) { // GO TO THA BALL, ROTATE TO THEIR GOAL
 			planMoveAndTurn(behindBall, theirGoal.getCoors());
 		} else if (testCase==7) { // GO TO THA BALL, hard ROTATE TO THEIR GOAL
