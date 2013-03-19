@@ -12,12 +12,13 @@ import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 // import lejos.nxt.Button;
 import lejos.nxt.Motor;
+import lejos.nxt.Motor.*;
 import lejos.nxt.SensorPort;
 
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 
-public class BluetoothNXT {
+public class BluetoothNXT {	
 	// Error codes
 	public static final byte RET_OK = 0;
 	public static final byte RET_UNDEFINED_OP = -1;
@@ -47,6 +48,11 @@ public class BluetoothNXT {
 	private static TouchSensor sensor1;
 	private static TouchSensor sensor2;
 	private static TouchSensor sensor3;
+	
+    private static volatile boolean isKicking = false;
+    
+    
+
 
 	public static void main(String[] args) {
 		robot = new Motormux(SensorPort.S4);
@@ -58,8 +64,9 @@ public class BluetoothNXT {
 		// Sound.setVolume(50);
 
 		// Max kicker speed
-		Motor.C.setSpeed((int) Motor.C.getMaxSpeed());
-
+		//Motor.C.setSpeed((int) Motor.C.getMaxSpeed());
+		//Motor.C.setAcceleration(10000);
+	
 		//Motor.A.setSpeed(6000);
 		//Motor.B.setSpeed(6000);
 		//Motor.A.setAcceleration(6000);
@@ -192,18 +199,36 @@ public class BluetoothNXT {
 	}
 
 	static void kick() {
-		// Kick
-		Motor.C.rotate(KICK_ANGLE * -KICK_DIRECTION, true);
+		
+		if (isKicking) {
+			return;
+		}
 
-		try {
-			Thread.sleep(100);
-		} catch(Exception e) { }
+		isKicking = true;
+		/*
+        Motor.A.setSpeed(900);
+        Motor.A.rotate(-40);
+        Motor.A.rotate(+40);
+        Motor.A.stop();
+        isKicking = false;
+		*/
+		Motor.A.setSpeed((int) Motor.C.getMaxSpeed());
+		Motor.A.resetTachoCount();
+		Motor.A.backward();
 
-		// Reset kicker to original position
-		Motor.C.rotate(KICK_ANGLE * KICK_DIRECTION, true);
-
-		try {
-			Thread.sleep(110);
-		} catch(Exception e) { }
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(80);
+				} catch (InterruptedException e) {
+					//
+				}
+				Motor.A.rotateTo(0);
+				Motor.A.stop();
+				isKicking = false;
+			}
+		}).start();
+	
 	}
 }

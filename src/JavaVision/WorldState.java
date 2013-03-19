@@ -13,6 +13,7 @@ public class WorldState {
 	private float blueOrientation;
 	private float yellowOrientation;
 	private long counter;
+	private boolean started;
 
 	public WorldState() {
 
@@ -30,41 +31,62 @@ public class WorldState {
 		this.ballY = 0;
 		this.blueOrientation = 0;
 		this.yellowOrientation = 0;
+		
+		this.started = false;
 	}
 
+	public boolean getStarted() {
+		return started;
+	}
+	
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+	
 	public int getBlueX() {
 		return blueX;
 	}
+	
 	public void setBlueX(int blueX) {
 		this.blueX = blueX;
 	}
+	
 	public int getBlueY() {
 		return blueY;
 	}
+	
 	public void setBlueY(int blueY) {
 		this.blueY = blueY;
 	}
+	
 	public int getYellowX() {
 		return yellowX;
 	}
+	
 	public void setYellowX(int yellowX) {
 		this.yellowX = yellowX;
 	}
+	
 	public int getYellowY() {
 		return yellowY;
 	}
+	
 	public void setYellowY(int yellowY) {
 		this.yellowY = yellowY;
 	}
+	
 	public int getBallX() {
 		return ballX;
 	}
+	
 	public void setBallX(int ballX) {
 		this.ballX = ballX;
 	}
+	
 	public int getBallY() {
 		return ballY;
 	}
+	
 	public void setBallY(int ballY) {
 		this.ballY = ballY;
 	}

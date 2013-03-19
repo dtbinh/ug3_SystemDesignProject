@@ -1,4 +1,4 @@
-prefix=/afs/inf.ed.ac.uk/user/s09/s0955035/Desktop/ug3_SDP/lib
+prefix=/afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

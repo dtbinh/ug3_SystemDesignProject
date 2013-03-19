@@ -88,9 +88,19 @@ public class BluetoothPC extends Thread {
 					}
 
 					// Push (or "update") with new request
-					req_queue.push(new_req); 
-				} else {
-					System.out.println("\tDrop!");
+					req_queue.push(new_req);
+
+				} else { // Drop, unlees exception
+					// Never drop: "1 0 0 0 0" or "3" if preceding command is "1 0 0 0 0"
+					if (req_queue.size() <= 8 && (new_req.equals("1 0 0 0 0") ||
+							(new_req.equals("3") && req_queue.getLast().equals("1 0 0 0 0")) )) {
+
+						System.out.println("\tAdded due to exception");
+						req_queue.push(new_req);
+
+					} else {
+						System.out.println("\tDrop!");
+					}
 				}
 			}
 

@@ -19,7 +19,7 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile VisionReader vision;
 
 	private static volatile Context context;
-    private static volatile Socket socket;
+	private static volatile Socket socket;
 
 	static volatile boolean shootingRight;
 	static volatile Goal theirGoal;
@@ -27,6 +27,7 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile Robot ourRobot;
 	static volatile Robot theirRobot;
 	static volatile Ball ball;
+	static volatile boolean started = false;
 	static volatile long kickTimeOut;
 
 	static volatile CommandStack plannedCommands;
@@ -41,19 +42,20 @@ public abstract class AbstractBaseScript extends Thread {
 		plannedCommands = new CommandStack();	
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
-        socket.connect("tcp://127.0.0.1:5555");
-        kickTimeOut = System.currentTimeMillis();
-        // first thing we do is send zeros to make robot stop if it
-        // had previous commands on the stack
-        sendZeros();
+		socket.connect("tcp://127.0.0.1:5555");
+		kickTimeOut = System.currentTimeMillis();
+		// first thing we do is send zeros to make robot stop if it
+		// had previous commands on the stack
+		sendZeros();
 	}
 
 	static void updateWorldState() {
 		ourRobot = vision.getOurRobot();
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
-//		ourRobot.setWantsToRotate(false);
-//		ourRobot.setWantsToStop(false);
+		started = vision.getStarted();
+		//		ourRobot.setWantsToRotate(false);
+		//		ourRobot.setWantsToStop(false);
 	}
 
 	/**
@@ -82,11 +84,11 @@ public abstract class AbstractBaseScript extends Thread {
 			playExecute();
 		}
 	}
-	
+
 	static void planKick() {
 		plannedCommands.pushKickCommand();
 	}
-	
+
 	/**
 	 * Just rotate in place
 	 * @param coorsToFace turn to face this Position
@@ -110,7 +112,7 @@ public abstract class AbstractBaseScript extends Thread {
 				new Point(obstacle.getCoors().getX(), obstacle.getCoors().getY()), 
 				(int) Math.toDegrees(obstacle.getAngle()), 
 				shootingRight ? AStar.LEFT : AStar.RIGHT);
-		        // if we're shootingRight, *our* side is LEFT
+		// if we're shootingRight, *our* side is LEFT
 	}
 	/**
 	 * Get the path to using A* search
@@ -180,12 +182,15 @@ public abstract class AbstractBaseScript extends Thread {
 	}
 
 	static void sendreceive(String signal) {
-		///*
-		socket.send(signal, 0);
-        System.out.println("Sending OK: " + signal);
-        socket.recv(0);
-        System.out.println("Receiving OK");
-		//*/
+		if (started) {
+			socket.send(signal, 0);
+			System.out.println("Sending OK: " + signal);
+			socket.recv(0);
+			System.out.println("Receiving OK");
+		} else {
+			socket.send("1 0 0 0 0", 0);
+			socket.recv(0);
+		}
 	}
 
 	static void sendZeros() {
@@ -237,14 +242,14 @@ public abstract class AbstractBaseScript extends Thread {
 			return null;
 		}
 	}
-	
+
 	public static boolean nullInput(Object o) {
 		return (o==null) || (ourRobot.getCoors()==null);
 	}
 	public static boolean nullInput(Object o, Object p) {
 		return (o==null) || (p==null) || (ourRobot.getCoors()==null);
 	}
-	
+
 	public static VisionReader getVision() {
 		return vision;
 	}
