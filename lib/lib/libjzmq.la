@@ -17,7 +17,7 @@ old_library='libjzmq.a'
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/afs/inf.ed.ac.uk/user/s09/s0955035/Desktop/ug3_SDP/lib/lib /afs/inf.ed.ac.uk/user/s09/s0955035/Desktop/ug3_SDP/lib/lib/libzmq.la -lrt -lpthread'
+dependency_libs=' -L/afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib/lib /afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib/lib/libzmq.la -lrt -lpthread'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/afs/inf.ed.ac.uk/user/s09/s0955035/Desktop/ug3_SDP/lib/lib'
+libdir='/afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib/lib'
