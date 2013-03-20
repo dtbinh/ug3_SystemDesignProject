@@ -68,7 +68,7 @@ public class Milestone4Script extends AbstractBaseScript {
 			System.out.print("-----S-----");
 			if (!ball.robotHasBall(ourRobot)) {
 				Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 50 );
-				planMoveAndTurn(behindBall, ball.getCoors());
+				planMoveToFace(behindBall, ball.getCoors());
 				System.out.println("Planning to go to ball");
 			} 
 			else {
@@ -77,7 +77,7 @@ public class Milestone4Script extends AbstractBaseScript {
 					System.out.println("Planning to rotate towards their goal");
 				}
 				else {
-					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 150) {
+					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 180) {
 						planMoveStraight(getOptimalKickPosition());
 //						planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
 						System.out.println("Planning to dribble");
@@ -106,7 +106,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +40 : -40);
 		// close to where the ball will be (on y axis)
 		// int y = ball.getCoors().getY();
-		int y = ball.getPredictedCoors(1000).getY();
+		int y = ball.getCoors().getY();
 		return new Position (x, y);
 	}
 
