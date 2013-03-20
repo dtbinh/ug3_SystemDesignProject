@@ -117,7 +117,7 @@ public class Milestone4Script extends AbstractBaseScript {
 			       
 			      if(ball.robotHasBall(ourRobot)) 
 		           {
-			         sendKickCommand(plannedCommands.pop());
+			         sendKickCommand();
 			         System.out.println("Kick!");
 			       }
 			        

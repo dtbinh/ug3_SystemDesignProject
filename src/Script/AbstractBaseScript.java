@@ -67,17 +67,17 @@ public abstract class AbstractBaseScript extends Thread {
 		if (plannedCommands.isEmpty()) { return; }
 		Command commandContainer = plannedCommands.pop();
 		if (commandContainer instanceof KickCommand) {
-			sendKickCommand(commandContainer);
+			sendCommand(commandContainer);
 			kickTimeOut = System.currentTimeMillis() + kickAllowance;
 		} 
 		else if (commandContainer instanceof RotateCommand) {
-			sendMRCommand(commandContainer);
+			sendCommand(commandContainer);
 		} 
 		else if (commandContainer instanceof MoveCommand) {
 			MoveCommand moveCommand = (MoveCommand) commandContainer;
 			double distToMovePoint = ourRobot.getCoors().euclidDistTo(moveCommand.getMovePoint()); 
 			if (distToMovePoint < GOT_THERE_DIST) {	playExecute(); }
-			else                                  { sendMRCommand(moveCommand); }
+			else                                  { sendCommand(moveCommand); }
 		} 
 		else {
 			System.out.println("GUUUUUUUUUUYYYS. THERE WAS AN UNRECOGNIZED COMMAND.");
@@ -196,53 +196,50 @@ public abstract class AbstractBaseScript extends Thread {
 	static void sendZeros() {
 		sendreceive("1 0 0 0 0");
 	}
-
-	static void sendKickCommand(Command c) {
-		sendZeros();
-		sendreceive("3");
-	}
-
+	
 	/**
-	 * Send Move/Rotate command
-	 * @param command process &  send this Command
+	 * Send proper command
+	 * @param command
 	 */
-	static void sendMRCommand(Command command) {
-		String signal = getMRCommandSignal(command);
-		sendreceive(signal);
-	}
-
-	/**
-	 * Get Move/Rotate command signal
-	 * @param command process this Command
-	 * @return signal String
-	 */
-	static String getMRCommandSignal(Command command){
-		if (command instanceof MoveAndTurnCommand){
+	static void sendCommand(Command command) {
+		if (command instanceof KickCommand) {
+			sendZeros();
+			sendreceive("3");
+		}
+		else if (command instanceof MoveAndTurnCommand){
 			MoveAndTurnCommand container = (MoveAndTurnCommand) command;
 			Position move = container.getMovePoint();
 			double direction = container.getDirection();
-			return ourRobot.moveAndTurn(move, direction);
+			sendreceive(ourRobot.moveAndTurn(move, direction));
 		}
 		else if (command instanceof MoveToFaceCommand){
 			MoveToFaceCommand container = (MoveToFaceCommand) command;
 			Position move = container.getMovePoint();
 			double direction = container.getDirection();
-			return ourRobot.moveToFace(move, direction);
+			sendreceive(ourRobot.moveToFace(move, direction));
 		}
 		else if (command instanceof RotateCommand){
 			RotateCommand container = (RotateCommand) command;
-			return ourRobot.rotate(container.getDirection());
+			sendreceive(ourRobot.rotate(container.getDirection()));
 		}
 		else if (command instanceof MoveStraightCommand){
 			MoveStraightCommand container = (MoveStraightCommand) command;
 			Position move = container.getMovePoint();
-			return ourRobot.moveStraight(move);
+			sendreceive(ourRobot.moveStraight(move));
 		} 
 		else {
-			return null;
+			sendZeros();
 		}
 	}
-	
+
+	/**
+	 * Just if we really want to kick *now*.
+	 * I would advise using planKick() and then execute ...
+	 */
+	static void sendKickCommand() {
+		sendCommand(new KickCommand());
+	}
+
 	public static boolean nullInput(Object o) {
 		return (o==null) || (ourRobot.getCoors()==null);
 	}
