@@ -4,7 +4,8 @@ package PitchObject;
 public class Robot extends PitchObject {
 	// TODO: test to find good value for this
 	public static final double DEFAULT_VELOCITY = 100.0;
-	public final static int MAX_SPEED = 255;
+	public static int MAX_SPEED = 296;
+//	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 56;
 	public final static int NEAR_RANGE = 30;
 	public final double SHOOTING_RANGE = 100;
@@ -118,7 +119,7 @@ public class Robot extends PitchObject {
          }
          // get the value -- tested! don't try larger values
          // with TURN_SPEED = 56 and rotationSign up to 5
-         if (angle > Math.PI/7) { return sign * 0.3; }
+         if (angle > Math.PI/7) { return sign * 0.2; }
     	 else                   { return 0; }
     }
     
@@ -263,7 +264,7 @@ public class Robot extends PitchObject {
     	double[] motors = getMovementRatio(moveAngle);    	
     	double rotateAngle = this.getRotationDifference(direction);
     	double value = getRotationValue(refitAngle(rotateAngle));
-//    	value = processRotationValue(value);
+    	value = processRotationValue(value);
     	for (int i = 0; i < 4; i++) {
    		 	motors[i] += value;
     	}

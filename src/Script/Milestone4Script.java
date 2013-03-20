@@ -1,6 +1,7 @@
 package Script;
 
 import PitchObject.Position;
+import PitchObject.Robot;
 
 public class Milestone4Script extends AbstractBaseScript {
 	private int taskNo;
@@ -37,6 +38,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		if (taskNo==3 && started && openPlay()) {
 			intercept = false;
 			score = true;
+			Robot.MAX_SPEED = 212;
 		}
 
 		if (intercept) {
@@ -76,8 +78,9 @@ public class Milestone4Script extends AbstractBaseScript {
 					System.out.println("Planning to rotate towards their goal");
 				}
 				else {
-					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 250) {
-						planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
+					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 150) {
+						planMoveStraight(getOptimalKickPosition());
+//						planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
 						System.out.println("Planning to dribble");
 					}
 					else {
