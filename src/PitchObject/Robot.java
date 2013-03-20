@@ -4,7 +4,7 @@ package PitchObject;
 public class Robot extends PitchObject {
 	// TODO: test to find good value for this
 	public static final double DEFAULT_VELOCITY = 100.0;
-	public static int MAX_SPEED = 296;
+	public static int MAX_SPEED = 255;
 //	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 56;
 	public final static int NEAR_RANGE = 30;
