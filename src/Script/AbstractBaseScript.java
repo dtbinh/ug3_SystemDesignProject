@@ -27,8 +27,8 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile Robot ourRobot;
 	static volatile Robot theirRobot;
 	static volatile Ball ball;
-	static volatile boolean started = false;
 	static volatile long kickTimeOut;
+	static volatile boolean started = false;
 
 	static volatile CommandStack plannedCommands;
 
@@ -54,8 +54,8 @@ public abstract class AbstractBaseScript extends Thread {
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
 		started = vision.getStarted();
-		//		ourRobot.setWantsToRotate(false);
-		//		ourRobot.setWantsToStop(false);
+		// ourRobot.setWantsToRotate(false);
+		// ourRobot.setWantsToStop(false);
 	}
 
 	/**
@@ -84,11 +84,11 @@ public abstract class AbstractBaseScript extends Thread {
 			playExecute();
 		}
 	}
-
+	
 	static void planKick() {
 		plannedCommands.pushKickCommand();
 	}
-
+	
 	/**
 	 * Just rotate in place
 	 * @param coorsToFace turn to face this Position
@@ -184,9 +184,9 @@ public abstract class AbstractBaseScript extends Thread {
 	static void sendreceive(String signal) {
 		if (started) {
 			socket.send(signal, 0);
-			System.out.println("Sending OK: " + signal);
-			socket.recv(0);
-			System.out.println("Receiving OK");
+	        System.out.println("Sending OK: " + signal);
+	        socket.recv(0);
+	        System.out.println("Receiving OK");
 		} else {
 			socket.send("1 0 0 0 0", 0);
 			socket.recv(0);
@@ -242,14 +242,14 @@ public abstract class AbstractBaseScript extends Thread {
 			return null;
 		}
 	}
-
+	
 	public static boolean nullInput(Object o) {
 		return (o==null) || (ourRobot.getCoors()==null);
 	}
 	public static boolean nullInput(Object o, Object p) {
 		return (o==null) || (p==null) || (ourRobot.getCoors()==null);
 	}
-
+	
 	public static VisionReader getVision() {
 		return vision;
 	}

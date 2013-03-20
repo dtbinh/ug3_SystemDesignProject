@@ -57,7 +57,7 @@ public class VisionReader extends Thread {
 		int height = 480;
 		int channel = 0;
 		int videoStandard = V4L4JConstants.STANDARD_PAL;
-		int compressionQuality = 100; //dropped compression of the camera slightly - feel free to experiment further
+		int compressionQuality = 80; //dropped compression of the camera slightly - feel free to experiment further
 
 		try {
 			/* Create a new Vision object to serve the main vision window. */

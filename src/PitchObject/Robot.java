@@ -6,7 +6,7 @@ public class Robot extends PitchObject {
 	public static final double DEFAULT_VELOCITY = 100.0;
 	public final static int MAX_SPEED = 255;
 	public final static int TURN_SPEED = 56;
-	public final static int NEAR_RANGE = 20;
+	public final static int NEAR_RANGE = 30;
 	public final double SHOOTING_RANGE = 100;
 //    private boolean wantsToRotate;
 	private int rotationSign = 0;
