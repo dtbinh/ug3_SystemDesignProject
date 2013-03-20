@@ -73,7 +73,7 @@ public class Milestone4Script extends AbstractBaseScript {
 			} 
 			else {
 				if (!ourRobot.isFacing(getOptimalGoal())) {
-					planRotate(theirGoal.getOptimalPosition());
+					planRotate(getOptimalGoal());
 					System.out.println("Planning to rotate towards their goal");
 				}
 				else {
@@ -103,7 +103,7 @@ public class Milestone4Script extends AbstractBaseScript {
 
 	private static Position getRetreatPoint(boolean shootingRight) {
 		// close to goal (on x axis)
-		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +30 : -30);
+		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +40 : -40);
 		// close to where the ball will be (on y axis)
 		// int y = ball.getCoors().getY();
 		int y = ball.getPredictedCoors(1000).getY();
