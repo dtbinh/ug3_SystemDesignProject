@@ -13,7 +13,7 @@ public abstract class PitchObject {
 	private long time1;
 	private long time2;
 	private long time3;
-	private Vector lastVelocity = null;
+//	private Vector lastVelocity = null;
 	
 	public Position getCoors() {
 		return coors;
@@ -30,14 +30,14 @@ public abstract class PitchObject {
     public void setCoors(Position current){
     	long newtime = System.currentTimeMillis();
     	if (newtime == time1) return;
-		lastVelocity = this.getVelocity();
+//		lastVelocity = this.getVelocity();
 		coors3 = coors2;
 		coors2 = coors1;
 		coors1 = current;
-		coors = current;
 		time3 = time2;
 		time2 = time1;
 		time1 = newtime;
+		coors = getPredictedCoors(1000);
 	}
 
     public int getSomeMillis() {
@@ -76,16 +76,16 @@ public abstract class PitchObject {
 	* Acceleration = change in velocity over change in time
 	*/
 	public Vector getAcceleration() {
-		if (lastVelocity == null) {
-			lastVelocity = this.getVelocity();
+//		if (lastVelocity == null) {
+//			lastVelocity = this.getVelocity();
 			return new Vector(0, 0);
-		} else {
-			Vector curVelocity = this.getVelocity();
-			double interval = (double) Math.abs(time1 - time2);
-			double accelX = (curVelocity.getX() - lastVelocity.getX()) / interval;
-			double accelY = (curVelocity.getY() - lastVelocity.getY()) / interval;
-			return new Vector(accelX, accelY);
-		}
+//		} else {
+//			Vector curVelocity = this.getVelocity();
+//			double interval = (double) Math.abs(time1 - time2);
+//			double accelX = (curVelocity.getX() - lastVelocity.getX()) / interval;
+//			double accelY = (curVelocity.getY() - lastVelocity.getY()) / interval;
+//			return new Vector(accelX, accelY);
+//		}
 	}
 	
 	
@@ -128,7 +128,7 @@ public abstract class PitchObject {
 	* @return Predicted position of ball.
 	*/
 	public Position getPredictedCoors(int timespan) {
-		return getPredictedCoors(timespan, this.getCoors(), 
+		return getPredictedCoors(timespan, coors1, 
 		this.getVelocity(), this.getAcceleration(), true);
 	}
 	
@@ -143,10 +143,10 @@ public abstract class PitchObject {
 	public static Position getPredictedCoors(int timespan, Position objCoors, 
 			Vector velocity, Vector acceler, boolean reflect) {
 		// if object velocity reaches 0 within timespan
-		if (Math.abs(velocity.getX()) < Math.abs(acceler.getX() * timespan)) {
-			// reduce time span to "when the object stops"
-			timespan = (int) (velocity.getX() / acceler.getX()); 
-		}
+//		if (Math.abs(velocity.getX()) < Math.abs(acceler.getX() * timespan)) {
+//			// reduce time span to "when the object stops"
+//			timespan = (int) (velocity.getX() / acceler.getX()); 
+//		}
 		int x = objCoors.getX() + getDisplacement(timespan, velocity.getX(), acceler.getX());
 		int y = objCoors.getY() + getDisplacement(timespan, velocity.getY(), acceler.getY());
 		
