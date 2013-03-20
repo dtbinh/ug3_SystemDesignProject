@@ -88,7 +88,7 @@ public class Milestone4Script extends AbstractBaseScript {
 							System.out.println("Planning to kick!!!");
 						}
 						else {
-							System.out.println("Would like to kick but no");
+							System.out.println("Would like to kick BRO but no");
 							return;
 						}
 					}
@@ -106,7 +106,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +30 : -30);
 		// close to where the ball will be (on y axis)
 		// int y = ball.getCoors().getY();
-		int y = ball.getPredictedCoors(400).getY();
+		int y = ball.getPredictedCoors(1000).getY();
 		return new Position (x, y);
 	}
 
