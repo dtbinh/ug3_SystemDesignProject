@@ -118,7 +118,7 @@ public class Robot extends PitchObject {
          }
          // get the value -- tested! don't try larger values
          // with TURN_SPEED = 56 and rotationSign up to 5
-         if (angle > Math.PI/7) { return sign * 0.25; }
+         if (angle > Math.PI/7) { return sign * 0.3; }
     	 else                   { return 0; }
     }
     

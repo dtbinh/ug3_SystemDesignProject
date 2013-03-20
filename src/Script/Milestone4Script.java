@@ -42,7 +42,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		if (intercept) {
 			System.out.print("-----I-----");
 			Position retreatPoint = getRetreatPoint(shootingRight);
-			if (Math.abs(ourRobot.getCoors().getY() - ball.getCoors().getY()) > 10) {
+			if (Math.abs(ourRobot.getCoors().getY() - ball.getCoors().getY()) > 35) {
 				if (taskNo == 1) {
 					planMoveAndTurn(retreatPoint, theirGoal.getCoors());
 				}
@@ -104,7 +104,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +30 : -30);
 		// close to where the ball will be (on y axis)
 		// int y = ball.getCoors().getY();
-		int y = ball.getCoors().getY();
+		int y = ball.getPredictedCoors(400).getY();
 		return new Position (x, y);
 	}
 

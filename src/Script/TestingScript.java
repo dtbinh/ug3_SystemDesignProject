@@ -14,7 +14,7 @@ public class TestingScript extends AbstractBaseScript {
 	}
 
 	public void run() {
-		int testCase = 1 ;
+		int testCase = 0;
 		int stopTime = 200000;
 		long startTime = System.currentTimeMillis();
 		while (!timeOut(startTime, stopTime)) {
