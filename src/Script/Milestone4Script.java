@@ -7,7 +7,6 @@ public class Milestone4Script extends AbstractBaseScript {
 	private int taskNo;
 	private static boolean intercept = false;
 	private static boolean score = false;
-	// TODO: CALIBRATE TODAY BEFORE MILESTONE !!!!!!!!!!!!!
 	private static int yTop = 160;
 	private static int yBottom = 311;
 
