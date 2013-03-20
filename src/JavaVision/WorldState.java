@@ -14,6 +14,7 @@ public class WorldState {
 	private float yellowOrientation;
 	private long counter;
 	private boolean started;
+	private boolean newFrame;
 
 	public WorldState() {
 
@@ -33,8 +34,17 @@ public class WorldState {
 		this.yellowOrientation = 0;
 		
 		this.started = false;
+		this.newFrame = true;
 	}
 
+	public boolean getNewFrame() {
+		return newFrame;
+	}
+	
+	public void setNewFrame(boolean newFrame) {
+		this.newFrame = newFrame;
+	}
+	
 	public boolean getStarted() {
 		return started;
 	}

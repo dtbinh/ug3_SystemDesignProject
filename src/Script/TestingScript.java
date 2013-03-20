@@ -14,8 +14,8 @@ public class TestingScript extends AbstractBaseScript {
 	}
 
 	public void run() {
-		int testCase = 5;
-		int stopTime = 12000;
+		int testCase = 0;
+		int stopTime = 200000;
 		long startTime = System.currentTimeMillis();
 		while (!timeOut(startTime, stopTime)) {
 			updateWorldState();
@@ -27,13 +27,13 @@ public class TestingScript extends AbstractBaseScript {
 	static void test(int testCase) {
 		Position behindBall = new Position(0,0);
 		if (ball.getCoors() != null) {
-			behindBall = ball.pointBehindBall(theirGoal.getCoors(), 40);
+			behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
 		}
 		if (testCase==0) { // JUST VISION
-			System.out.println("Ball: " + ball.getCoors() + 
-					" / Goal: " + theirGoal.getCoors());
-			sendZeros();
-			return;
+//			System.out.println("Ball: " + ball.getCoors() + 
+//					" / Goal: " + theirGoal.getCoors() + 
+//					" / BehindBall: " + behindBall);
+			System.out.println(ball.robotHasBall(ourRobot));
 		} else if (testCase==1) { // GO STRAIGHT TO THA BALL
 			planMoveStraight(behindBall);
 		} else if (testCase==2) { // GO STRAIGHT TO THEIR GOAL

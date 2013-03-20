@@ -34,14 +34,8 @@ public class Ball extends PitchObject {
 		return distToBall <= DRIBBLE_DIST;
 	}
 
-	public Position pointBehindBall(Position direction, int distance) {
-		Position ballPos = this.getCoors();
-		double rvrsBallToGoal = new Robot(direction, 0).getAngleFromRobotToPoint(ballPos);
-		Position goPoint = ballPos.projectPoint(rvrsBallToGoal, distance);
-		if (!goPoint.withinPitch()){
-			goPoint.setX((ballPos.getX()));
-		    goPoint.setY((ballPos.getY()));
-		}
-		return goPoint;
+	public Position pointBehindBall(Position fromCoors, int distance) {
+		double angle = fromCoors.getAngleToPosition(this.getCoors());
+		return this.getCoors().projectPoint(angle, distance);
 	}
 }
