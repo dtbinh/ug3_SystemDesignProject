@@ -30,17 +30,9 @@ public class TestingScript extends AbstractBaseScript {
 			behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
 		}
 		if (testCase==0) { // JUST VISION
-//			System.out.println("Ball: " + ball.getCoors() + 
-//					" / Goal: " + theirGoal.getCoors() + 
-//					" / BehindBall: " + behindBall);
-			System.out.println(ball.robotHasBall(ourRobot));
-			sendKickCommand();
-			try {
-				Thread.sleep(1500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			System.out.println(" / Goal: " + theirGoal.getCoors() +
+					"Ball: " + ball.getCoors() + 
+					" / BehindBall: " + behindBall);
 		} else if (testCase==1) { // GO STRAIGHT TO THA BALL
 			planMoveStraight(behindBall);
 		} else if (testCase==2) { // GO STRAIGHT TO THEIR GOAL

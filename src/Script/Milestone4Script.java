@@ -7,8 +7,8 @@ public class Milestone4Script extends AbstractBaseScript {
 	private static boolean intercept = false;
 	private static boolean score = false;
 	// TODO: CALIBRATE TODAY BEFORE MILESTONE !!!!!!!!!!!!!
-	private static int yLeft = 143;
-	private static int yRight = 312;
+	private static int yTop = 160;
+	private static int yBottom = 311;
 
 
 	public static void main(String[] args) {
@@ -77,7 +77,7 @@ public class Milestone4Script extends AbstractBaseScript {
 				}
 				else {
 					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 250) {
-						planMoveStraight(theirGoal.getOptimalPosition());
+						planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
 						System.out.println("Planning to dribble");
 					}
 					else {
@@ -112,25 +112,30 @@ public class Milestone4Script extends AbstractBaseScript {
 		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 150;
 	}
 
-	private static Position getOptimalGoal(){
+	private static int getOptimalGoalY() {
 		int robotY = theirRobot.getCoors().getY();
-		if (robotY > yLeft && robotY < yRight){
-			int midY;
-			int right = yRight - robotY;
-			int left = robotY - yLeft;
-			if(left > right ){
-				midY = (robotY + yLeft)/2;
-			}else {
-				midY = (yRight + robotY)/2;
+		if (robotY > yTop && robotY < yBottom){
+			int bottom = yBottom - robotY;
+			int top = robotY - yTop;
+			if (top > bottom) {
+				return (robotY + yTop)/2;
+			} else {
+				return (yBottom + robotY)/2;
 			}	
-			if (shootingRight){
-				return new Position(theirGoal.getCoors().getX(),midY);
-			}else{
-				return new Position(theirGoal.getCoors().getX(),midY);
-			}
-		}else{	
-			return (theirGoal.getCoors());
 		}
+		else return theirGoal.getCoors().getY();
+	}
+	
+	private static Position getOptimalKickPosition() {
+		if (shootingRight){
+			return new Position(theirGoal.getCoors().getX() + 120, getOptimalGoalY());
+		} else {
+			return new Position(theirGoal.getCoors().getX() - 120, getOptimalGoalY());
+		}
+	}
+	
+	private static Position getOptimalGoal() {
+		return new Position(theirGoal.getCoors().getX(), getOptimalGoalY());
 	}
 
 }
