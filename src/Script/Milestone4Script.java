@@ -43,8 +43,12 @@ public class Milestone4Script extends AbstractBaseScript {
 			System.out.print("-----I-----");
 			Position retreatPoint = getRetreatPoint(shootingRight);
 			if (Math.abs(ourRobot.getCoors().getY() - ball.getCoors().getY()) > 35) {
-				// planMoveAndTurn(retreatPoint, theirGoal.getCoors());
-				planMoveStraight(retreatPoint);
+				if (taskNo == 1) {
+					planMoveAndTurn(retreatPoint, theirGoal.getCoors());
+				}
+				else {
+					planMoveStraight(retreatPoint);
+				}
 				System.out.println("Planning moving to retreat point " + retreatPoint);
 			}
 			else {
@@ -62,7 +66,7 @@ public class Milestone4Script extends AbstractBaseScript {
 		else if (score) {
 			System.out.print("-----S-----");
 			if (!ball.robotHasBall(ourRobot)) {
-				Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 25);
+				Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 50 );
 				planMoveAndTurn(behindBall, ball.getCoors());
 				System.out.println("Planning to go to ball");
 			} 
@@ -105,12 +109,7 @@ public class Milestone4Script extends AbstractBaseScript {
 	}
 
 	private static boolean openPlay() {
-//		int xDist = Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX());
-//
-//		//Reason for not 35 is that goal initialises before coordinate 
-//		// goal x is 35 
-//		return (xDist <100 && (!(xDist == 35)));
-		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 100;
+		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 150;
 	}
 
 	private static Position getOptimalGoal(){
@@ -125,9 +124,9 @@ public class Milestone4Script extends AbstractBaseScript {
 				midY = (yRight + robotY)/2;
 			}	
 			if (shootingRight){
-				return new Position(theirGoal.getCoors().getX() -150,midY);
+				return new Position(theirGoal.getCoors().getX(),midY);
 			}else{
-				return new Position(theirGoal.getCoors().getX() +150,midY);
+				return new Position(theirGoal.getCoors().getX(),midY);
 			}
 		}else{	
 			return (theirGoal.getCoors());
