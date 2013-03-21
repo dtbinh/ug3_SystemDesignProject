@@ -18,7 +18,11 @@ public class Milestone4Script extends AbstractBaseScript {
 
 	public Milestone4Script(String[] args) {
 		super(args);
-		taskNo = Integer.parseInt(args[2]);
+		if (args.length == 0) {
+			System.err.println("Please specify a task to do!");
+			System.exit(1);
+		}
+		taskNo = Integer.parseInt(args[0]);
 	}
 
 	public void run() {

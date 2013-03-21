@@ -4,6 +4,22 @@ package Script;
 import PitchObject.Position;
 
 public class TestingScript extends AbstractBaseScript {
+	public static final int STOP_TIME = 200000;
+	public static final TestCase DEFAULT_TESTCASE = TestCase.VISION;
+	public static enum TestCase {
+		VISION,
+		GO_STRAIGHT_TO_BALL,
+		GO_STRAIGHT_TO_OPPONENT_GOAL,
+		ROTATE_TO_BALL,
+		MOVE_AND_TURN_TO_BALL,
+		MOVE_AND_HARD_TURN_TO_BALL,
+		GO_TO_BALL_AND_ROTATE_TO_OPPONENT_GOAL,
+		GO_TO_BALL_AND_HARD_ROTATE_TO_OPPONENT_GOAL,
+		ROTATE_TO_OPPONENT_GOAL_AND_KICK,
+	}
+
+	TestCase[] testCases;
+
 	public static void main(String[] args) {
 		TestingScript ts = new TestingScript(args);
 		ts.run();
@@ -11,55 +27,77 @@ public class TestingScript extends AbstractBaseScript {
 
 	public TestingScript(String[] args) {
 		super(args);
+
+		if (args.length == _argsParsed) {
+			testCases = new TestCase[]{ DEFAULT_TESTCASE };
+		} else {
+			testCases = new TestCase[args.length];
+			for (int i = _argsParsed; i < args.length; i++, _argsParsed++) {
+				testCases[i] = TestCase.values()[Integer.parseInt(args[i])];
+			}
+		}
 	}
 
 	public void run() {
-		int testCase = 0;
-		int stopTime = 200000;
-		long startTime = System.currentTimeMillis();
-		while (!timeOut(startTime, stopTime)) {
-			updateWorldState();
-			test(testCase);
+		for (int i = 0; i < testCases.length; i++) {
+			while (!timeOut(startTime, STOP_TIME)) {
+				updateWorldState();
+				test(testCases[i]);
+			}
+			sendZeros();
 		}
-		sendZeros();
 	}
 
-	static void test(int testCase) {
+	static void test(TestCase testCase) {
 		Position behindBall = new Position(0,0);
 		if (ball.getCoors() != null) {
 			behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
 		}
-		if (testCase==0) { // JUST VISION
-			System.out.println(" / Goal: " + theirGoal.getCoors() +
-					"Ball: " + ball.getCoors() + 
-					" / BehindBall: " + behindBall);
-		} else if (testCase==1) { // GO STRAIGHT TO THA BALL
-			planMoveStraight(behindBall);
-		} else if (testCase==2) { // GO STRAIGHT TO THEIR GOAL
-			planMoveStraight(theirGoal.getCoors());
-		} else if (testCase==3) { // ROTATE TO THA BALL
-			planRotate(ball.getCoors());
-		} else if (testCase==4) { // GO AND TURN TO THA BALL
-			planMoveAndTurn(behindBall, ball.getCoors());
-		} else if (testCase==5) { // GO AND hard TURN TO THA BALL
-			planMoveToFace(ball.getCoors(), ball.getCoors());
-		} else if (testCase==6) { // GO TO THA BALL, ROTATE TO THEIR GOAL
-			planMoveAndTurn(behindBall, theirGoal.getCoors());
-		} else if (testCase==7) { // GO TO THA BALL, hard ROTATE TO THEIR GOAL
-			planMoveToFace(behindBall, theirGoal.getCoors());
-		} else if (testCase==8) { // ROTATE TO THE GOAL, KICK
-			if (ourRobot.getCoors() == null) { return; }
-			if (System.currentTimeMillis() > kickTimeOut && 
+		switch (testCase) {
+			case VISION:
+				System.out.printf("|  Goal %s  |  Ball %s  |  BehindBall %s  |\n",
+					theirGoal.getCoors(), ball.getCoors(), behindBall);
+				break;
+	
+			case GO_STRAIGHT_TO_BALL:
+				planMoveStraight(behindBall);
+				break;
+	
+			case GO_STRAIGHT_TO_OPPONENT_GOAL:
+				planMoveStraight(theirGoal.getCoors());
+				break;
+	
+			case ROTATE_TO_BALL:
+				planRotate(ball.getCoors());
+				break;
+	
+			case MOVE_AND_TURN_TO_BALL:
+				planMoveAndTurn(behindBall, ball.getCoors());
+				break;
+	
+			case MOVE_AND_HARD_TURN_TO_BALL:
+				planMoveToFace(ball.getCoors(), ball.getCoors());
+				break;
+	
+			case GO_TO_BALL_AND_ROTATE_TO_OPPONENT_GOAL:
+				planMoveAndTurn(behindBall, theirGoal.getCoors());
+				break;
+	
+			case GO_TO_BALL_AND_HARD_ROTATE_TO_OPPONENT_GOAL:
+				planMoveToFace(behindBall, theirGoal.getCoors());
+				break;
+	
+			case ROTATE_TO_OPPONENT_GOAL_AND_KICK:
+				if (ourRobot.getCoors() == null) {
+					return;
+				}
+				if (System.currentTimeMillis() > kickTimeOut && 
 					ourRobot.isFacing(theirGoal.getCoors())) {
-				planKick();
-			} else {
-				planRotate(theirGoal.getCoors());
-			}
+					planKick();
+				} else {
+					planRotate(theirGoal.getCoors());
+				}
 		}
 		playExecute();
-	}
-
-	static boolean timeOut(long startTime, int allowance) {
-		return startTime + allowance < System.currentTimeMillis();
 	}
 }

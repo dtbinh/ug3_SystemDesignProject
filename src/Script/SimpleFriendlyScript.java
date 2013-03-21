@@ -11,12 +11,12 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 
 	public SimpleFriendlyScript(String[] args) {
         super(args);
-        if (args.length < 3) {
+        if (args.length == 0) {
         	robotMode = RobotMode.PLAY;
         } else {
-        	if (args[2].equalsIgnoreCase("defendPenalty")) {
+        	if (args[0].equalsIgnoreCase("defendPenalty")) {
         		robotMode = RobotMode.PENALTY_DEF;
-        	} else if (args[2].equalsIgnoreCase("shootPenalty")) {
+        	} else if (args[0].equalsIgnoreCase("shootPenalty")) {
         		robotMode = RobotMode.PENALTY_ATK;
         	} else {
         		System.err.println("ERROR: unhandled mode");

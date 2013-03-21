@@ -40,13 +40,17 @@ public abstract class AbstractBaseScript extends Thread {
 
 	static volatile long kickTimeOut = System.currentTimeMillis();
     static volatile long penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
-	static volatile boolean started = false;
+
+    static volatile long startTime = System.currentTimeMillis();
+    static volatile boolean started = false;
 
 	static volatile CommandStack plannedCommands;
 
+	volatile int _argsParsed = 0; // amount of `String[] args` we have used
+
 	public AbstractBaseScript(String[] args) {
-		String ourColor = args[0];
-		String ourDirection = args[1];
+		String ourColor = args[0]; _argsParsed++;
+		String ourDirection = args[1]; _argsParsed++;
 
 		shootingRight = ourDirection.equals("right");
 		theirGoal = shootingRight ? Goal.goalR() : Goal.goalL();
@@ -292,5 +296,9 @@ public abstract class AbstractBaseScript extends Thread {
 
 	public static boolean penaltyTimeUp() {
 		return System.currentTimeMillis() > penaltyTimeOut;
+	}
+
+	static boolean timeOut(long startTime, int allowance) {
+		return startTime + allowance < System.currentTimeMillis();
 	}
 }
