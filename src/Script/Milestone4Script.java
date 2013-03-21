@@ -30,7 +30,7 @@ public class Milestone4Script extends AbstractBaseScript {
 	}
 
 	static void doTask(int taskNo) {
-		
+
 		if (started && ball.isMoving() && !score) {
 			intercept = true;
 		}
@@ -62,7 +62,7 @@ public class Milestone4Script extends AbstractBaseScript {
 					sendZeros();
 					System.out.println("We done task 1/2 MAN");
 				}
-			} 
+			}
 		}
 		else if (score) {
 			System.out.print("-----S-----");
@@ -70,7 +70,7 @@ public class Milestone4Script extends AbstractBaseScript {
 				Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 50 );
 				planMoveToFace(behindBall, ball.getCoors());
 				System.out.println("Planning to go to ball");
-			} 
+			}
 			else {
 				if (!ourRobot.isFacing(getOptimalGoal())) {
 					planRotate(getOptimalGoal());
@@ -79,7 +79,7 @@ public class Milestone4Script extends AbstractBaseScript {
 				else {
 					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 180) {
 						planMoveStraight(getOptimalKickPosition());
-//						planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
+						// planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
 						System.out.println("Planning to dribble");
 					}
 					else {
@@ -101,19 +101,6 @@ public class Milestone4Script extends AbstractBaseScript {
 		playExecute();
 	}
 
-	private static Position getRetreatPoint(boolean shootingRight) {
-		// close to goal (on x axis)
-		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +40 : -40);
-		// close to where the ball will be (on y axis)
-		// int y = ball.getCoors().getY();
-		int y = ball.getCoors().getY();
-		return new Position (x, y);
-	}
-
-	private static boolean openPlay() {
-		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 150;
-	}
-
 	private static int getOptimalGoalY() {
 		int robotY = theirRobot.getCoors().getY();
 		if (robotY > yTop && robotY < yBottom){
@@ -123,11 +110,11 @@ public class Milestone4Script extends AbstractBaseScript {
 				return (robotY + yTop)/2;
 			} else {
 				return (yBottom + robotY)/2;
-			}	
+			}
 		}
 		else return theirGoal.getCoors().getY();
 	}
-	
+
 	private static Position getOptimalKickPosition() {
 		if (shootingRight){
 			return new Position(theirGoal.getCoors().getX() + 120, getOptimalGoalY());
@@ -135,7 +122,7 @@ public class Milestone4Script extends AbstractBaseScript {
 			return new Position(theirGoal.getCoors().getX() - 120, getOptimalGoalY());
 		}
 	}
-	
+
 	private static Position getOptimalGoal() {
 		return new Position(theirGoal.getCoors().getX(), getOptimalGoalY());
 	}

@@ -12,7 +12,7 @@ import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 // import lejos.nxt.Button;
 import lejos.nxt.Motor;
-import lejos.nxt.Motor.*;
+// import lejos.nxt.Motor.*;
 import lejos.nxt.SensorPort;
 
 import lejos.nxt.comm.Bluetooth;
