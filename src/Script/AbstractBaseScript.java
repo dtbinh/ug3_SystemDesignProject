@@ -14,7 +14,10 @@ import PitchObject.*;
 
 public abstract class AbstractBaseScript extends Thread {
 	public final static int GOT_THERE_DIST = 10;
-	final static int kickAllowance = 1500;
+    public final static int DRIBBLE_DIST = 60;
+    public final static int BEHIND_BALL_DIST = 50;
+	public final static int KICK_ALLOWANCE = 1500;
+    public final static int PENALTY_ALLOWANCE = 20000;
 
 	static volatile VisionReader vision;
 
@@ -27,7 +30,12 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile Robot ourRobot;
 	static volatile Robot theirRobot;
 	static volatile Ball ball;
+
 	static volatile long kickTimeOut;
+    static volatile long penaltyTimeOut;
+    static volatile boolean playMode = true;
+    static volatile boolean penaltyDefMode = false;
+    static volatile boolean penaltyAtkMode = false;
 	static volatile boolean started = false;
 
 	static volatile CommandStack plannedCommands;
@@ -39,11 +47,12 @@ public abstract class AbstractBaseScript extends Thread {
 		shootingRight = ourDirection.equals("right");
 		theirGoal = shootingRight ? Goal.goalR() : Goal.goalL();
 		ourGoal = shootingRight ? Goal.goalL() : Goal.goalR();
-		plannedCommands = new CommandStack();	
+		plannedCommands = new CommandStack();
 		context = ZMQ.context(1);
 		socket = context.socket(ZMQ.REQ);
 		socket.connect("tcp://127.0.0.1:5555");
 		kickTimeOut = System.currentTimeMillis();
+        penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
 		// first thing we do is send zeros to make robot stop if it
 		// had previous commands on the stack
 		sendZeros();
@@ -54,7 +63,6 @@ public abstract class AbstractBaseScript extends Thread {
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
 		started = vision.getStarted();
-
 		// ourRobot.setWantsToRotate(false);
 		// ourRobot.setWantsToStop(false);
 	}
@@ -69,27 +77,27 @@ public abstract class AbstractBaseScript extends Thread {
 		Command commandContainer = plannedCommands.pop();
 		if (commandContainer instanceof KickCommand) {
 			sendCommand(commandContainer);
-			kickTimeOut = System.currentTimeMillis() + kickAllowance;
-		} 
+			kickTimeOut = System.currentTimeMillis() + KICK_ALLOWANCE;
+		}
 		else if (commandContainer instanceof RotateCommand) {
 			sendCommand(commandContainer);
-		} 
+		}
 		else if (commandContainer instanceof MoveCommand) {
 			MoveCommand moveCommand = (MoveCommand) commandContainer;
-			double distToMovePoint = ourRobot.getCoors().euclidDistTo(moveCommand.getMovePoint()); 
+			double distToMovePoint = ourRobot.getCoors().euclidDistTo(moveCommand.getMovePoint());
 			if (distToMovePoint < GOT_THERE_DIST) {	playExecute(); }
 			else                                  { sendCommand(moveCommand); }
-		} 
+		}
 		else {
 			System.out.println("GUUUUUUUUUUYYYS. THERE WAS AN UNRECOGNIZED COMMAND.");
 			playExecute();
 		}
 	}
-	
+
 	static void planKick() {
 		plannedCommands.pushKickCommand();
 	}
-	
+
 	/**
 	 * Just rotate in place
 	 * @param coorsToFace turn to face this Position
@@ -107,11 +115,11 @@ public abstract class AbstractBaseScript extends Thread {
 	 */
 	static ArrayList<Position> getPath(Position coors, Robot obstacle) {
 		return AStar.getPath2(
-				new Point(coors.getX(), coors.getY()), 
-				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()), 
-				(int) Math.toDegrees(ourRobot.getAngle()), 
-				new Point(obstacle.getCoors().getX(), obstacle.getCoors().getY()), 
-				(int) Math.toDegrees(obstacle.getAngle()), 
+				new Point(coors.getX(), coors.getY()),
+				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()),
+				(int) Math.toDegrees(ourRobot.getAngle()),
+				new Point(obstacle.getCoors().getX(), obstacle.getCoors().getY()),
+				(int) Math.toDegrees(obstacle.getAngle()),
 				shootingRight ? AStar.LEFT : AStar.RIGHT);
 		// if we're shootingRight, *our* side is LEFT
 	}
@@ -147,7 +155,7 @@ public abstract class AbstractBaseScript extends Thread {
 	/**
 	 * Use A* to plan a path and push it as commands
 	 * Also make robot turn while moving -- try to end up moving forwards
-	 * For this we need to project a point 
+	 * For this we need to project a point
 	 * @param coors destination Position
 	 */
 	static void planMoveAndTurn(Position coors) {
@@ -171,7 +179,7 @@ public abstract class AbstractBaseScript extends Thread {
 	/**
 	 * Use A* to plan a path and push it as commands
 	 * Also make robot turn while moving -- try to end up moving forwards
-	 * For this we need to project a point 
+	 * For this we need to project a point
 	 * Near the end, HARD rotate to face that Position
 	 * @param coors destination Position
 	 */
@@ -197,7 +205,7 @@ public abstract class AbstractBaseScript extends Thread {
 	static void sendZeros() {
 		sendreceive("1 0 0 0 0");
 	}
-	
+
 	/**
 	 * Send proper command
 	 * @param command
@@ -227,7 +235,7 @@ public abstract class AbstractBaseScript extends Thread {
 			MoveStraightCommand container = (MoveStraightCommand) command;
 			Position move = container.getMovePoint();
 			sendreceive(ourRobot.moveStraight(move));
-		} 
+		}
 		else {
 			sendZeros();
 		}
@@ -247,7 +255,7 @@ public abstract class AbstractBaseScript extends Thread {
 	public static boolean nullInput(Object o, Object p) {
 		return (o==null) || (p==null) || (ourRobot.getCoors()==null);
 	}
-	
+
 	public static VisionReader getVision() {
 		return vision;
 	}
