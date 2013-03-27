@@ -82,7 +82,7 @@ public class BluetoothNXT {
 				dis = connection.openInputStream();
 				dos = connection.openOutputStream();
 
-				Motor.C.rotate(10, true);
+				//Motor.C.rotate(10, true);
 				//Motor.C.resetTachoCount(); 
 				//Motor.C.stop();
 
@@ -163,28 +163,6 @@ public class BluetoothNXT {
 			else if (opcode == OP_KICK) {
 				// TODO: add to thread
 				kick();
-			} else if (opcode == OP_ROTATE_RXT_MOTOR ||
-					opcode == OP_CHANGE_RXT_MOTOR_SPEED || 
-					opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
-				byte[] motor_params = new byte[2 * 2];
-				dis.read(motor_params);
-
-				short mA = (short) ((short)motor_params[1] << 8 | (255 & (short)motor_params[0]));
-				short mB = (short) ((short)motor_params[3] << 8 | (255 & (short)motor_params[2]));
-
-				LCD.drawString("mA: " + mA + "   ", 0, 3);
-				LCD.drawString("mB: " + mB + "   ", 0, 4);
-
-				if (opcode == OP_ROTATE_RXT_MOTOR) {
-					Motor.A.rotate(mA, true);
-					Motor.B.rotate(mB, true);
-				} else if (opcode == OP_CHANGE_RXT_MOTOR_SPEED) {
-					Motor.A.setSpeed(mA);
-					Motor.B.setSpeed(mB);
-				} else if (opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
-					Motor.A.setAcceleration(mA);
-					Motor.B.setAcceleration(mB);
-				}
 			}
 			else {
 				LCD.drawString("UNDEF OPCODE: " + opcode, 0, 3);
@@ -212,7 +190,7 @@ public class BluetoothNXT {
         Motor.A.stop();
         isKicking = false;
 		*/
-		Motor.A.setSpeed((int) Motor.C.getMaxSpeed());
+		Motor.A.setSpeed((int) Motor.A.getMaxSpeed());
 		Motor.A.resetTachoCount();
 		Motor.A.backward();
 
