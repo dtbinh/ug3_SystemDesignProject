@@ -572,6 +572,7 @@ public class Vision extends WindowAdapter {
 		worldState.setYellowX(yellow.getX());
 		worldState.setYellowY(yellow.getY());
 		worldState.updateCounter();
+		worldState.setNewFrame(true);
 
 		/* Draw the image onto the vision frame. */
 		Graphics frameGraphics = label.getGraphics();

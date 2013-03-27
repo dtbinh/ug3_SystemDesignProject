@@ -1,31 +1,16 @@
 package Script;
 
-import PitchObject.PitchObject;
 import PitchObject.Position;
+import PitchObject.Robot;
 
-/**
- * GeneralPlanningScript is an outline for how all 
- * strategy scripts should look.
- * I recommend reading the documentation in RobotMath and 
- * ObjectAvoidance before starting any planning task. 
- * Being familiar with the ObjectDetails subclasses (balls and robots)
- * might also be of use
- * 
- * @see RobotMath
- * @see ObjectAvoidance
- * @see PitchObject
- * 
- * @author		c-w
- */
 public class Milestone4Script extends AbstractBaseScript {
 	private int taskNo;
+	private static boolean intercept = false;
 	private static boolean score = false;
-	private static boolean facing = false;
-	//TODO: CHANGE TOMORROW BEFORE MILESTONE !!!!!!!!!!!!!
-	private static int yLeft = 143;
-	private static int yRight = 312;
+	private static int yTop = 160;
+	private static int yBottom = 311;
 
-	
+
 	public static void main(String[] args) {
 		Milestone4Script m4 = new Milestone4Script(args);
 		m4.run();
@@ -33,182 +18,117 @@ public class Milestone4Script extends AbstractBaseScript {
 
 	public Milestone4Script(String[] args) {
 		super(args);
-		taskNo = Integer.parseInt(args[2]);
+		if (args.length == 0) {
+			System.err.println("Please specify a task to do!");
+			System.exit(1);
+		}
+		taskNo = Integer.parseInt(args[0]);
 	}
 
 	public void run() {
 		while (true) {
 			updateWorldState();
+			if (ball.getCoors() == null) continue;
 			doTask(this.taskNo);
 		}
 	}
 
 	static void doTask(int taskNo) {
-		/*
-		 * Do we need to wait for the ball to move before we 
-		 * start going towards it?
-		 * For part 3 do we have to score past the robot?
-		 */
-		//score =false;
-		if (!(ball.getCoors() == null)){
-			Position temp = getOptimalGoal();
-			System.out.println("Goal COORS X " + theirGoal.getCoors().getX() + " Y: " + theirGoal.getCoors().getY());
-			System.out.println();
-			System.out.println("Optimal COORS X " + temp.getX() + " Y: " + temp.getY());
-			System.out.println();
-			System.out.println("BALL COORS X " + ball.getCoors().getX() + " Y: " + ball.getCoors().getY());
+
+		if (started && ball.isMoving() && !score) {
+			intercept = true;
 		}
-	
-		//ourRobot.moveAndTurn(ball.getCoors(), ball.getCoors());
-		planRotate(ball.getCoors());
-		
-		System.out.println((openPlay(ball.getCoors(), ourGoal.getCoors())));
-		if((openPlay(ball.getCoors(), ourGoal.getCoors()))){
-			//Release robot from retreating to x
+		if (taskNo==3 && started && openPlay()) {
+			intercept = false;
 			score = true;
+			Robot.MAX_SPEED = 212;
 		}
-		System.out.println("is the ball within 100: " + score);
 
-		
-		if (!(ball.getCoors() ==null)) facing = ourRobot.isFacing(ball.getCoors());
-		
-		if(!score) {
-			
-			//Position intersectionPoint = ball.intersectinPosition(ourRobot);
+		if (intercept) {
+			System.out.print("-----I-----");
 			Position retreatPoint = getRetreatPoint(shootingRight);
-			if ((ball.getCoors() != null)) //&& (!ourRobot.closeToPoint(retreatPoint))){
-				//plannedCommands.pushMoveToFacePoint(retreatPoint,theirGoal.getCoors());
-				planMoveToFace(retreatPoint, theirGoal.getCoors());
-			//}
-			//planRotate(theirGoal.getCoors());
-			System.out.println("Moving to retreat point " + retreatPoint);
-		} else {
-			if (taskNo == 1 || taskNo == 2) {
-				// TODO: test
-				// just stop when we have the ball- this should be enough
-				sendZeros();
-			} else if (taskNo == 3) {
-			      // score a goal
-		         // 1) move to a point where the opponent doesn't intersect
-		         //    the line from our robot to goal centre
-
-			   
-				
-				System.out.println("Are we facing the ball: " + facing);
-				//If we are not facing the ball go to the ball
-				//TODO: potential go behind ball but that method needs fixed
-			   if(!(ball.robotHasBall(ourRobot))){
-				   Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 25);
-				   //planMoveToFace(behindBall, ball.getCoors());
-				   planMoveAndTurn(ball.getCoors(), ball.getCoors());
-			   }else if (!ourRobot.isFacing(getOptimalGoal())) {
-	              planMoveToFace(ourRobot.getCoors(), getOptimalGoal()); //face the enemy goal
-	              
-		          System.out.println("Rotating to face enemy goal... " + theirGoal.getOptimalPosition());
-			     
-		          // 2) move closer to goal
-			       
-			      //*do some object avoidance here*
-			       //we also need to make sure the ball continues to be in our possession during movement
-			      
-			       planMoveToFace(theirGoal.getOptimalPosition(), theirGoal.getOptimalPosition());
-			      
-			         // 3) shoot
-			       
-			      if(ball.robotHasBall(ourRobot)) 
-		           {
-			         sendKickCommand(plannedCommands.pop());
-			         System.out.println("Kick!");
-			       }
-			        
-			        sendZeros();
-			   }
-		       
-
-//				Position target = theirRobot.getTarget(theirGoal);
-//				int newX = (ourRobot.getCoors().getX() + target.getX())/2;
-//				Position movePoint = new Position(newX, target.getY());
-//				// TODO: implement
-//				// score a goal
-//				// 1) move to a point where the opponent doesn't intersect
-//				//    the line from our robot to goal centre
-//				
-//				if(!ourRobot.isFacing(target))
-//				{
-//					planMoveAndTurn(ourRobot.getCoors(), target); //face the enemy goal
-//					System.out.println("Rotating to face enemy goal... " + target);
-//				}
-//				else{
-//				// 2) move closer to goal
-//				
-//				//*do some object avoidance here*
-//				//we also need to make sure the ball continues to be in our possession during movement
-//				
-//				//planMoveAndTurn(theirGoal.getOptimalPosition(), theirGoal.getOptimalPosition());
-//				plannedCommands.pushMoveToFacePoint(movePoint, target);
-//				}
-//				// 3) shoot
-//				
-//				if(ball.robotHasBall(ourRobot) && ourRobot.isFacing(target) &&(ourRobot.withinKickingRange(target))) 
-//				{
-//					sendKickCommand(plannedCommands.pop());
-//					System.out.println("Kick!");
-//				}
-//				
-//				sendZeros();
-//			} else {
-//				System.err.println("Task not specified.");
-//				System.exit(0);
+			if (Math.abs(ourRobot.getCoors().getY() - ball.getCoors().getY()) > 35) {
+				if (taskNo == 1) {
+					planMoveAndTurn(retreatPoint, theirGoal.getCoors());
+				}
+				else {
+					planMoveStraight(retreatPoint);
+				}
+				System.out.println("Planning moving to retreat point " + retreatPoint);
 			}
+			else {
+				if (!ball.robotIsFacingBall(ourRobot)) {
+					planRotate(ball.getCoors());
+					System.out.println("Planning to rotate towards ball");
+				}
+				else {
+					plannedCommands.clear();
+					sendZeros();
+					System.out.println("We done task 1/2 MAN");
+				}
+			}
+		}
+		else if (score) {
+			System.out.print("-----S-----");
+			if (!ball.robotHasBall(ourRobot)) {
+				Position behindBall = ball.pointBehindBall(theirGoal.getCoors(), 50 );
+				planMoveToFace(behindBall, ball.getCoors());
+				System.out.println("Planning to go to ball");
+			}
+			else {
+				if (!ourRobot.isFacing(getOptimalGoal())) {
+					planRotate(getOptimalGoal());
+					System.out.println("Planning to rotate towards their goal");
+				}
+				else {
+					if (theirGoal.getCoors().euclidDistTo(ball.getCoors()) > 180) {
+						planMoveStraight(getOptimalKickPosition());
+						// planMoveAndTurn(getOptimalKickPosition(), getOptimalGoal());
+						System.out.println("Planning to dribble");
+					}
+					else {
+						if (System.currentTimeMillis() > kickTimeOut) {
+							planKick();
+							System.out.println("Planning to kick!!!");
+						}
+						else {
+							System.out.println("Would like to kick BRO but no");
+							return;
+						}
+					}
+				}
+			}
+		}
+		else {
+			System.out.println("-----------");
 		}
 		playExecute();
 	}
 
-	private static Position getRetreatPoint(boolean shootDirection) {
-		if(ourRobot.getCoors() == null){
-			return ourGoal.getCoors();
-		}
-		
-		int xPoint =  ourGoal.getOptimalPosition().getX();
-		xPoint -= shootDirection ? -30 : 30;
-		int yPoint = ball.getCoors().getY(); 
-
-		return new Position (xPoint, yPoint);
-	}
-	
-	private static boolean openPlay(Position pos1, Position pos2){
-		//Checks to see if the x distance is less than 100
-		if (pos1 == null) return false;
-		int xDist = (int) (Math.sqrt((double)Math.pow((pos1.getX() - pos2.getX()),2)));
-		System.out.println("xDist = " + xDist);
-		
-		//Reason for not 35 is that goal initialises before coordinate 
-		// goal x is 35 
-		if(xDist <100 && (!(xDist == 35))){
-			return true;
-		}
-		return false;
-	}
-	
-	private static Position getOptimalGoal(){
+	private static int getOptimalGoalY() {
 		int robotY = theirRobot.getCoors().getY();
-		if (robotY > yLeft && robotY < yRight){
-			int midY;
-			int right = yRight - robotY;
-			int left = robotY - yLeft;
-			if(left > right ){
-				midY = (robotY + yLeft)/2;
-			}else {
-			    midY = (yRight + robotY)/2;
-			}	
-			if (shootingRight){
-				return new Position(theirGoal.getCoors().getX() -150,midY);
-			}else{
-				return new Position(theirGoal.getCoors().getX() +150,midY);
+		if (robotY > yTop && robotY < yBottom){
+			int bottom = yBottom - robotY;
+			int top = robotY - yTop;
+			if (top > bottom) {
+				return (robotY + yTop)/2;
+			} else {
+				return (yBottom + robotY)/2;
 			}
-		}else{	
-			return (theirGoal.getCoors());
 		}
+		else return theirGoal.getCoors().getY();
+	}
+
+	private static Position getOptimalKickPosition() {
+		if (shootingRight){
+			return new Position(theirGoal.getCoors().getX() + 120, getOptimalGoalY());
+		} else {
+			return new Position(theirGoal.getCoors().getX() - 120, getOptimalGoalY());
+		}
+	}
+
+	private static Position getOptimalGoal() {
+		return new Position(theirGoal.getCoors().getX(), getOptimalGoalY());
 	}
 
 }

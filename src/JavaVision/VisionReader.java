@@ -81,12 +81,15 @@ public class VisionReader extends Thread {
 	public void updatePitchVariables() {
 		// Get pitch information from vision
 		state = vision.getWorldState();
-		ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
-
-		yellowRobot.setAngle(state.getYellowOrientation());
-		yellowRobot.setCoors(new Position(state.getYellowX(), state.getYellowY()));
-		blueRobot.setAngle(state.getBlueOrientation());
-		blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
+		if (state.getNewFrame()) {
+			ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
+	
+			yellowRobot.setAngle(state.getYellowOrientation());
+			yellowRobot.setCoors(new Position(state.getYellowX(), state.getYellowY()));
+			blueRobot.setAngle(state.getBlueOrientation());
+			blueRobot.setCoors(new Position(state.getBlueX(), state.getBlueY()));
+			state.setNewFrame(false);
+		}
 	}
 
 	//getters for planning thread.
@@ -122,6 +125,7 @@ public class VisionReader extends Thread {
 		
 		return state.getStarted();
 	}
+	
 		
 	public int getMinX() { return vision.getMinX(); }
 	public int getMaxX() { return vision.getMaxX(); }

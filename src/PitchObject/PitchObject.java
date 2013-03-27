@@ -7,17 +7,12 @@ public abstract class PitchObject {
 	protected Position coors;
 	protected float angle;
 	
-	private static Position coors2 = null;
-	private static Position coors3 = null;
-	static long time1;
-	static long time2;
-	static long time3;
-	public static int count = 0;
-	public static int count2 = 0;
-	static long difference;
-	static double distance;
-	static double speed1;
-	static double speed2;
+	private Position coors1 = null;
+	private Position coors2 = null;
+	private Position coors3 = null;
+	private long time1;
+	private long time2;
+	private long time3;
 	private Vector lastVelocity = null;
 	
 	public Position getCoors() {
@@ -33,39 +28,47 @@ public abstract class PitchObject {
 	}
 	
     public void setCoors(Position current){
+    	long newtime = System.currentTimeMillis();
+    	if (newtime == time1) return;
 		lastVelocity = this.getVelocity();
 		coors3 = coors2;
-		coors2 = this.coors;
-		this.coors = current;
+		coors2 = coors1;
+		coors1 = current;
+		coors = current;
 		time3 = time2;
 		time2 = time1;
-		time1 = System.currentTimeMillis();
+		time1 = newtime;
 	}
 
+    public int getSomeMillis() {
+    	return (int) (time1 - time3);
+    }
+    
 	/**
 	* @return	2-D vector representing velocity of ball.
 	*/
-	/**
-	* Note from Sarah
-	* Why don't we just get the initial velocity, between times 1 and 2,
-	* then get the current velocity at times 3 and 4. So two types of get velocity methods.
-	* Makes acceleration accurate?
-	*/
 	public Vector getVelocity() {
-		if (this.coors == null || coors2 == null || coors3 == null) {
+		if (coors1 == null || coors2 == null || coors3 == null) {
 			return new Vector(0, 0);
 		}
-		double interval = (double) Math.abs(time1 - time2);
-		double speedX = (coors2.getX() - this.coors.getX()) / interval;
-		double speedY = (coors2.getY() - this.coors.getY()) / interval;
-		double interval2 = (double) Math.abs(time2 - time3);
+		long interval1 = time1 - time2;
+		if (interval1 == 0) return new Vector(0, 0);
+		double speedX = (coors2.getX() - coors1.getX()) / interval1;
+		double speedY = (coors2.getY() - coors1.getY()) / interval1;
+		long interval2 = time2 - time3;
+		if (interval2 == 0) return new Vector(0, 0);
 		speedX = 0.7 * speedX + (0.3 * (coors3.getX() - coors2.getX()) / interval2);
 		speedY = 0.7 * speedY + (0.3 * (coors3.getY() - coors2.getY()) / interval2);
 		return new Vector(speedX, speedY);
 	}
 	
+
+	public double getSpeed() {
+		return getVelocity().getMagnitude();
+	}
+	
 	public boolean isMoving() {
-		return this.getVelocity().getMagnitude() > 0.05;
+		return getSpeed() > 0.03;
 	}
 
 	/**
@@ -85,9 +88,6 @@ public abstract class PitchObject {
 		}
 	}
 	
-	public double getSpeed() {
-		return this.getAcceleration().getMagnitude();
-	}
 	
 	/**
 	* Method, returns first reachable position of ball. 

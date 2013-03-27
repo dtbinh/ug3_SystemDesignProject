@@ -154,8 +154,8 @@ public class Position {
     }
 
 	public Position projectPoint(double ang, int dist){
-	 	int newX = (int) (this.getX() + (dist * Math.sin(ang)));
-	    int newY = (int) (this.getY() - (dist * Math.cos(ang)));
+	 	int newX = (int) (this.getX() + (dist * Math.cos(ang)));
+	    int newY = (int) (this.getY() + (dist * Math.sin(ang)));
 	    Position goPoint = new Position(newX, newY);
 	    return goPoint;
 	}
