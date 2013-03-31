@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="classes/src"/>
+	<classpathentry kind="src" path="jtools/src"/>
+	<classpathentry kind="src" path="org.lejos.charting/src"/>
+	<classpathentry kind="src" path="org.lejos.example/src"/>
+	<classpathentry kind="src" path="org.lejos.pcexample/src"/>
+	<classpathentry kind="src" path="pccomms/src"/>
+	<classpathentry kind="src" path="pcsamples/src"/>
+	<classpathentry kind="src" path="pctools/src"/>
+	<classpathentry kind="src" path="samples/src"/>
+	<classpathentry kind="src" path="startup/src"/>
+	<classpathentry kind="lib" path="jtools/3rdparty/lib/bcel.jar"/>
+	<classpathentry kind="lib" path="org.lejos.charting/3rdparty/lib/jcommon.jar"/>
+	<classpathentry kind="lib" path="org.lejos.charting/3rdparty/lib/jfreechart.jar"/>
+	<classpathentry kind="lib" path="pccomms/3rdparty/lib/bluecove-gpl.jar"/>
+	<classpathentry kind="lib" path="pccomms/3rdparty/lib/bluecove.jar"/>
+	<classpathentry kind="lib" path="pccomms/3rdparty/lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="pctools/3rdparty/lib/commons-cli.jar"/>
+	<classpathentry kind="lib" path="release/lejos_nxj/build/cpptasks.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
