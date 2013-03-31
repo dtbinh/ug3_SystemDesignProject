@@ -2,15 +2,16 @@ from __future__ import print_function
 import sys
 import os
 import time
+import zmq
 import math
-import socket
-#import cv
+import threading
 from cv2 import cv
 
 from optparse import OptionParser
 
 from SimpleCV import Image, Camera, VirtualCamera
 from preprocess import Preprocessor
+from postprocess import Postprocessor
 from features import Features
 from threshold import Threshold
 from display import Gui, ThresholdGui
@@ -18,7 +19,7 @@ from display import Gui, ThresholdGui
 HOST = 'localhost' 
 PORT = 28546 
 
-PITCH_SIZE = (243.8, 121.9)
+#PITCH_SIZE = (243.8, 121.9)
 
 # Distinct between field size line or entity line
 ENTITY_BIT = 'E';
@@ -29,7 +30,7 @@ class Vision:
     def __init__(self, pitchnum, stdout, sourcefile, resetPitchSize):
                
         self.running = True
-        self.connected = False
+        #self.connected = False
         
         self.stdout = stdout 
 
@@ -50,44 +51,44 @@ class Vision:
         self.thresholdGui = ThresholdGui(self.threshold, self.gui)
         self.preprocessor = Preprocessor(resetPitchSize)
         self.features = Features(self.gui, self.threshold)
+        self.postprocessor = Postprocessor()
+        
+        self.current_ents = {}
+        self.predicted_ents = {}
         
         eventHandler = self.gui.getEventHandler()
         eventHandler.addListener('q', self.quit)
 
+    def run(self):
         while self.running:
-            try:
-                if not self.stdout:
-                    self.connect()
-                else:
-                    self.connected = True
+            #try:
+                #if not self.stdout:
+                #    self.connect()
+                #else:
+                #    self.connected = True
 
-                if self.preprocessor.hasPitchSize:
-                    self.outputPitchSize()
-                    self.gui.setShowMouse(False)
-                else:
-                    eventHandler.setClickListener(self.setNextPitchCorner)
+             if self.preprocessor.hasPitchSize:
+                 self.outputPitchSize()
+                 self.gui.setShowMouse(False)
+             else:
+                 eventHandler.setClickListener(self.setNextPitchCorner)
 
-                while self.running:
-                    self.doStuff()
+             while self.running:
+                 self.doStuff()
 
-            except socket.error:
-                self.connected = False
+            #except socket.error:
+             #   self.connected = False
                 # If the rest of the system is not up yet/gets quit,
                 # just wait for it to come available.
                 #time.sleep(1)
 
                 # Strange things seem to happen to X sometimes if the
                 # display isn't updated for a while
-                self.doStuff()
+              #  self.doStuff()
 
-        if not self.stdout:
-            self.socket.close()
-        
-    def connect(self):
-        print("Attempting to connect...")
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect( (HOST, PORT) )
-        self.connected = True
+        #if not self.stdout:
+            #self.socket.close()
+
 
     def quit(self):
         self.running = False
@@ -103,7 +104,9 @@ class Vision:
         self.gui.updateLayer('raw', frame)
 
         ents = self.features.extractFeatures(frame)
-        self.outputEnts(ents)
+        self.updateEnts(ents)
+        self.printState()
+        #self.postprocessor.update(ents)
 
         self.gui.loop()
 
@@ -120,38 +123,49 @@ class Vision:
     
     def outputPitchSize(self):
         print(self.preprocessor.pitch_size)
-        self.send('{0} {1} {2} \n'.format(
-                PITCH_SIZE_BIT, self.preprocessor.pitch_size[0], self.preprocessor.pitch_size[1]))
+        #sys.stdout.write('{0} {1} {2} \n'.format(PITCH_SIZE_BIT, self.preprocessor.pitch_size[0], self.preprocessor.pitch_size[1]))
 
-    def outputEnts(self, ents):
-
-        # Messyyy
-        if not self.connected or not self.preprocessor.hasPitchSize:
+    def updateEnts(self, ents):
+        if not self.preprocessor.hasPitchSize:
             return
 
-        self.send("{0} ".format(ENTITY_BIT))
+        self.last_update_time = int(time.time() * 1000)
+        self.current_ents = ents
+        self.predicted_ents = self.postprocessor.predict(ents, self.last_update_time)
 
-        for name in ['yellow', 'blue', 'ball']:
-            entity = ents[name]
-            x, y = entity.coordinates()
-
-            # The rest of the system needs (0, 0) at the bottom left
-            if y != -1:
-                y = self.preprocessor.pitch_size[1] - y
-
-            if name == 'ball':
-                self.send('{0} {1} '.format(x, y))
-            else:
-                angle = 360 - (((entity.angle() * (180/math.pi)) - 360) % 360)
-                self.send('{0} {1} {2} '.format(x, y, angle))
-
-        self.send(str(int(time.time() * 1000)) + " \n")
+    def printState(self):
+        print(self.getStateString())
         
-    def send(self, string):
-        if self.stdout:
-            sys.stdout.write(string)
+    def getStateString(self):
+        reply = ""
+        
+        for ents in [self.current_ents, self.predicted_ents]:
+            for name in ['yellow', 'blue', 'ball']:
+                entity = ents[name]
+                x, y = entity.coordinates()
+                
+                if (name == 'ball'):
+                    reply += '{0} {1} '.format(int(x), int(y))
+                else:
+                    angle = 360 - (((entity.angle() * (180/math.pi)) - 360) % 360)
+                    reply += '{0} {1} {2} '.format(int(x), int(y), int(angle))
+                                     
+        reply += str(self.last_update_time)
+        return reply
+
+    def handle_request(self, request):
+        reply = ""
+        
+        if (request == 'E'):
+            reply = self.getStateString()        
+        elif (request == 'P'):
+            for c in self.preprocessor._cropRect:
+                reply += str(c) + ' '
         else:
-            self.socket.send(string)
+            reply = "UNDEF"
+        
+        return reply
+
 
 class OptParser(OptionParser):
     """
@@ -164,6 +178,7 @@ class OptParser(OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
         self.exit(0, "%s: error: %s\n" % (self.get_prog_name(), msg))
+
 
 if __name__ == "__main__":
 
@@ -185,7 +200,34 @@ if __name__ == "__main__":
     if options.pitch not in [0,1]:
         parser.error('Pitch must be 0 or 1')
 
-    Vision(options.pitch, options.stdout, options.file, options.resetPitchSize)
+    vision = Vision(options.pitch, options.stdout, options.file, options.resetPitchSize)
+    
+    # Socket
+    context = zmq.Context()
+    socket = context.socket(zmq.REP)
+    socket.bind("tcp://127.0.0.1:6666")
+    socket.setsockopt(zmq.RCVTIMEO, 1000)
+    
+    # Run the vision thread
+    thread = threading.Thread(target=vision.run)
+    thread.start()
 
+    # Wait for request
+    while vision.running:
+        request = None
+        
+        try:
+            request = socket.recv()
+        except:
+            pass
+        
+        if (request != None):
+            reply = vision.handle_request(request)
+            socket.send(reply)
+        
+        #socket.send( vision.handle_request(socket.recv()) )
+        
+        
+    thread.join(2)
 
 

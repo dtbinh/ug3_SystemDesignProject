@@ -8,14 +8,9 @@ class Features:
     # Sizes of various features
     # Format : ( min_w, max_w, min_l, max_l)
     # width is defined as the shorter dimension
-    # Sizes = { 'ball'     : (4, 20, 4,  20),
-    #       'T'         : (15, 40, 20, 55),
-    #       'dirmarker' : (3,  12, 3,  12),
-    #     }
+    #Sizes = { 'ball': (4, 20, 4,  20), 'T': (15, 40, 20, 55), 'dirmarker': (3,  12, 3,  12), }
 
-    Sizes = { 'ball'     : (20, 300),
-          'T'         : (100, 800),
-        }
+    Sizes = {'ball': (20, 300), 'T': (100, 800), }
 
     def __init__(self, display, threshold):
         self.threshold = threshold
