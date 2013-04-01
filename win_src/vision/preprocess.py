@@ -19,13 +19,17 @@ class Preprocessor:
             self.hasPitchSize = False
         else:
             self.hasPitchSize = True
+            
+        # left, top, right, bottom
+        #self._cropRect = [0, 55, 640, 370]
+        #self.__savePitchSize()
+            
 
     def __savePitchSize(self):
         util.dumpToFile(self._cropRect, self._filepath)
 
     def __loadPitchSize(self):
         self._cropRect = util.loadFromFile(self._filepath)
-        print self._cropRect
 
     @property
     def pitch_size(self):
