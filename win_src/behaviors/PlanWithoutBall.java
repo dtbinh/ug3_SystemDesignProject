@@ -41,23 +41,24 @@ public class PlanWithoutBall implements Behavior {
 		superRobot.pathNav.addWaypoint(new Waypoint(goal));
 		
 		//done brah
-		superRobot.needsNewPath = false;
-		
-		
-		
+		superRobot.needsNewPath = false;		
 
 	}
 
 	@Override
 	public void suppress() {
-		// TODO Auto-generated method stub
+		boolean suppressed = true;
 
 	}
 
 	@Override
 	public boolean takeControl() {//TODO:Add conditions
-		// TODO Auto-generated method stub
-		return false;
+		if (superRobot.needsNewPlan()){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 }

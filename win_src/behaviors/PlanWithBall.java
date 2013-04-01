@@ -29,7 +29,6 @@ public class PlanWithBall implements Behavior {
 
 	@Override
 	public void suppress() {
-		// TODO Auto-generated method stub
 		suppressed = true;
 
 	}
