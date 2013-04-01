@@ -139,7 +139,7 @@ public class BluetoothNXT {
 				byte[] motor_speeds = new byte[4 * 2];
 				dis.read(motor_speeds);
 
-				short m1 = bytesToShort(motor_speeds[2], motor_speeds[1]);
+				short m1 = bytesToShort(motor_speeds[1], motor_speeds[0]);
 				short m2 = bytesToShort(motor_speeds[3], motor_speeds[2]);
 				short m3 = bytesToShort(motor_speeds[5], motor_speeds[4]);
 				short m4 = bytesToShort(motor_speeds[7], motor_speeds[6]);

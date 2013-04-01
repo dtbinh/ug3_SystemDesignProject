@@ -105,6 +105,7 @@ class Entity:
         self._hasAngle = hasAngle
         self._angle = None
         self._feature = None
+        self._velocity = None
     
     def coordinates(self):
         return self._coordinates

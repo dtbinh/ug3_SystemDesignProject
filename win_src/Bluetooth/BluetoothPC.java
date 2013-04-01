@@ -34,6 +34,7 @@ public class BluetoothPC extends Thread {
 	public static final byte OP_TRAVEL_ARC = 7;
 	public static final byte OP_STOP = 8;
 	public static final byte OP_NOP = 9;
+	public static final byte OP_CAITHAN = 10;
 
 	// Privates
 	private static InputStream in;
@@ -284,8 +285,64 @@ public class BluetoothPC extends Thread {
 					0, command, 5, 4);
 			
 
-		}
-		else {
+		} else if (opcode == OP_CAITHAN) {
+			short ux = (short)Integer.parseInt(request_tokens[1]);
+			short uy = (short)Integer.parseInt(request_tokens[2]);
+			short ua = (short)Integer.parseInt(request_tokens[3]);
+			short ex = (short)Integer.parseInt(request_tokens[4]);
+			short ey = (short)Integer.parseInt(request_tokens[5]);
+			short ea = (short)Integer.parseInt(request_tokens[6]);
+			short gx = (short)Integer.parseInt(request_tokens[7]);
+			short gy = (short)Integer.parseInt(request_tokens[8]);
+			short ga = (short)Integer.parseInt(request_tokens[10]); // TIME and then goal angle
+			
+			
+			//System.out.println("\tParams: m1: " + m1 + ", m2: " + m2 + ", m3: " + m3 + ", m4: " + m4);
+			//System.out.println("\tParams: yx: " + yx)
+
+			// Parameters parsed, construct command to robot
+			command = new byte[1 + 2 * 9]; // 1 for opcode, 2 * 4 for motor speeds
+			// opcode
+			command[0] = (byte)opcode;
+			
+			//yx
+			command[1] = (byte)(ux & 0xff);
+			command[2] = (byte)((ux >> 8) & 0xff);
+			
+			//yy
+			command[3] = (byte)(uy & 0xff);
+			command[4] = (byte)((uy >> 8) & 0xff);
+			
+			//ya
+			command[5] = (byte)(ua & 0xff);
+			command[6] = (byte)((ua >> 8) & 0xff);
+			
+			//bx
+			command[7] = (byte)(ex & 0xff);
+			command[8] = (byte)((ex >> 8) & 0xff);
+			
+			//by
+			command[9] = (byte)(ey & 0xff);
+			command[10] = (byte)((ey >> 8) & 0xff);
+			
+			//ba
+			command[11] = (byte)(ea & 0xff);
+			command[12] = (byte)((ea >> 8) & 0xff);
+			
+			
+			//blx
+			command[13] = (byte)(gx & 0xff);
+			command[14] = (byte)((gx >> 8) & 0xff);
+			
+			//bly
+			command[15] = (byte)(gy & 0xff);
+			command[16] = (byte)((gy >> 8) & 0xff);	
+			
+			// Goal angle
+			command[17] = (byte)(ga & 0xff);
+			command[18] = (byte)((ga >> 8) & 0xff);	
+			
+		} else {
 			System.out.println("\tUndefined opcode: " + opcode); 
 			return RET_UNDEFINED_OP; // Undefined opcode
 		}

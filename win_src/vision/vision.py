@@ -16,14 +16,6 @@ from features import Features
 from threshold import Threshold
 from display import Gui, ThresholdGui
 
-HOST = 'localhost' 
-PORT = 28546 
-
-#PITCH_SIZE = (243.8, 121.9)
-
-# Distinct between field size line or entity line
-ENTITY_BIT = 'E';
-PITCH_SIZE_BIT  = 'P';
 
 class Vision:
     
@@ -54,7 +46,7 @@ class Vision:
         self.postprocessor = Postprocessor()
         
         self.current_ents = {}
-        self.predicted_ents = {}
+        #self.predicted_ents = {}
         
         eventHandler = self.gui.getEventHandler()
         eventHandler.addListener('q', self.quit)
@@ -131,7 +123,7 @@ class Vision:
 
         self.last_update_time = int(time.time() * 1000)
         self.current_ents = ents
-        self.predicted_ents = self.postprocessor.predict(ents, self.last_update_time)
+        self.postprocessor.update(ents, self.last_update_time)
 
     def printState(self):
         print(self.getStateString())
@@ -139,16 +131,19 @@ class Vision:
     def getStateString(self):
         reply = ""
         
-        for ents in [self.current_ents, self.predicted_ents]:
-            for name in ['yellow', 'blue', 'ball']:
-                entity = ents[name]
-                x, y = entity.coordinates()
-                
-                if (name == 'ball'):
-                    reply += '{0} {1} '.format(int(x), int(y))
-                else:
-                    angle = 360 - (((entity.angle() * (180/math.pi)) - 360) % 360)
-                    reply += '{0} {1} {2} '.format(int(x), int(y), int(angle))
+        for name in ['yellow', 'blue', 'ball']:
+            entity = self.current_ents[name]
+            x, y = entity.coordinates()
+            
+            # If current position is lost, try to predict it
+            if (x == -1 or y == -1):
+                x, y = self.postprocessor.predict(self.last_update_time)[name].coordinates()
+            
+            if (name == 'ball'):
+                reply += '{0} {1} '.format(int(x), int(y))
+            else:
+                angle = 360 - (((entity.angle() * (180/math.pi)) - 360) % 360)
+                reply += '{0} {1} {2} '.format(int(x), int(y), int(angle))
                                      
         reply += str(self.last_update_time)
         return reply

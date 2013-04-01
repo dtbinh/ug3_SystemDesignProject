@@ -6,15 +6,21 @@ import zmq
 context = zmq.Context()
 
 print "Connecting to server..."
-socket = context.socket(zmq.REQ)
-socket.connect ("tcp://127.0.0.1:6666")
+vision_socket = context.socket(zmq.REQ)
+vision_socket.connect ("tcp://127.0.0.1:6666")
+
+bt_socket = context.socket(zmq.REQ)
+bt_socket.connect("tcp://127.0.0.1:5555")
 
 # Kick!
 while True:
-    socket.send ("P")
-    print socket.recv()
-    
-    socket.send ("E")
-    print socket.recv()
+    vision_socket.send ("E")
+    data = vision_socket.recv()
+
+    # gate angle
+    bt_socket.send("10  " + data + " 180")
+    print bt_socket.recv()
+
+    time.sleep(5)
 
 #time.sleep(5)
