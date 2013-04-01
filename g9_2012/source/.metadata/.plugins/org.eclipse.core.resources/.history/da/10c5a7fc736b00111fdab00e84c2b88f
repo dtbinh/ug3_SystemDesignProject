@@ -1,0 +1,296 @@
+package sdp.server.vision;
+
+import com.googlecode.javacpp.Loader;
+import com.googlecode.javacv.cpp.opencv_core.CvRect;
+import com.googlecode.javacv.cpp.opencv_core.CvSeq;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
+
+import sdp.server.PropertyProvider;
+import sdp.server.math.MathUtils;
+import sdp.server.math.Vector2;
+
+import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+
+public class EntityModel extends PropertyProvider {
+	private int[][]      hsvLimits = { { 127, 127, 127 }, { 128, 128, 128 } };
+	private IplImage     channel, temp1, debugImage;
+	private CvMemStorage storage;
+	private CvRect       roi;
+	
+	private CvMoments    moments  = new CvMoments();
+	private Vector2      centroid = null;
+	private CvSeq        contour  = null;
+	
+	private int          frameId        = 0;
+	private double       roiSize        = 128;
+	private int          uncropInterval = 10;
+	
+	public EntityModel( CvMemStorage storage, IplImage channel, IplImage temp1 ) {
+		assert storage != null;
+		assert channel != null;
+		assert temp1   != null;
+		assert temp1   != channel;
+		
+		this.channel = channel;
+		this.temp1   = temp1;
+		this.storage = storage;
+		
+		populateProperties();
+	}
+	
+	public void setDebugImage( IplImage image ) {
+		debugImage = image;
+	}
+	
+	public IplImage getDebugImage() {
+		return debugImage;
+	}
+	
+	public CvRect getRoi() {
+		return roi;
+	}
+	
+	public CvMemStorage getMemStorage() {
+		return storage;
+	}
+	
+	public int getFrameId() {
+		return frameId;
+	}
+	
+	public CvMoments getMoments() {
+		return moments;
+	}
+	
+	public CvSeq getContour() {
+		return contour;
+	}
+	
+	public Vector2 getCentroid() {
+		return centroid;
+	}
+	
+	public double getArea() {
+		return moments.m00();
+	}
+	
+	public IplImage getBinaryImage() {
+		return channel;
+	}
+	
+	public void setHsvMean( int component, int newMean ) {
+		hsvLimits[ 0 ][ component ] = MathUtils.clamp( newMean, 0, 255 );
+	}
+	
+	public void setHsvRange( int component, int newRange ) {
+		hsvLimits[ 1 ][ component ] = MathUtils.clamp( newRange, 0, 255 );
+	}
+	
+	public int getHsvMean( int component ) {
+		return hsvLimits[ 0 ][ component ];
+	}
+	
+	public int getHsvRange( int component ) {
+		return hsvLimits[ 1 ][ component ];
+	}
+	
+	public boolean detect() {
+		boolean success = true;
+		contour = selectContour();
+		
+		if( contour != null )
+			centroid = computeCentroid( moments ).plus( getRoiOffset() ); 
+		else
+			success = false;
+		
+		return success;
+	}
+	
+	public void threshold( IplImage hsv[] ) {
+		// Change the ROI based on the current frame no.
+		updateRoi( hsv[0].cvSize(), frameId ++ );
+		
+		// For each pixel property (hue, saturation or value), find the pixels that lie
+		// between the entity limits for that property.
+		for( int i = 0; i < 3 ; ++ i ) {
+			cvSetImageROI( hsv[ i ], roi );
+			cvSetImageROI( channel,  roi );
+			cvSetImageROI( temp1,    roi );
+			
+			IplImage hsvi = hsv[ i ];
+			
+			int min = hsvLimits[ 0 ][ i ] - hsvLimits[ 1 ][ i ];
+			int max = hsvLimits[ 0 ][ i ] + hsvLimits[ 1 ][ i ];
+			
+			if( i == 0 ) {
+				cvThreshold( hsvi, channel, min, 255.0, CV_THRESH_BINARY );
+			} else {
+				cvThreshold( hsvi, temp1, min, 255.0, CV_THRESH_BINARY );
+				cvAnd( channel, temp1, channel, null );
+			}
+			
+			cvThreshold( hsvi, temp1, max, 255.0, CV_THRESH_BINARY_INV );
+			cvAnd( channel, temp1, channel, null );
+			cvResetImageROI( hsv[ i ] );
+		}
+		
+		cvResetImageROI( channel );
+		cvResetImageROI( temp1 );
+	}
+	
+	protected static Vector2 computeCentroid( CvMoments moments ) {
+		return new Vector2( moments.m10() / moments.m00(), moments.m01() / moments.m00() );
+	}
+	
+	protected static Vector2 computeCentroid( CvSeq contour ) {
+		CvMoments moments = new CvMoments();
+		cvMoments( contour, moments, 0 );
+		Vector2 c = computeCentroid( moments );
+		moments.deallocate();
+		moments.setNull();
+		return c;
+	}
+	
+	protected static double computeArea( CvMoments moments ) {
+		return moments.m00();
+	}
+		
+	protected void setCentroid( Vector2 newCentroid ) {
+		centroid = newCentroid;
+	}
+	
+	protected Vector2 getRoiOffset() {
+		return new Vector2( roi.x(), roi.y() );
+	}
+	
+	protected void updateRoi( CvSize imageSize, int frameId ) {
+		updateRoi( imageSize, frameId, 1.0, getCentroid() );
+	}
+	
+	protected void updateRoi( CvSize imageSize, int frameId, double roiScale, Vector2 pos ) {
+		roi = cvRect( 0, 0, imageSize.width(), imageSize.height() );
+		
+		if( frameId % uncropInterval != 0 && pos != null ) {
+			if( MathUtils.isInBounds( pos, new Vector2( imageSize.width(), imageSize.height() ), 1.0 ) ) {
+				int sz = (int)(roiSize * roiScale);
+				roi = cvRect( pos.getIntX() - sz / 2, pos.getIntY() - sz / 2, sz, sz );
+				
+				if( roi.x() < 0 ) roi.x( 0 );
+				if( roi.y() < 0 ) roi.y( 0 );
+				
+				if( roi.width() + roi.x() > imageSize.width() )
+					roi.width( imageSize.width() - roi.x() );
+				
+				if( roi.height() + roi.y() > imageSize.height() )
+					roi.height( imageSize.height() - roi.y() );
+			}
+		}
+	}
+	
+	final protected CvSeq selectContour() {
+		CvSeq     contours    = getContours();
+		double    bestScore   = Double.NEGATIVE_INFINITY;
+		CvSeq     bestContour = null;
+		CvMoments curMoments   = new CvMoments();
+		CvMoments bestMoments  = new CvMoments();		
+		
+		for( CvSeq c = contours ; c != null && !c.isNull() ; c = c.h_next() ) {
+			if( bestMoments.isNull() ) {
+				cvMoments( c, bestMoments, 0 );
+				double score = contourScore( c, bestMoments );
+				if( !Double.isNaN( score ) ) {
+					bestScore    = score;
+					bestContour  = c;
+				}
+			} else {
+				cvMoments( c, curMoments, 0 );
+				double score = contourScore( c, curMoments );
+				
+				if( score > bestScore ) {
+					bestScore = score;
+					bestContour = c;
+					copyMoments( curMoments, bestMoments ); 
+				}
+			}
+		}
+		
+		if( bestContour != null )
+			cvMoments( bestContour, moments, 0 );
+		
+		curMoments.deallocate();
+		curMoments.setNull();
+		
+		return bestContour;
+	}
+	
+	protected double contourScore( CvSeq contour, CvMoments moments ) {
+		return moments.m00();
+	}
+	
+	protected CvSeq getContours() {
+		CvSeq seq = new CvSeq(null);
+		cvSetImageROI( channel,  roi );
+		cvSetImageROI( temp1,    roi );
+		cvCopy( channel, temp1 );
+		cvFindContours( temp1, storage, seq, Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
+		cvResetImageROI( channel );
+		cvResetImageROI( temp1 );
+		return seq;
+	}
+		
+	private class HsvProperty extends PropertyProvider.Property {
+		private int component, limitType;
+		HsvProperty( String key, int component, int limitType ) {
+			super( key, 0.0, 255.0, 1.0 );
+			this.component = component;
+			this.limitType = limitType;
+		}
+
+		@Override
+		public void setValue( double newValue ) {
+			hsvLimits[ limitType ][ component  ] = ( int ) newValue;
+		}
+
+		@Override
+		public double getValue() {
+			return hsvLimits[ limitType ][ component  ];
+		}
+	}
+	
+	private static void copyMoments( CvMoments src, CvMoments dest ) {
+		dest.m00( src.m00() );
+		dest.m01( src.m01() );
+		dest.m02( src.m02() );
+		dest.m03( src.m03() );
+		dest.m10( src.m10() );
+		dest.m11( src.m11() );
+		dest.m12( src.m12() );
+		dest.m20( src.m20() );
+		dest.m21( src.m21() );
+		dest.m30( src.m30() );
+		
+		dest.mu02( src.mu02() );
+		dest.mu03( src.mu03() );
+		dest.mu11( src.mu11() );
+		dest.mu12( src.mu12() );
+		dest.mu20( src.mu20() );
+		dest.mu21( src.mu21() );
+		dest.mu30( src.mu30() );
+		
+		dest.inv_sqrt_m00( src.inv_sqrt_m00() );
+	}
+	
+	@Override
+	protected void populateProperties() {
+		new HsvProperty( "Hue.Mean",         0, 0 );
+		new HsvProperty( "Saturation.Mean",  1, 0 );
+		new HsvProperty( "Value.Mean",       2, 0 );
+		new HsvProperty( "Hue.Range",        0, 0 );
+		new HsvProperty( "Saturation.Range", 1, 0 );
+		new HsvProperty( "Value.Range",      2, 0 );
+		
+		new ReflectProperty( "RoiSize", "roiSize", 1.0, 512.0, 10.0 );
+	}
+}

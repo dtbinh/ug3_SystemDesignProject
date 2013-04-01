@@ -1,0 +1,228 @@
+package sdp;
+
+import java.lang.Math;
+
+import javax.swing.JButton;
+import javax.swing.JSlider;
+
+/** This class provides an abstraction layer over the raw wheel speeds, by allowing a Strategy to simply specify a goal
+ *  position and rotation, a direction of movement (forwards or backwards) and simple kick() method to perform kicks.
+ */
+public class Control {
+	
+	/** Construct giving a reference to the world. */
+	public Control( World world, ControlPanel panel, Timer timer ) {
+		this.world        = world;
+		this.timer        = timer;
+		this.panel        = panel;
+		this.goalPosition = world.getPlayerState().getPosition();
+		this.goalRotation = world.getPlayerState().getRotation();
+		
+		// Add some buttons
+		this.panel.addButton("Kick!", new ControlPanel.ButtonCallback () {
+			@Override
+			public void buttonClicked(JButton b) {
+				Control.this.kick();
+			}	
+		});
+	}
+	
+	public void setStationary( boolean b ) {
+		stationary = b;
+	}
+	
+	/** Set the position to go to. */
+	public void setGoalPosition( Vector2 newGoalPosition ) {
+		goalPosition = transformWorldCoords( newGoalPosition );
+	}
+	
+	/** Set the robot's rotation to be achieved. */
+	public void setGoalRotation( double newGoalRotation ) {
+		goalRotation = capAngle( newGoalRotation );
+	}
+	
+	/** Achieve the goal by going backwards or forwards. */
+	public void setGoBackwards( boolean newGoBackwards ) {
+		goBackwards = newGoBackwards;
+	}
+	
+	/** Is a kicking action still going on? */
+	public boolean isKicking() {
+		return doKick;
+	}
+	
+	/** Perform kicking action. */
+	public void kick() {
+		doKick = true;
+	}
+	
+	public boolean hasReachedGoal() {
+		return reachedGoal;
+	}
+	
+	private Vector2 transformWorldCoords( Vector2 v ) {
+		return new Vector2( v.getX() / 644.0 * 8.0 / 4.0, v.getY() / 343.0 * 4.0 / 3.0 );
+	}
+	
+	/** Set the right wheel speeds to get to the goal. */
+	public void update() {
+		assert world.getMotorCount() == 3;
+
+		Vector2 position = transformWorldCoords( world.getPlayerState().getPosition() );
+		//System.out.println( position.getX() + " " + position.getY() + " -> " + goalPosition.getX() + " " + position.getY() );
+		double  rotation = world.getPlayerState().getRotation();
+		
+		if( goBackwards )
+			rotation = capAngle( rotation + Math.PI );
+		
+		double[] wheelSpeeds  = { 0.0, 0.0  };
+		double   rotationDiff = angleDiff( goalRotation, rotation );
+		double   forwardSpeed  = 0.0;
+		
+		// If we're not at our goal position yet, we need a forward speed to go in that direction.
+		// We don't care that we may not be pointing the right direction yet, the rotation code
+		// that follows will take care of that.
+		
+		double overrideRotation = goalPosition.minus(position).computeAngle();
+		double overrideDiff     = angleDiff(overrideRotation,rotation);
+		if( true ) {
+			goalRotation = overrideRotation;
+			rotationDiff = overrideDiff;
+		}
+		
+		double relWheelSpeed = computeRelativeWheelSpeed(rotationDiff);
+		
+		if( !position.approxEquals( goalPosition, positionTolerance ) ) {
+			Vector2 toGoal   = goalPosition.minus( position );
+			double  distance = toGoal.computeNorm();
+			
+			forwardSpeed = Math.min( distance / wheelRadius, maxWheelSpeed / movementSlowDown ) * movementSlowDown * Math.cos(rotationDiff);
+			
+			if( goBackwards )
+				forwardSpeed = -forwardSpeed;
+			
+			// set the wheel speeds to the forward speed, displaced by the relative velocity required for turning
+			wheelSpeeds[ 0 ] = forwardSpeed - relWheelSpeed;
+			wheelSpeeds[ 1 ] = forwardSpeed + relWheelSpeed;
+			
+			reachedGoal = false;
+		} else if( Math.abs(rotationDiff) > Math.PI/8 ){
+			wheelSpeeds[ 0 ] = - relWheelSpeed;
+			wheelSpeeds[ 1 ] = + relWheelSpeed;
+			reachedGoal = false;
+		} else {
+			
+			System.out.println("At goal");
+			reachedGoal = true;
+		}
+		
+		if( stationary ) {
+			wheelSpeeds[ 0 ] = wheelSpeeds[ 1 ] = 0.0;
+		}
+		
+		if( doKick ) {
+			System.out.println("Control: Kick!");
+			world.kick();
+			doKick = false;
+		}
+		
+		//reachedGoal = false;
+		//wheelSpeeds = new double[] { 0, 0 };
+		
+		world.setWheelSpeeds( capWheelSpeeds( wheelSpeeds ) );
+	}
+	
+	private double computeRelativeWheelSpeed( double rotationDiff ) {
+		// relative wheel speed (right - left)
+		double relWheelSpeed = rotationDiff / 2.0 * axleLength / wheelRadius / world.getTimeStep();
+		double limit         = maxWheelSpeed / rotationSlowDown;
+		
+		// limit the relative wheel speed
+		if( relWheelSpeed < - limit )
+			relWheelSpeed = -limit;
+		else if( relWheelSpeed > limit )
+			relWheelSpeed = limit;
+		
+		// apply the slowdown factor
+		relWheelSpeed *= rotationSlowDown;
+		
+		return relWheelSpeed;
+	}
+	
+	/**
+	 *  Shift wheel speeds to bring both of them in the [-maxWheelSpeed, +maxWheelSpeed].
+	 *  Assumes abs(motorSpeeds[1]-motorSpeeds[0]) <= 2*maxWheelSpeed. This means they can be
+	 *  shifted to fit.
+	 */
+	private double[] capWheelSpeeds( double[] motorSpeeds ) {
+		double correction = 0.0;
+		
+		assert motorSpeeds[1] - motorSpeeds[0] <= (2 * maxWheelSpeed);
+		
+		if( motorSpeeds[ 0 ] > maxWheelSpeed )
+			correction = motorSpeeds[ 0 ] - maxWheelSpeed;
+		else if( motorSpeeds[ 0 ] < - maxWheelSpeed )
+			correction = motorSpeeds[ 0 ] + maxWheelSpeed;
+		else if( motorSpeeds[ 1 ] > maxWheelSpeed )
+			correction = motorSpeeds[ 1 ] - maxWheelSpeed;
+		else if( motorSpeeds[ 1 ] < - maxWheelSpeed )
+			correction = motorSpeeds[ 1 ] + maxWheelSpeed;
+		
+		motorSpeeds[ 0 ] -= correction;
+		motorSpeeds[ 1 ] -= correction;
+		
+		return motorSpeeds;
+	}
+	
+	/// Bring an angle into the [0,2*pi) interval.
+	public static double capAngle( double angle ) {
+		//return angle - ( 2.0 * Math.PI ) * Math.floor( angle / (2.0 * Math.PI) );
+		while(angle >= 2*Math.PI) angle -= 2*Math.PI;
+		while(angle < 0) angle += 2*Math.PI;
+		return angle;
+	}
+	
+	/// Compute an angle difference in the (-pi,pi] interval.
+	/// Assumes abs( a - b ) <= 2*PI
+	public static double angleDiff( double a, double b ) {
+		assert Math.abs( a - b ) <= 2.0 * Math.PI;
+		
+		double r = a - b;
+		
+		if( r < - Math.PI )
+			r += 2 * Math.PI;
+		else if( r > Math.PI )
+			r -= 2 * Math.PI;
+		
+		assert r >= -Math.PI;
+		assert r <= Math.PI;
+		
+		return r;
+	}
+	
+	enum KickPhase {
+		NOT_KICKING,
+		UP,
+		BACK
+	};
+	
+	private World   	 world;
+	private ControlPanel panel;
+	private Vector2 	 goalPosition;
+	private double  	 goalRotation;
+	
+	private boolean      doKick = false;
+	
+	private boolean      goBackwards       = false;
+	private boolean      reachedGoal       = false;
+	private double       positionTolerance = 0.09; // SET TO 0.05
+	private double       maxWheelSpeed     = 11.0;
+	private double       movementSlowDown  = 0.999;
+	private double       rotationSlowDown  = 0.08;
+	                                       
+	private double       axleLength        = 0.115;
+	private double       wheelRadius       = 0.04;
+	private boolean      stationary        = false;
+	
+	
+}

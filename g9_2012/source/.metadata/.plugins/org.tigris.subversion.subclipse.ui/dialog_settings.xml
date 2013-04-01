@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="338" key="RevertDialog.location.x"/>
+	<item value="500" key="CommitDialog.weights.0"/>
+	<item value="500" key="CommitDialog.weights.1"/>
+	<item value="217" key="RevertDialog.location.y"/>
+	<item value="338" key="MarkResolvedDialog.location.x"/>
+	<item value="217" key="MarkResolvedDialog.location.y"/>
+	<item value="217" key="UpdateDialog.location.y"/>
+	<item value="338" key="UpdateDialog.location.x"/>
+	<item value="90" key="HistoryTableProvider.SVNHistoryPage.Author"/>
+	<item value="613" key="UpdateDialog.size.x"/>
+	<item value="444" key="UpdateDialog.size.y"/>
+	<item value="125" key="CommitDialog.location.y"/>
+	<item value="380" key="CommitDialog.location.x"/>
+	<item value="613" key="RevertDialog.size.x"/>
+	<item value="6" key="ResolveConflictDialog.lastChoice"/>
+	<item value="444" key="RevertDialog.size.y"/>
+	<item value="613" key="MarkResolvedDialog.size.x"/>
+	<item value="444" key="MarkResolvedDialog.size.y"/>
+	<item value="162" key="HistoryTableProvider.SVNHistoryPage.Date"/>
+	<item value="883" key="HistoryTableProvider.SVNHistoryPage.Comment"/>
+	<item value="747" key="CommitDialog.size.x"/>
+	<item value="810" key="CommitDialog.size.y"/>
+	<item value="45" key="HistoryTableProvider.SVNHistoryPage.Revision"/>
+	<section name="CommitWizard">
+		<item value="false" key="ShowCompare"/>
+		<item value="500" key="VWeight2"/>
+		<item value="500" key="VWeight1"/>
+	</section>
+</section>

@@ -1,0 +1,89 @@
+package sdp;
+
+import javax.swing.JSlider;
+
+import sdp.ControlPanel.SliderCallback;
+
+/** GUI class that provides controls for the camera: brightness, contrast etc.
+ *  
+ * @author Cristian Cobzarenco
+ *
+ */
+public class CameraGui {
+	private Camera       cam;
+	private ControlPanel panel;
+	private boolean      connected = false;
+	
+	public CameraGui( Camera camera ) {
+		this( camera, null );
+	}
+	
+	public CameraGui( Camera camera, ControlPanel panel ) {
+		if( panel == null ) {
+			panel = new ControlPanel();
+			panel.setTitle("Camera Controls");
+		}
+		
+		this.cam   = camera;
+		this.panel = panel;
+		
+		panel.addSlider("Brightness", 128, 0, 255, new SliderCallback() {
+			@Override
+			public void valueChanged(JSlider s, int newValue) {
+				cam.setBrightness(newValue);
+				System.out.println("CameraGui: Brightness = "+newValue);
+			}
+		});
+		
+		panel.addSlider("Contrast", 63, 0, 127, new SliderCallback() {
+			@Override
+			public void valueChanged(JSlider s, int newValue) {
+				cam.setContrast(newValue);
+				System.out.println("CameraGui: Contrast = "+newValue);
+			}
+		});
+		
+		panel.addSlider("Saturation", 63, 0, 127, new SliderCallback() {
+			@Override
+			public void valueChanged(JSlider s, int newValue) {
+				cam.setSaturation(newValue);
+				System.out.println("CameraGui: Saturation = "+newValue);
+			}
+		});
+			
+		panel.addSlider("Hue", 0, -128, 127, new SliderCallback() {
+			@Override
+			public void valueChanged(JSlider s, int newValue) {
+				cam.setHue( newValue );
+				System.out.println("CameraGui: Hue = "+newValue);
+			}
+		});
+	}
+	
+	public ControlPanel getPanel() {
+		return panel;
+	}
+	
+	public void refreshValues() {
+		
+		
+		panel.getSlider( "Brightness" ).setValue( cam.getBrightness() );
+		panel.getSlider( "Contrast" ).setValue( cam.getContrast() );
+		panel.getSlider( "Saturation" ).setValue( cam.getContrast() );
+		panel.getSlider( "Hue" ).setValue( cam.getHue() );
+	}
+	
+	public void update() {
+		boolean newConnected = cam.isConnected();
+		
+		if( connected != newConnected ) {
+			connected = newConnected;
+			if( connected )
+				refreshValues();
+		}
+	}
+	
+	public void dispose() {
+		panel.dispose();
+	}
+}

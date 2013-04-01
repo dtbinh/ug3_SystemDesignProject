@@ -1,0 +1,41 @@
+1330942774824	Delete element
+1330942839323	Delete element
+1330942853323	Rename package 'simulator'
+1330942877854	Delete element
+1330942907307	Delete element
+1330942976117	Move compilation units
+1330943110089	Move compilation units
+1330943177644	Delete element
+1330943280105	Move compilation units
+1330943367086	Move compilation unit
+1330943378074	Move compilation units
+1330943563090	Move compilation units
+1330943628359	Rename package 'sdp'
+1330943666149	Move compilation units
+1330943672069	Delete element
+1330943697369	Rename package 'sdp'
+1330943742086	Move compilation units
+1330943756217	Delete element
+1330943768039	Delete element
+1330955037587	Rename local variable 'currentPos'
+1330955040594	Rename local variable 'currentRot'
+1330959238793	Rename local variable 'lastDetour'
+1331222780353	Rename local variable 'roi'
+1331314125386	Delete element
+1331399600195	Rename local variable 'ch'
+1331400242104	Rename field 'colourMin'
+1331400249177	Rename field 'colourMax'
+1331401871117	Rename method 'keyFor'
+1331403308440	Rename field 'bestMoments'
+1331403343834	Rename local variable 'curBestMoments'
+1331406511704	Rename field 'suppressAngle'
+1331461104968	Copy file
+1331461109930	Delete element
+1331461121750	Copy file
+1331461327565	Copy file
+1331461412696	Delete element
+1331461421222	Copy file
+1331461626427	Rename local variable 'type'
+1331466609757	Delete element
+1331466620063	Copy file
+1331471862390	Rename local variable 'oppCenter'

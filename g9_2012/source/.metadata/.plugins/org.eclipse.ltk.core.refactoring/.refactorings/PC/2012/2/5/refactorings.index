@@ -1,0 +1,13 @@
+1328188711856	Delete elements
+1328195154188	Rename type 'CameraPanel'
+1328280618172	Rename type 'IStrategy'
+1328292036763	Rename method 'getCameraProperty'
+1328292044967	Rename method 'getCameraPropertyRange'
+1328292051995	Rename method 'setCameraProperty'
+1328293944241	Rename method 'getPropertyValueAndRange'
+1328297925234	Delete element
+1328364118650	Rename local variable 'suppressAngleChange'
+1328365371895	Rename local variable 'cutPoints'
+1328365575199	Rename local variable 'cutCentroids'
+1328365583298	Rename local variable 'cutContours'
+1328365606934	Rename local variable 'centroid'
