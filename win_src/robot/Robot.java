@@ -1,6 +1,6 @@
 package robot;
 
-import lejos.nxt.*;
+import lejos.nxt.*; 
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Navigator;
@@ -38,17 +38,12 @@ public class Robot {
 	public volatile boolean needsNewPath = false; //NEVER do a plan first bro //SNG
 	
 	public volatile Navigator pathNav;
-	
-	
-	
-	
-	
+
 	
 	public Robot() {
 		pilot =  new DifferentialPilot(WHEEL_RADIUS,AXLE_LENGTH, MOTOR_LEFT, MOTOR_RIGHT, false);
 		pilot.setTravelSpeed(MAX_SPEED);
 		pilot.setRotateSpeed(MAX_SPEED);
-	
 	}
 
 	public static void main(String[] args) {
@@ -87,14 +82,55 @@ public class Robot {
 		pathNav.clearPath();
 	}
 
-	public Navigator getNav() {
-		// TODO Auto-generated method stub
-		return this.pathNav;
-	}
 
 	public void requestData() {
 		this.needsNewPath = true;
 		this.needsNewData = true;
 		
 	}
+	
+	public Pose getOurPose(){
+		return ourPose;
+	}
+	
+	public Pose getTheirPose(){
+		return theirPose;
+	}
+	
+	public Pose getGoalPose(){
+		return goalPose;
+	}
+	
+	public void setOurPose(float x, float y, float heading){
+		this.ourPose = new Pose (x,y,heading);
+	}
+	
+	public void setTheirPose(float x, float y, float heading){
+		this.theirPose = new Pose (x,y,heading);
+	}
+	
+	public void setGoalPose(float x, float y, float heading){
+		this.goalPose = new Pose (x,y,heading);
+	}
+	
+	public boolean hasPlan(){
+	 return !this.needsNewPath;
+	}
+	
+	public boolean needsNewPlan(){
+		returns this.needsNewPath;
+	}
+	
+	public Navigator getNav() {
+		return this.pathNav;
+	}
+	
+	public void setNewPath(boolean x) {
+		this.needsNewPath = x;
+	}
+	
+	public void setNav(Navigator x){
+		this.pathNav = x;
+	}
+	
 }
