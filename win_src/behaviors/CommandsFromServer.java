@@ -39,7 +39,7 @@ public class CommandsFromServer implements Behavior {
 		suppressed = true;
 	}
 
-	public boolean takeControl() {
+	public boolean takeControl() { //TODO:Add conditions
 		return true;
 	}
 
@@ -47,7 +47,7 @@ public class CommandsFromServer implements Behavior {
 		byte[] positions = new byte[3];//us /  them /  goal assumed TODO: Make sense
 		// TODO
 		try{
-			while (true) { //TODO: Fix?
+			while (!suppressed) { //TODO: Fix?
 				dis.read(positions);
 				
 				LCD.drawString("US: " + positions[0] + "GOAL: " + positions[2], 0, 6);
@@ -56,7 +56,8 @@ public class CommandsFromServer implements Behavior {
 				if (!goalReadPose.equals(superRobot.goalPose)){
 					superRobot.goalPose = goalReadPose; //TODO: SEND THIS SHIT OVER BT
 					superRobot.ourPose = makePose(positions[0]);
-					superRobot.theirPose = makePose(positions[1]);		
+					superRobot.theirPose = makePose(positions[1]);	
+					superRobot.needsNewData = false;
 					superRobot.needsNewPath = true;
 				}
 			}
