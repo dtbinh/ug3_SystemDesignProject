@@ -33,8 +33,10 @@ public class ExecutePlan implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		// TODO Auto-generated method stub
-		return false;
+		if (superRobot.hasPlan()){
+			return true;
+		}
+		
 	}
 
 }

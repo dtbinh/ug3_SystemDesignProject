@@ -40,7 +40,13 @@ public class CommandsFromServer implements Behavior {
 	}
 
 	public boolean takeControl() { //TODO:Add conditions
-		return true;
+		if (superRobot.needsNewData){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
 	}
 
 	public void action() {
