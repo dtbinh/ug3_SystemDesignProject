@@ -124,7 +124,8 @@ public abstract class AbstractBaseScript extends Thread {
 	 * @return
 	 */
 	public static ArrayList<Position> getPath(Position coors, Robot obstacle) {
-		return AStar.getPath2(
+		
+		ArrayList<Position> path = AStar.getPath2(
 				new Point(coors.getX(), coors.getY()),
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()),
 				(int) Math.toDegrees(ourRobot.getAngle()),
@@ -132,6 +133,11 @@ public abstract class AbstractBaseScript extends Thread {
 				(int) Math.toDegrees(obstacle.getAngle()),
 				shootingRight ? AStar.LEFT : AStar.RIGHT);
 		// if we're shootingRight, *our* side is LEFT
+		for (Position point : path) {
+			System.out.print(point + " -> ");
+		}
+		System.out.println("\nPlanning path to " + coors + " while avoiding " + obstacle.getCoors());
+		return path;
 	}
 
 	/**
@@ -225,8 +231,12 @@ public abstract class AbstractBaseScript extends Thread {
 	 */
 	public static void sendCommand(Command command) {
 		if (command instanceof KickCommand) {
-			sendZeros();
 			sendreceive("3");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		else if (command instanceof MoveAndTurnCommand){
 			MoveAndTurnCommand container = (MoveAndTurnCommand) command;
@@ -291,7 +301,7 @@ public abstract class AbstractBaseScript extends Thread {
 		double positionScore = ourRobot.getPositionScore(shootingRight);
 		double hitScore = ourRobot.getHitScore(shootingRight);
 		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
-		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.32);
+		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.4);
 	}
 
 	public static boolean penaltyTimeUp() {

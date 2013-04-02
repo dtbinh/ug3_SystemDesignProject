@@ -28,6 +28,7 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
     public void run() {
 		while (true) {
 			updateWorldState();
+			if (ball.getCoors() == null) continue;
 			switch (robotMode) {
 				case PLAY:
 					playMode();
@@ -60,12 +61,12 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 		// !!!! planning phase !!!!
 		if (!ball.robotHasBall(ourRobot)) {
 			Position target = ball.pointBehindBall(theirGoal.getCoors(), BEHIND_BALL_DIST);
-			System.out.println("going to X: " + target.getX() + " Y: " + target.getY());
 			planMoveToFace(target, theirGoal.getCoors());
+			System.out.println("planning for " + target);
 		}
 		else {
 			if (wantToKick()) {
-				plannedCommands.pushKickCommand();
+				planKick();
 				System.out.println("planning to kick");
 			}
 			else {

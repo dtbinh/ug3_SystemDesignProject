@@ -12,11 +12,12 @@ import lejos.pc.comm.NXTInfo;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.*;
 
-import java.util.*;
+import java.util.StringTokenizer;
+import java.util.ArrayList;
 
-public class BluetoothPC extends Thread {
-	public static String NXT_MAC_ADDRESS;
-	public static String NXT_NAME;
+public class BluetoothPC {
+	public static String NXT_MAC_ADDRESS;// = "00:16:53:07:D5:5F";
+	public static String NXT_NAME;// = "G5";
 
 	// Error codes
 	public static final int RET_OK = 0;
@@ -26,109 +27,35 @@ public class BluetoothPC extends Thread {
 	public static final int RET_NOT_IMPLEMENTED = -4;
 
 	// Opcodes
-	public static final int OP_NOP = 7; // No operation, just update touch sensors
-	public static final int OP_SET_MOTOR_SPEEDS = 1; // [short short short short]
+	public static final int OP_SET_MOTOR_SPEEDS = 1;
 	public static final int OP_CHANGE_ROBOT_DIRECTION = 2;
 	public static final int OP_KICK = 3;
 	public static final int OP_ROTATE_RXT_MOTOR = 4;
 	public static final int OP_CHANGE_RXT_MOTOR_SPEED = 5;
 	public static final int OP_CHANGE_RXT_MOTOR_ACCELERATION = 6;
 
-	// Privates
 	private static InputStream in;
 	private static OutputStream out;
 
-	private static volatile LinkedList <String>req_queue = new LinkedList<String>(); // Thread safe
-	private static volatile int robot_connection_status = 0; // 0 - unconnected, 1 - connected
-	private static volatile int[] touch_sensors = {0, 0, 0, 0};
-
-	public synchronized void run() {
-		//  Socket to talk to clients over IPC
-		Context context = ZMQ.context(1);
-		Socket socket = context.socket(ZMQ.REP);
-
-		// Bind
-		System.out.println("Binding to port 5555...");
-		socket.bind("tcp://127.0.0.1:5555");
-
-		String last_req = null;
-		String new_req = null;
-		String reply_string = null;
-
-
-		while (true) {
-			last_req = null;
-			new_req = null;
-
-			// Wait for request
-			byte[] request = socket.recv(0);
-			new_req = new String(request);
-			System.out.println("IPC: Request: [" + new_req + "]");
-
-			// TODO: trim string?
-			// TODO: check for syntax?
-
-			synchronized(req_queue) {
-
-				if (req_queue.size() <= 5) {
-					// Get last element of the queue
-					if (!req_queue.isEmpty())
-						last_req = req_queue.getLast();
-
-					// Check if queue is empty
-					if (last_req != null) {
-						// Compare and remove if opcode matches
-						if (split(new_req, " ")[0].equals(split(last_req, " ")[0])) {
-							System.out.println("\tUpdate!");
-
-							// The last pushed op is the same as new one, only update parameters
-							// Remove last element from the queue
-							req_queue.removeLast();
-						}
-					}
-
-					// Push (or "update") with new request
-					req_queue.push(new_req);
-
-				} else { // Drop, unlees exception
-					// Never drop: "1 0 0 0 0" or "3" if preceding command is "1 0 0 0 0"
-					if (req_queue.size() <= 8 && (new_req.equals("1 0 0 0 0") ||
-							(new_req.equals("3") && req_queue.getLast().equals("1 0 0 0 0")) )) {
-
-						System.out.println("\tAdded due to exception");
-						req_queue.push(new_req);
-
-					} else {
-						System.out.println("\tDrop!");
-					}
-				}
-			}
-
-			// Reply with status and touch sensor data
-			reply_string = robot_connection_status + " " + touch_sensors[0] + " " + touch_sensors[1] + " " + touch_sensors[2] + " " + touch_sensors[3];
-			System.out.println("IPC: Reply  : [" + reply_string + "]\n");
-
-			// Send reply
-			socket.send(reply_string.getBytes(), 0);
-		}
-
-	}
-
 	public static void main(String args[]) throws IOException, InterruptedException {
-		// Start enother thread for IPC commns
-		BluetoothPC obj = new BluetoothPC();
-		Thread t1 = new Thread(obj);
-		t1.start();
-
 		// Parse command line argument
 		if (args.length > 0 && args[0].equals("dummy")) {
 			System.out.println("Dummy bot server");
 			NXT_MAC_ADDRESS = "00:16:53:0B:B5:A3";
 			NXT_NAME = "G5Dummy";	
-		} else {
+		} 
+		else {
 			NXT_MAC_ADDRESS = "00:16:53:07:D5:5F";
 			NXT_NAME = "G5";
 		}
+
+		Context context = ZMQ.context(1);
+
+		//  Socket to talk to clients over IPC
+		Socket socket = context.socket(ZMQ.REP);
+		socket.bind("tcp://127.0.0.1:5555");
+
+		int reply_error_code;
 
 		while (true) {
 			// TODO: add timeout
@@ -150,59 +77,51 @@ public class BluetoothPC extends Thread {
 				continue;
 			}
 
-			// Clear queue
-			req_queue.clear();
-
 			//in.close();
 			//out.close();
-			int ack = 0;
-			String request = null;
 
 			while (true) {
-				// Parse request from request queue
-				//System.out.println(req_queue.isEmpty());
+				// TODO: detect disconnect
 
-				if (!req_queue.isEmpty()) {
-					synchronized(req_queue) {
-						// Send request to robot
-						request = req_queue.pop();
-					}
+				// Wait for request
+				byte[] request = socket.recv(0);
 
-					handle_request(request);
+				// Parse request and send it to the robot
+				reply_error_code = handle_request(new String(request));
 
-					// Read ACK (status of touch sensors)
-					ack = in.read();
+				// Read status of touch sensors
+				int touch_sensors = in.read();
 
-					// Parse ACK response
-					boolean s1 = (ack & (1 << 0)) != 0;
-					boolean s2 = (ack & (1 << 1)) != 0;
-					boolean s3 = (ack & (1 << 2)) != 0;
-					boolean s4 = (ack & (1 << 3)) != 0;
+				// Parse response
+				boolean s1 = (touch_sensors & (1 << 0)) != 0;
+				boolean s2 = (touch_sensors & (1 << 1)) != 0;
+				boolean s3 = (touch_sensors & (1 << 2)) != 0;
+				boolean s4 = (touch_sensors & (1 << 3)) != 0;
 
-					// Typecast to Int (JAVA-style!)
-					touch_sensors[0] = s1 ? 1 : 0;
-					touch_sensors[1] = s2 ? 1 : 0;
-					touch_sensors[2] = s3 ? 1 : 0;
-					touch_sensors[3] = s4 ? 1 : 0;
+				// Typecast to Int (JAVA-style!)
+				int s1_int = s1 ? 1 : 0;
+				int s2_int = s2 ? 1 : 0;
+				int s3_int = s3 ? 1 : 0;
+				int s4_int = s4 ? 1 : 0;
 
-					/*try {
-						Thread.sleep(50);
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}*/
-				} else {
-					try {
-						Thread.sleep(1);
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}
-				}
+				//  Send status reply back to client
+				String replyString = reply_error_code + " " + s1_int + " " + s2_int + " " + s3_int + " " + s4_int;
+				System.out.println("Reply: [" + replyString + "]\n");
+
+				byte[] reply = replyString.getBytes();
+				socket.send(reply, 0);
+
+
+				// Send reply to the IPC
+				//int b = in.read();
+
+				//System.out.println(b);
 			}
 		}
 	}
 
 	static int handle_request(String request) {
-		System.out.println("BT:  Request: [" + request + "]");
+		System.out.println("Request: [" + request + "]");
 		String[] request_tokens = split(request, " ");
 
 		int opcode;
@@ -250,15 +169,19 @@ public class BluetoothPC extends Thread {
 			// m4
 			command[7] = (byte)(m4 & 0xff);
 			command[8] = (byte)((m4 >> 8) & 0xff);
-
-		} else if (opcode == OP_KICK ||
-				opcode == OP_NOP) {
+		}
+		else if (opcode == OP_CHANGE_ROBOT_DIRECTION) {
+			// Params: [short short short] = [speed movement_angle rotation_angle] 
+			System.out.println("\tNot implemented opcode: " + opcode); 
+			return RET_NOT_IMPLEMENTED; // Not implemented opcode			
+		}
+		else if (opcode == OP_KICK) {
 			command = new byte[1];
 			command[0] = (byte)opcode;
-
-		} else if (opcode == OP_ROTATE_RXT_MOTOR ||
-				opcode == OP_CHANGE_RXT_MOTOR_SPEED ||
-				opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
+		}
+		else if (opcode == OP_ROTATE_RXT_MOTOR ||
+				 opcode == OP_CHANGE_RXT_MOTOR_SPEED ||
+				 opcode == OP_CHANGE_RXT_MOTOR_ACCELERATION) {
 			// Params: [short short]
 			short mA = request_codes[1];
 			short mB = request_codes[2];
@@ -275,8 +198,8 @@ public class BluetoothPC extends Thread {
 			// B
 			command[3] = (byte)(mB & 0xff);
 			command[4] = (byte)((mB >> 8) & 0xff);
-
-		} else {
+		}
+		else {
 			System.out.println("\tUndefined opcode: " + opcode); 
 			return RET_UNDEFINED_OP; // Undefined opcode
 		}
