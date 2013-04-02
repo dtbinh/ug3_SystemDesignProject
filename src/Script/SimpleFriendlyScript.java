@@ -65,7 +65,15 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 			System.out.println("planning for " + target);
 		}
 		else {
-			if (wantToKick()) {
+			/*if (ourRobot.isFacing(theirRobot.getCoors())) {
+				Position target = theirGoal.getOptimalPosition();
+				target.setY((theirRobot.getCoors().getY() > 240) ? 215 : 265);
+				Position toFace = theirGoal.getCoors();
+				toFace.setY(target.getY());
+				planMoveToFace(target, toFace);
+				System.out.println("planning to GO AROUND");
+			}
+			else */if (wantToKick()) {
 				planKick();
 				System.out.println("planning to kick");
 			}

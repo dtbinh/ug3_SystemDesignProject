@@ -124,8 +124,7 @@ public abstract class AbstractBaseScript extends Thread {
 	 * @return
 	 */
 	public static ArrayList<Position> getPath(Position coors, Robot obstacle) {
-		
-		ArrayList<Position> path = AStar.getPath2(
+		return AStar.getPath2(
 				new Point(coors.getX(), coors.getY()),
 				new Point(ourRobot.getCoors().getX(), ourRobot.getCoors().getY()),
 				(int) Math.toDegrees(ourRobot.getAngle()),
@@ -133,11 +132,6 @@ public abstract class AbstractBaseScript extends Thread {
 				(int) Math.toDegrees(obstacle.getAngle()),
 				shootingRight ? AStar.LEFT : AStar.RIGHT);
 		// if we're shootingRight, *our* side is LEFT
-		for (Position point : path) {
-			System.out.print(point + " -> ");
-		}
-		System.out.println("\nPlanning path to " + coors + " while avoiding " + obstacle.getCoors());
-		return path;
 	}
 
 	/**
