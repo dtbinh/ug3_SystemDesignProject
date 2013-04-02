@@ -12,6 +12,7 @@ public class PlanWithoutBall implements Behavior {
 	private Robot superRobot;
 	private Pose us;
 	private Pose goal;
+	private boolean suppressed;
 	
 	//Does the whole craycray turn around (BRIGGGGHT EYEEES), drive backwards, then return-around to da ball. 
 	//3 commands or GTFO
@@ -21,6 +22,8 @@ public class PlanWithoutBall implements Behavior {
 
 	@Override
 	public void action() {
+		suppressed = false;
+		System.out.println("PWB start");
 		us = superRobot.getOurPose();
 		goal = superRobot.getGoalPose();
 		//Fuck da current path - shit's changed or I wouldn't be here!
@@ -32,11 +35,11 @@ public class PlanWithoutBall implements Behavior {
 		float firstAngle = (relativeBearing < 180 ) ? relativeBearing + 180 : relativeBearing - 180; //face the opposite way
 		Point firstPoint = us.getLocation();
 		Pose firstPose = new Pose(firstPoint.x, firstPoint.y, firstAngle);
-		myNav.addWaypoint(new Waypoint(firstPose));
+		//myNav.addWaypoint(new Waypoint(firstPose));
 		
 		//Reverse movement
 		Point goalLoc = goal.getLocation();
-		myNav.addWaypoint(new Waypoint(goalLoc.x, goalLoc.y, firstAngle));
+		//myNav.addWaypoint(new Waypoint(goalLoc.x, goalLoc.y, firstAngle));
 		
 		//final turn, homie
 		myNav.addWaypoint(new Waypoint(goal));
@@ -44,23 +47,20 @@ public class PlanWithoutBall implements Behavior {
 		//done brah
 		superRobot.setNewPath(false);	
 		superRobot.setNav(myNav);
-
+		System.out.println("PWB done");
+		Thread.yield();
+		
 	}
 
 	@Override
 	public void suppress() {
-		boolean suppressed = true;
+		suppressed = true;
 
 	}
 
 	@Override
 	public boolean takeControl() {//TODO:Add conditions
-		if (!superRobot.needsNewPlan()){
-			return true;
-		}
-		else{
-			return false;
-		}
+		return (superRobot.needsNewPlan());
 	}
 
 }

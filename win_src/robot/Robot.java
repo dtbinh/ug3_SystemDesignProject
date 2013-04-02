@@ -18,7 +18,7 @@ public class Robot {
 	public static final double AXLE_LENGTH = 0.155;
 	public static final double STEERING_RAD = 1; //Simulated turning circle TODO: find a good value
 	
-	private static DifferentialPilot pilot;
+	private DifferentialPilot pilot;
 
 	public static NXTRegulatedMotor MOTOR_LEFT = Motor.A;
 	public static NXTRegulatedMotor MOTOR_RIGHT = Motor.B;
@@ -35,31 +35,41 @@ public class Robot {
 	public volatile Pose goalPose; //SNG
 	
 	public boolean needsNewData = true; 
-	public volatile boolean needsNewPath = false; //NEVER do a plan first bro //SNG
+	public volatile boolean needsNewPath = true; //NEVER do a plan first bro //SNG
 	
 	public volatile Navigator pathNav;
+	private double UNIT =  1.23/315;
 
 	
 	public Robot() {
 		pilot =  new DifferentialPilot(WHEEL_RADIUS,AXLE_LENGTH, MOTOR_LEFT, MOTOR_RIGHT, false);
 		pilot.setTravelSpeed(MAX_SPEED);
 		pilot.setRotateSpeed(MAX_SPEED);
+		diffSetup();
+		setGoalPose(new Pose((float) (288*UNIT) ,(float) (186*UNIT),180)); 
+		setOurPose(new Pose((float) (573*UNIT),(float) (195*UNIT),190));
+		setTheirPose(new Pose((float)(124*UNIT),(float) (98*UNIT),208));	
+		needsNewData = false;
+		needsNewPath = true;
+		System.out.println(ourPose.toString());
+		System.out.println(goalPose.toString());
 	}
 
 	public static void main(String[] args) {
 		// default behaviour: get commands from server
 		Robot thisRobot = new Robot();
-			Behavior b1 = new CommandsFromServer(thisRobot);
+			//Behavior b1 = new CommandsFromServer(thisRobot);
 		
 		// instinctively back off when hitting something
 		SensorPort[] touch_sensors = {TOUCH_SENSOR_LEFT, TOUCH_SENSOR_RIGHT};
 		Behavior b2 = new BackOff(touch_sensors);
 		Behavior b3 = new PlanWithoutBall(thisRobot);
-		Behavior b4 = new PlanWithBall(thisRobot);
+		//Behavior b4 = new PlanWithBall(thisRobot);
 		Behavior b5 = new ExecutePlan(thisRobot);
+		Behavior b6 = new DriveForwards();
 		
 		// run the robot
-		Behavior[] behaviors = {b1, b2};
+		Behavior[] behaviors = {b6,b5,b3,b2};
 		Arbitrator arby = new Arbitrator(behaviors);
 		arby.start();
 	}
@@ -101,16 +111,16 @@ public class Robot {
 		return goalPose;
 	}
 	
-	public void setOurPose(float x, float y, float heading){
-		this.ourPose = new Pose (x,y,heading);
+	public void setOurPose(Pose p){
+		this.ourPose = p;
 	}
 	
-	public void setTheirPose(float x, float y, float heading){
-		this.theirPose = new Pose (x,y,heading);
+	public void setTheirPose(Pose p){
+		this.theirPose = p;
 	}
 	
-	public void setGoalPose(float x, float y, float heading){
-		this.goalPose = new Pose (x,y,heading);
+	public void setGoalPose(Pose p){
+		this.goalPose = p;
 	}
 	
 	public boolean hasPlan(){
@@ -118,7 +128,7 @@ public class Robot {
 	}
 	
 	public boolean needsNewPlan(){
-		returns this.needsNewPath;
+		return this.needsNewPath;
 	}
 	
 	public Navigator getNav() {
@@ -131,6 +141,10 @@ public class Robot {
 	
 	public void setNav(Navigator x){
 		this.pathNav = x;
+	}
+	
+	public DifferentialPilot getPilot(){
+		return this.pilot;
 	}
 	
 }
