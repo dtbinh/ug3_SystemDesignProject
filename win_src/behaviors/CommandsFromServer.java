@@ -35,6 +35,8 @@ public class CommandsFromServer implements Behavior {
 
 	}
 
+	//TODO: DE-BEHAVIORALIZE, MAKE WORK. THREAD.
+	
 	public void suppress() {
 		suppressed = true;
 	}
@@ -46,7 +48,6 @@ public class CommandsFromServer implements Behavior {
 	public void action() {
 		byte[] positions = new byte[9*2];
 		byte[] opcode = new byte[1];
-		// TODO
 		try{
 			while (!suppressed) { //TODO: Fix?
 				dis.read(opcode);

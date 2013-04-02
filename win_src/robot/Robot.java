@@ -29,16 +29,16 @@ public class Robot {
 	
 	public static double MAX_SPEED = MOTOR_LEFT.getMaxSpeed();
 	
-	//TODO: SETTERS AND GETTERS N00B
-	public volatile Pose ourPose; //SNG
-	public volatile Pose theirPose; //SNG
-	public volatile Pose goalPose; //SNG
+	public volatile Pose ourPose; 
+	public volatile Pose theirPose;
+	public volatile Pose goalPose;
 	
 	public boolean needsNewData = true; 
 	public volatile boolean needsNewPath = true; //NEVER do a plan first bro //SNG
 	
 	public volatile Navigator pathNav;
 	private double UNIT =  1.23/315;
+	private boolean hasBall = false;
 
 	
 	public Robot() {
@@ -63,7 +63,7 @@ public class Robot {
 		// instinctively back off when hitting something
 		SensorPort[] touch_sensors = {TOUCH_SENSOR_LEFT, TOUCH_SENSOR_RIGHT};
 		Behavior b2 = new BackOff(touch_sensors);
-		Behavior b3 = new PlanWithoutBall(thisRobot);
+		Behavior b3 = new PlanToGoal(thisRobot);
 		//Behavior b4 = new PlanWithBall(thisRobot);
 		Behavior b5 = new ExecutePlan(thisRobot);
 		Behavior b6 = new DriveForwards();
@@ -145,6 +145,14 @@ public class Robot {
 	
 	public DifferentialPilot getPilot(){
 		return this.pilot;
+	}
+
+	public void doSetup() {
+		if (this.hasBall ) {
+			steerSetup();
+		} else {
+			diffSetup();
+		}
 	}
 	
 }
