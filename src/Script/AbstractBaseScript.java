@@ -225,8 +225,12 @@ public abstract class AbstractBaseScript extends Thread {
 	 */
 	public static void sendCommand(Command command) {
 		if (command instanceof KickCommand) {
-			sendZeros();
 			sendreceive("3");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("SENT KICK COMMAND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		else if (command instanceof MoveAndTurnCommand){
 			MoveAndTurnCommand container = (MoveAndTurnCommand) command;
@@ -291,7 +295,7 @@ public abstract class AbstractBaseScript extends Thread {
 		double positionScore = ourRobot.getPositionScore(shootingRight);
 		double hitScore = ourRobot.getHitScore(shootingRight);
 		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
-		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.32);
+		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.4);
 	}
 
 	public static boolean penaltyTimeUp() {

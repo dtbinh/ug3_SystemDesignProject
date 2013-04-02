@@ -32,8 +32,8 @@ public class TestingScript extends AbstractBaseScript {
 			testCases = new TestCase[]{ DEFAULT_TESTCASE };
 		} else {
 			testCases = new TestCase[args.length];
-			for (int i = _argsParsed; i < args.length; i++, _argsParsed++) {
-				testCases[i] = TestCase.values()[Integer.parseInt(args[i])];
+			for (int i = 0; _argsParsed < args.length; i++, _argsParsed++) {
+				testCases[i] = TestCase.values()[Integer.parseInt(args[_argsParsed])];
 			}
 		}
 	}
@@ -42,6 +42,7 @@ public class TestingScript extends AbstractBaseScript {
 		for (int i = 0; i < testCases.length; i++) {
 			while (!timeOut(startTime, STOP_TIME)) {
 				updateWorldState();
+				if (ball.getCoors() == null) continue;
 				test(testCases[i]);
 			}
 			sendZeros();
@@ -50,9 +51,7 @@ public class TestingScript extends AbstractBaseScript {
 
 	static void test(TestCase testCase) {
 		Position behindBall = new Position(0,0);
-		if (ball.getCoors() != null) {
-			behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
-		}
+		behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
 		switch (testCase) {
 			case VISION:
 				System.out.printf("|  Goal %s  |  Ball %s  |  BehindBall %s  |\n",
@@ -91,9 +90,10 @@ public class TestingScript extends AbstractBaseScript {
 				if (ourRobot.getCoors() == null) {
 					return;
 				}
-				if (System.currentTimeMillis() > kickTimeOut && 
-					ourRobot.isFacing(theirGoal.getCoors())) {
-					planKick();
+				if (ourRobot.isFacing(theirGoal.getCoors())) {
+					if (System.currentTimeMillis() > kickTimeOut)
+						planKick();
+					else return;
 				} else {
 					planRotate(theirGoal.getCoors());
 				}

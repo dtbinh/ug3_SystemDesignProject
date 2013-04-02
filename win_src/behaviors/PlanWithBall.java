@@ -24,6 +24,9 @@ public class PlanWithBall implements Behavior {
 		superRobot.steerSetup(); //Simulate 
 		superRobot.pathNav.getPoseProvider().setPose(us); 
 		
+		while (!suppressed) {
+			Thread.yield();
+		}
 
 	}
 

@@ -275,10 +275,8 @@ public class Robot extends PitchObject {
 	public String moveToFace(Position movePos, double direction){
     	if ((this.getCoors().euclidDistTo(movePos) < NEAR_RANGE)
     		 && !this.isFacing(direction)) {
-    		System.out.println("ROTATE");
     		return rotate(direction);
     	} else {
-    		System.out.println(this.getCoors().euclidDistTo(movePos));
     		return moveAndTurn(movePos, direction);
     	}
     }

@@ -35,39 +35,50 @@ public class CommandsFromServer implements Behavior {
 
 	}
 
+	//TODO: DE-BEHAVIORALIZE, MAKE WORK. THREAD.
+	
 	public void suppress() {
 		suppressed = true;
 	}
 
-	public boolean takeControl() { //TODO:Add conditions
-		if (superRobot.needsNewData){
-			return true;
-		}
-		else{
-			return false;
-		}
-		
+	public boolean takeControl() { 
+		return (superRobot.needsNewData);
 	}
 
 	public void action() {
-		byte[] positions = new byte[3];//us /  them /  goal assumed TODO: Make sense
-		// TODO
+		byte[] positions = new byte[9*2];
+		byte[] opcode = new byte[1];
 		try{
 			while (!suppressed) { //TODO: Fix?
-				dis.read(positions);
-				
-				LCD.drawString("US: " + positions[0] + "GOAL: " + positions[2], 0, 6);
-				
-				Pose goalReadPose =  makePose(positions[2]);
-				if (!goalReadPose.equals(superRobot.goalPose)){
-					superRobot.goalPose = goalReadPose; //TODO: SEND THIS SHIT OVER BT
-					superRobot.ourPose = makePose(positions[0]);
-					superRobot.theirPose = makePose(positions[1]);	
-					superRobot.needsNewData = false;
-					superRobot.needsNewPath = true;
+				dis.read(opcode);
+				System.out.println(opcode);
+				if (opcode[0] == 10){
+					dis.read(positions);
+					short ux = bytesToShort(positions[1],positions[0]); 
+					short uy = bytesToShort(positions[3], positions[2]);
+					short ua = bytesToShort(positions[5], positions[4]);
+					short ex = bytesToShort(positions[7], positions[6]);
+					short ey = bytesToShort(positions[9], positions[8]);
+					short ea = bytesToShort(positions[11], positions[10]);
+					short gx = bytesToShort(positions[13], positions[12]);
+					short gy = bytesToShort(positions[15], positions[14]);
+					short ga = bytesToShort(positions[17], positions[16]);
+					dos.write(opcode);
+					dos.flush();
+					
+					System.out.println("recieved some stuff bro");			
+					Pose goalReadPose =  new Pose(gx,gy,ga);
+					if (!goalReadPose.equals(superRobot.getGoalPose())){
+						System.out.println(goalReadPose.toString());
+						superRobot.setGoalPose(goalReadPose); 
+						superRobot.setOurPose(new Pose(ux,uy,ua));
+						superRobot.setTheirPose(new Pose(ex,ey,ea));	
+						superRobot.needsNewData = false;
+						superRobot.needsNewPath = true;
+					}
+					
 				}
 			}
-	
 		} catch (Exception e) {
 			// Does not wait for user to notice
 			LCD.drawString("EXCEPTION1!", 0, 6);
@@ -79,12 +90,16 @@ public class CommandsFromServer implements Behavior {
 		}
 		
 	}
-
-	private Pose makePose(byte b) {
-		// TODO Auto-generated method stub
-		return null;
+	
+		
+	
+		
+	
+	
+	public static short bytesToShort(byte b0, byte b1){
+		return (short) ((short)b0 <<8 | (0xFF & (short)b1));
 	}
-
+	
 
 
 }

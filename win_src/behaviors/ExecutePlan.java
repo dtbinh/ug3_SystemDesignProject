@@ -2,6 +2,8 @@ package behaviors;
 
 import robot.Robot;
 import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.pathfinding.Path;
 import lejos.robotics.subsumption.Behavior;
 
 public class ExecutePlan implements Behavior {
@@ -11,32 +13,38 @@ public class ExecutePlan implements Behavior {
 		superRobot = thisRobot;
 	}
 
-	@Override
 	public void action() {
-		
+		suppressed = false;
 		Navigator aNav = superRobot.getNav();
 		aNav.singleStep(true);
-		while (!suppressed && !aNav.pathCompleted()){
+		while (!aNav.pathCompleted()){
+			Thread.yield();
 			aNav.followPath();
+			superRobot.setNav(aNav);
 		}
-		if (aNav.pathCompleted()){
-			superRobot.requestData();
-		}
-
+		Thread.yield();
+	
 	}
 
-	@Override
+
 	public void suppress() {
 		suppressed = true;
-
 	}
 
-	@Override
+
 	public boolean takeControl() {
-		if (superRobot.hasPlan()){
-			return true;
-		}
-		
+		return (superRobot.hasPlan());	
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
