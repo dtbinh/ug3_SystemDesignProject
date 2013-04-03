@@ -6,6 +6,7 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import PitchObject.Ball;
 import PitchObject.Position;
 import PitchObject.Robot;
+import Script.RobotMode;
 
 public class VisionReader extends Thread {
 	private static final int YELLOW = 0;
@@ -124,6 +125,10 @@ public class VisionReader extends Thread {
 		}
 		
 		return state.getStarted();
+	}
+	
+	public RobotMode getRobotMode() {
+		return RobotMode.PLAY;
 	}
 	
 		

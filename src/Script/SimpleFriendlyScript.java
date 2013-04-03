@@ -11,18 +11,6 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 
 	public SimpleFriendlyScript(String[] args) {
         super(args);
-        if (args.length == _argsParsed) {
-        	robotMode = RobotMode.PLAY;
-        } else {
-        	if (args[_argsParsed].equalsIgnoreCase("defendPenalty")) {
-        		robotMode = RobotMode.PENALTY_DEF;
-        	} else if (args[_argsParsed].equalsIgnoreCase("shootPenalty")) {
-        		robotMode = RobotMode.PENALTY_ATK;
-        	} else {
-        		System.err.println("ERROR: unhandled mode");
-        		System.exit(1);
-        	}
-        }
     }
 
     public void run() {

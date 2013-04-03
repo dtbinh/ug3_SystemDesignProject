@@ -19,11 +19,6 @@ public abstract class AbstractBaseScript extends Thread {
 	public final static int KICK_ALLOWANCE = 1500;
     public final static int PENALTY_ALLOWANCE = 20000;
 
-    public static enum RobotMode {
-    	PLAY,
-    	PENALTY_ATK,
-    	PENALTY_DEF,
-    };
 	static volatile RobotMode robotMode = RobotMode.PLAY;
 
 	static volatile VisionReader vision;
@@ -73,6 +68,7 @@ public abstract class AbstractBaseScript extends Thread {
 		theirRobot = vision.getTheirRobot();
 		ball = vision.getBall();
 		started = vision.getStarted();
+		robotMode = vision.getRobotMode();
 		// ourRobot.setWantsToRotate(false);
 		// ourRobot.setWantsToStop(false);
 	}
