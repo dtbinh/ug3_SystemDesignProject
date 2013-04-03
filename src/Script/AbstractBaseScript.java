@@ -13,7 +13,7 @@ import Command.*;
 import PitchObject.*;
 
 public abstract class AbstractBaseScript extends Thread {
-	public final static int GOT_THERE_DIST = 10;
+	public final static int GOT_THERE_DIST = 20;
     public final static int DRIBBLE_DIST = 60;
     public final static int BEHIND_BALL_DIST = 50;
 	public final static int KICK_ALLOWANCE = 1500;

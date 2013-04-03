@@ -1,6 +1,7 @@
 package Script;
 
 import PitchObject.Position;
+import PitchObject.Robot;
 
 public class SimpleFriendlyScript extends AbstractBaseScript {
 
@@ -43,6 +44,12 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 			Position target = ball.pointBehindBall(theirGoal.getCoors(), BEHIND_BALL_DIST);
 			planMoveToFace(target, theirGoal.getCoors());
 			System.out.println("planning for " + target);
+			int minSpeed = 100; int maxSpeed = 255; 
+			int minDist  = 0;   int maxDist  = 150;
+			int dist = (int) target.euclidDistTo(ourRobot.getCoors());
+			Robot.MAX_SPEED = Math.min(maxSpeed,
+					(minSpeed + (dist-minDist) / (maxDist-minDist) * (maxSpeed-minSpeed)));
+			System.out.println(Robot.MAX_SPEED);
 		}
 		else {
 			/*if (ourRobot.isFacing(theirRobot.getCoors())) {
@@ -61,6 +68,7 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 				planMoveStraight(theirGoal.getCoors());
 				System.out.println("planning to DRIBBLE");
 			}
+			Robot.MAX_SPEED = 255;
 		}
 
 		// !!!! execution phase !!!!
@@ -68,9 +76,9 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 	}
 
 	static void penaltyDefMode() {
-		// TODO: probably get rid of 90% and use planMoveStraight
-		Position frontOfUs = ourRobot.getCoors().projectPoint(ourRobot.getAngle(), 30);
-		Position defendCoors = theirRobot.getCoors().projectPoint(theirRobot.getAngle(),
+		Position frontOfUs = ourRobot.getCoors().projectPoint(Math.PI/2, 30);
+		// !!!! planning phase !!!!
+		Position defendCoors = theirRobot.getCoors().projectPoint(theirRobot.getRobotAngle(),
 		    (int) ourRobot.getCoors().euclidDistTo(theirRobot.getCoors()));
 
 		System.out.println("ourRobot " + ourRobot.getCoors());
@@ -79,14 +87,19 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 
 		double angle;
 		if (ourRobot.getCoors().getY() - defendCoors.getY() > GOT_THERE_DIST) {
-			angle = 0.0;
+			angle = 3*Math.PI/2;
 		} else if (defendCoors.getY() - ourRobot.getCoors().getY() > GOT_THERE_DIST) {
-			angle = Math.PI;
+			angle = Math.PI/2;
 		} else {
 			return;
 		}
 		Position target = ourRobot.getCoors().projectPoint(angle, 100);
+		System.out.println("target " + target);
 		planMoveToFace(target, frontOfUs);
+		Robot.MAX_SPEED = 150;
+		
+		// !!!! execution phase !!!!
+		playExecute();
 	}
 
 	static void penaltyAtkMode() {
