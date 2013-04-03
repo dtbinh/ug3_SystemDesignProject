@@ -18,6 +18,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import Script.RobotMode;
+
 /**
  * Creates and maintains the swing-based Control GUI, which 
  * provides both control manipulation (pitch choice, direction,
@@ -49,6 +51,10 @@ public class ControlGUI implements ChangeListener {
 
 	/* Start/Stop button */
 	private JButton startButton;
+	/* RobotMode buttons */
+	private JButton normalPlayButton;
+	private JButton penaltyAtkButton;
+	private JButton penaltyDefButton;
 
 	/* Button panel */
 	private JPanel buttonPanel;
@@ -189,8 +195,12 @@ public class ControlGUI implements ChangeListener {
 		buttonPanel = new JPanel();
 
 		setUpStartButton();
+		setUpRobotModeButtons();
 
 		buttonPanel.add(startButton);
+		buttonPanel.add(normalPlayButton);
+		buttonPanel.add(penaltyAtkButton);
+		buttonPanel.add(penaltyDefButton);
 
 		frame.add(buttonPanel);
 
@@ -222,6 +232,33 @@ public class ControlGUI implements ChangeListener {
 			}
 		});
 
+	}
+	private void setUpRobotModeButtons() {
+		normalPlayButton = new JButton("Normal Play");
+		penaltyAtkButton = new JButton("Penalty ATK");
+		penaltyDefButton = new JButton("Penalty DEF");
+		worldState.setRobotMode(RobotMode.PLAY);
+		
+		normalPlayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				worldState.setRobotMode(RobotMode.PLAY);
+			}
+		});
+		
+		penaltyAtkButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				worldState.setRobotMode(RobotMode.PENALTY_ATK);
+			}
+		});
+		
+		penaltyDefButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				worldState.setRobotMode(RobotMode.PENALTY_DEF);
+			}
+		});
 	}
 
 	/**

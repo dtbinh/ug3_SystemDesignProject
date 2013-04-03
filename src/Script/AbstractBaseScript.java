@@ -296,7 +296,7 @@ public abstract class AbstractBaseScript extends Thread {
 	}
 
 	public static void endPenalty() {
-		vision.setRobotMode(RobotMode.PLAY);
+		if (started) vision.setRobotMode(RobotMode.PLAY);
 	}
 
 	static boolean timeOut(long startTime, int allowance) {
