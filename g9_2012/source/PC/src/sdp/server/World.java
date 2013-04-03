@@ -21,6 +21,7 @@ public abstract class World {
 	private   long             lastTime = 0;
 	private   double           timeStep = 0.03;
 	private   ScreenProjection screenProj;
+	private long 			lastUpdateTime = -1;
 	
 	public static class FailedInitException extends Exception {
 		private static final long serialVersionUID = 1L;
@@ -71,6 +72,14 @@ public abstract class World {
 		
 		screenProj = new ScreenProjection( Vector2.NaN );
 		lastTime = System.currentTimeMillis();
+	}
+	
+	public void setLastUpdateTime(long newTime){
+		this.lastUpdateTime = newTime;
+	}
+	
+	public long getLastUpdateTime(){
+		return lastUpdateTime;
 	}
 	
 	/** Set the pitch size. */
@@ -126,6 +135,8 @@ public abstract class World {
 		long currentTime = System.currentTimeMillis();
 		timeStep = (double)(currentTime - lastTime) / 1000.0;
 		lastTime = currentTime;
+		
+		//this.lastUpdateTime = currentTime;
 		
 		update();
 	}

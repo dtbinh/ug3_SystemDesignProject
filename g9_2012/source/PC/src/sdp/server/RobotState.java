@@ -191,7 +191,6 @@ public class RobotState {
 		assert newPosition == null || !newPosition.isNaN();
 		assert !Double.isNaN( newRotation );
 		assert timeStep > 0.0;
-		
 		if( position.isNaN() || Double.isNaN( rotation ) ) {
 			if( newPosition != null )
 				reset( newPosition, newRotation );
