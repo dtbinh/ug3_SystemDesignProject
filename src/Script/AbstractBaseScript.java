@@ -67,7 +67,6 @@ public abstract class AbstractBaseScript extends Thread {
 		ball = vision.getBall();
 		started = vision.getStarted();
 		robotMode = vision.getRobotMode();
-		System.out.println(robotMode);
 	}
 
 	/**

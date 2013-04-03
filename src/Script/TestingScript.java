@@ -55,8 +55,9 @@ public class TestingScript extends AbstractBaseScript {
 		behindBall = ball.pointBehindBall(theirGoal.getCoors(), 100);
 		switch (testCase) {
 			case VISION:
-				System.out.printf("|  Goal %s  |  Ball %s  |  BehindBall %s  |\n",
-					theirGoal.getCoors(), ball.getCoors(), behindBall);
+//				System.out.printf("|  Goal %s  |  Ball %s  |  BehindBall %s  |\n",
+//					theirGoal.getCoors(), ball.getCoors(), behindBall);
+				System.out.println(ourRobot.getAngle() + " " + ball.getCoors().getAngleToPosition(ourRobot.getCoors()));
 				break;
 	
 			case GO_STRAIGHT_TO_BALL:
