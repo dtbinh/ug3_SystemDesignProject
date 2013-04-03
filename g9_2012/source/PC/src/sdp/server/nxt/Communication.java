@@ -31,9 +31,9 @@ import lejos.pc.comm.NXTInfo;
  *
  */
 public class Communication {
-	private static final byte    OP_SPEEDS    = 0x0;
-	private static final byte    OP_KICK      = 0x1;
-	private static final byte    OP_SHUTDOWN  = 0x2;
+	private static final byte    OP_SPEEDS    = 1;
+	private static final byte    OP_KICK      = 2;
+	private static final byte    OP_SHUTDOWN  = 3;
 	
 	private boolean useUSB = false;
 	private boolean connected = false;
@@ -114,13 +114,13 @@ public class Communication {
 	public void disconnect() {
 		if( this.connected ) {
 			try {
+				//shutdownRobot();
 				nxtComm.close(); nxtComm = null;
 				//is.close(); is = null;
 				os.close(); os = null;
 			} catch (IOException e) {
 				
 			}
-			
 			this.connected = false;
 			System.out.println("Communication: Disconnected.");
 		}

@@ -20,63 +20,64 @@ public class PcServer {
 	private Control              ctrl;
 	private Gui                  gui;
 	private StrategyInterface    strategy;
+	private static Bluetooth bt;
 	private final World.Settings defaultSettings = new World.Settings(
 			new BallState( 0.02 ),
 			new RobotState[] {
 				new RobotState( RobotState.Team.YELLOW, new Vector2( 0.256, 0.154 ) ),
-			    new RobotState( RobotState.Team.BLUE,   new Vector2( 0.256, 0.154 ) )
+				new RobotState( RobotState.Team.BLUE,   new Vector2( 0.256, 0.154 ) )
 			},
 			//new Vector2( 1.14, 0.63 ) // PITCH 1
 			new Vector2( 1.216, 0.74 ) // PITCH1 
 	);
-	
+
 	private boolean running;
-	
+
 	public PcServer() {
 		running = false;
 	}
-	
+
 	public boolean isRunning() {
 		return running;
 	}
-	
+
 	public Control getControl() {
 		return ctrl;
 	}
-	
+
 	public Gui getGui() {
 		return gui;
 	}
-	
+
 	public World getWorld() {
 		return world;
 	}
-	
+
 	public void setStrategy( StrategyInterface newStrategy ) {
 		if( strategy != null )
 			strategy.disable();
-		
+
 		strategy = newStrategy;
 		if( strategy != null )
 			strategy.enable();
 	}
-	
+
 	public StrategyInterface getStrategy() {
 		return strategy;
 	}
-	
+
 	public void setupNxtWorld() {
 		world = new NxtWorld( defaultSettings );
 		ctrl  = new Control( world, Team.YELLOW );
 		gui   = new NxtGui( this, (NxtWorld)world );
 	}
-	
+
 	public void setupSimWorld() {
 		world = new SimWorld( defaultSettings );
 		ctrl  = new Control( world, Team.YELLOW );
 		gui   = new SimGui( this, (SimWorld)world );
 	}
-	
+
 	public void run() {
 		running = true;
 		try {
@@ -86,41 +87,47 @@ public class PcServer {
 			running = false;
 			System.err.println( "PcServer: World initialisation failed: " + e.getMessage() );
 		}
-		
+
 		while( running ) {
 			world.step();
-			
+
 			if( gui != null )
 				gui.update();
-			
+
 			ctrl.update( world.getTimeStep() );
-			
+
 			if( strategy != null )
 				strategy.update();
+			
+			bt.updateWorld(world);
 		}
-		
+
 		if( strategy != null )
 			strategy.disable();
-		
+
 		gui.dispose();
 		ctrl.dispose();
 		world.dispose();
+		bt.dispose();
 	}
-	
+
 	public void shutdown() {
 		running = false;
 	}
-	
+
 	public static void main( String args[] ) {
 		PcServer server = new PcServer();
 		if( (args.length == 0 || args[ 0 ].equals( "nxt" )) ) {
 			System.out.println("PcServer: Running NXT...");
+			bt = new Bluetooth();
+			bt.start();
+
 			server.setupNxtWorld();
 		} else {
 			System.out.println("PcServer: Running simulator...");
 			server.setupSimWorld();
 		}
-		
+
 		server.run();
 	}
 }

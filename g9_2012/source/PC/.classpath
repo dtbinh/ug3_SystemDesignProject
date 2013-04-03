@@ -46,5 +46,10 @@
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/lejos_nxj/lib/pc/3rdparty/bluecove.jar"/>
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/lejos_nxj/lib/pc/3rdparty/bluecove-gpl.jar"/>
 	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/lejos_nxj/lib/pc/3rdparty/commons-cli.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/share/java/zmq.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
