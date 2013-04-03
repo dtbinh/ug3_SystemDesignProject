@@ -1,4 +1,7 @@
 package JavaVision;
+
+import Script.RobotMode;
+
 public class WorldState {
 
 	private int direction; // 0 = right, 1 = left.
@@ -15,6 +18,11 @@ public class WorldState {
 	private long counter;
 	private boolean started;
 	private boolean newFrame;
+	private RobotMode robotMode;
+	
+	public final static int PENALTY_ALLOWANCE = 20000;
+    static volatile long penaltyTimeOut = -1;
+    static volatile long startTime = System.currentTimeMillis();
 
 	public WorldState() {
 
@@ -35,6 +43,7 @@ public class WorldState {
 		
 		this.started = false;
 		this.newFrame = true;
+		this.setRobotMode(RobotMode.PLAY);
 	}
 
 	public boolean getNewFrame() {
@@ -51,6 +60,10 @@ public class WorldState {
 	
 	public void setStarted(boolean started) {
 		this.started = started;
+		if (penaltyTimeOut < 0 && (robotMode == RobotMode.PENALTY_ATK || 
+				robotMode == RobotMode.PENALTY_DEF) && started) {
+			penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
+		}
 	}
 	
 	public int getBlueX() {
@@ -147,6 +160,21 @@ public class WorldState {
 
 	public long getCounter() {
 		return this.counter;
+	}
+
+	public RobotMode getRobotMode() {
+		return this.robotMode;
+	}
+	
+	public void setRobotMode(RobotMode robotMode) {
+		this.robotMode = robotMode;
+		if (robotMode!=RobotMode.PENALTY_ATK && robotMode!=RobotMode.PENALTY_DEF) {
+			penaltyTimeOut = -1;
+		}
+	}
+
+	public boolean penaltyTimeUp() {
+		return System.currentTimeMillis() > penaltyTimeOut;
 	}
 
 }

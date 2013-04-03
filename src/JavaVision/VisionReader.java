@@ -128,12 +128,25 @@ public class VisionReader extends Thread {
 	}
 	
 	public RobotMode getRobotMode() {
-		return RobotMode.PLAY;
+		if (state == null) {
+			return RobotMode.PLAY;
+		}
+		
+		return state.getRobotMode();
 	}
-	
+
+	public void setRobotMode(RobotMode robotMode) {
+		state.setRobotMode(robotMode);
+	}
+
+	public boolean penaltyTimeUp() {
+		return state.penaltyTimeUp();
+	}
 		
 	public int getMinX() { return vision.getMinX(); }
 	public int getMaxX() { return vision.getMaxX(); }
 	public int getMinY() { return vision.getMinY(); }
 	public int getMaxY() { return vision.getMaxY(); }
+
+
 }
