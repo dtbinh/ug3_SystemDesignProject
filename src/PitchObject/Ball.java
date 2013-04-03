@@ -1,7 +1,7 @@
 package PitchObject;
 
 public class Ball extends PitchObject {
-	public final static int DRIBBLE_DIST = 60;
+	public final static int DRIBBLE_DIST = 45;
 
 	public Position intersectinPosition(Robot robot) {
 		Position robotCoors = robot.getCoors();
