@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="gcc noversion nomachine-Wall -std=gnu99 -fPIC -c -fPIC -I. -I../../../../../../../../../usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/include -I../../../libusb/include -I../../../../../../../../../usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/include/linux">
+      <target file="main_jlibnxt.o" lastModified="1350aa9d608">
+         <source file="main_jlibnxt.c" lastModified="12ff8cd49b0"/>
+      </target>
+   </processor>
+   <processor signature="gcc -shared -L/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/lejos_nxj/src/libnxt -lusb -L/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/libusb/lib -lusb">
+      <target file="libjlibnxt.so" lastModified="1350aa9d608">
+         <source file="../../../libusb/lib/libusb.a" lastModified="1350a9081a8"/>
+         <source file="../../../libusb/lib/libusb-0.1.so.4.4.4" lastModified="1350a9081a8"/>
+         <source file="main_jlibnxt.o" lastModified="1350aa9d608"/>
+      </target>
+   </processor>
+</history>

@@ -1,0 +1,10 @@
+prefix=/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/bluez
+exec_prefix=${prefix}
+libdir=/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/bluez/lib
+includedir=${prefix}/include
+ 
+Name: BlueZ
+Description: Bluetooth protocol stack for Linux
+Version: 4.86
+Libs: -L${libdir} -lbluetooth
+Cflags: -I${includedir}

@@ -1,0 +1,132 @@
+package sdp;
+
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import javax.swing.JButton;
+
+/** Simple class that wraps CameraGui and VisionGui as well as adding a few other controls, to provide
+ * a user interface for NxtWorld's parameters.
+ * @author s0906176
+ *
+ */
+public class NxtGui implements Gui {
+	private PcServer     server;
+	private NxtWorld     world;
+	private CameraGui    cam;
+	private VisionGui    vis;
+	private ControlPanel generalPanel;
+	
+	public NxtGui( PcServer server, NxtWorld world ) {
+		this.server       = server;
+		this.world        = world;
+		this.cam          = new CameraGui( world.getCamera() );
+		this.vis          = new VisionGui( world.getVision() );
+		this.generalPanel = new ControlPanel();
+		
+		generalPanel.setTitle("General");
+		
+		Communication comm = world.getCommunication(); 
+		String connectButtonCaption;
+		if( comm.getDummyMode() ) {
+			connectButtonCaption = "Connect (Not Connected)";
+		} else {
+			connectButtonCaption = "Disconnect (Connected)";
+		}
+		
+		generalPanel.addButton( connectButtonCaption, new ControlPanel.ButtonCallback() {
+			public void buttonClicked(JButton button) {
+				Communication comm = NxtGui.this.world.getCommunication();
+				comm.setDummyMode( !comm.getDummyMode() );
+				
+				if( comm.getDummyMode() ) {
+					button.setText( "Connect (Not Connected)" );
+				} else {
+					button.setText( "Disconnect (Connected)" );
+				}
+			}
+		});
+		
+		generalPanel.addButton( "Force Kick", new ControlPanel.ButtonCallback() {
+			public void buttonClicked( JButton button ) {
+				NxtGui.this.world.getCommunication().kick();
+			}
+		});
+		
+		generalPanel.addButton( "Shutdown", new ControlPanel.ButtonCallback() {
+			public void buttonClicked(JButton button) {
+				shutdown();
+			}
+		});
+		
+		
+		WindowListener winListener = new WindowListener() {
+			@Override public void windowClosed(WindowEvent arg0) {}
+			@Override public void windowActivated(WindowEvent arg0) {}
+			@Override public void windowOpened(WindowEvent arg0) {}
+			@Override public void windowIconified(WindowEvent arg0) {}
+			@Override public void windowDeiconified(WindowEvent arg0) {}
+			@Override public void windowDeactivated(WindowEvent arg0) {}
+			@Override public void windowClosing(WindowEvent arg0) {
+				shutdown();
+			}
+		};
+		
+		vis.getViewer().getContentPane().addHierarchyBoundsListener( new HierarchyBoundsListener() {
+			@Override public void ancestorResized(HierarchyEvent arg0) {}
+			@Override public void ancestorMoved(HierarchyEvent arg0) {
+				arrangeWindows();
+			}
+		});
+	 
+		
+		generalPanel.addWindowListener( winListener );
+		vis.getPanel().addWindowListener( winListener );
+		vis.getViewer().addWindowListener( winListener );
+		cam.getPanel().addWindowListener( winListener );
+		arrangeWindows();
+	}
+	
+	public ControlPanel getGeneralPanel() {
+		return generalPanel;
+	}
+	
+	@Override
+	public void update() {
+		vis.update();
+		cam.update();
+	}
+	
+	@Override
+	public void dispose() {
+		vis.dispose();
+		cam.dispose();
+		generalPanel.dispose();
+	}
+	
+	private void arrangeWindows() {
+		int viewerHeight = vis.getViewer().getHeight();
+		int viewerX      = vis.getViewer().getX();
+		int visHeight    = cam.getPanel().getHeight() + viewerHeight;
+		int camWidth     = vis.getViewer().getWidth() - generalPanel.getWidth();
+		int x            = viewerX - vis.getPanel().getWidth();
+		if( x < 0 ) {
+			viewerX += -x;
+			x = 0;
+			vis.getViewer().setLocation( viewerX, vis.getViewer().getY() );
+		}
+		
+		
+		int y            = vis.getViewer().getY();
+		
+		vis.getPanel().setBounds( x, y, vis.getPanel().getWidth(), visHeight );
+		cam.getPanel().setBounds(viewerX, y + viewerHeight, camWidth, cam.getPanel().getHeight() );
+		generalPanel.setBounds( viewerX + camWidth, y + viewerHeight, generalPanel.getWidth(), cam.getPanel().getHeight() );
+	}
+	
+	private void shutdown() {
+		server.shutdown();
+	}
+}

@@ -1,0 +1,15 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{verbatim}
+
+\title{SDP 2012 Group 9 - Individual Final Report}
+\author{Cristian Cobzarenco [0906176]}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+My position in the team was `Software Lead' which meant that in addition to actual development work, I was also in charge of the assignment and overseeing of development tasks. My main contributions were in Vision, Strategy and Control subsystems, but I also worked at some point or another on all of the other components. Thus, at any point, I knew how all the subsytems worked and how they interacted which allowed me to act as liaison between the different subteams as well.
+
+
+
+\end{document}          

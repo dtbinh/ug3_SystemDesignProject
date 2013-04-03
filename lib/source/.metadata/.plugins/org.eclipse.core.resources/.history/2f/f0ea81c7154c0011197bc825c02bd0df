@@ -1,0 +1,66 @@
+package sdp;
+
+public class PcServer {
+	private ImageViewer  viewer  = null;
+	private World        world   = null;
+	private Control      ctrl    = null;
+	private ControlPanel panel   = null;
+	private Timer        timer   = null;
+	private boolean      running = false;
+	private int          mode    = null;
+	
+	public PcServer() {
+		World.Settings settings = new World.Settings();
+		settings.ballState       = new BallState( new Vector2(0.0,0.0), 0.4);
+		settings.playerState     = new RobotState( RobotState.Team.BLUE,   new Vector2(0.5,0.5), new Vector2(0.3,0.3), 0.0 );
+		settings.opponentState   = new RobotState( RobotState.Team.YELLOW, new Vector2(0.5,0.5), new Vector2(0.3,0.3), 0.0 );
+		settings.pitchBottomLeft = new Vector2(0.0,0.0);
+		settings.pitchTopRight   = new Vector2(1.0,1.0);
+		
+		panel  = new ControlPanel();
+		viewer = new ImageViewer();
+		world  = new NxtWorld( settings, viewer, panel );
+		ctrl   = new Control( world, panel );
+	}
+	
+	
+	public boolean gotoOtherEnd( double ypos ) {
+		double band = 644.0/4;
+		Vector2 v = world.getPlayerState().getPosition();
+		if( v.getX() <= band ) {
+			ctrl.setGoalPosition( new Vector2( 3.0*band+3.0/4.0 * band, ypos ) );
+			System.out.println("Server: Go to right end.");
+			return true;
+		} else if( v.getX() >= 3*band ) {
+			ctrl.setGoalPosition( new Vector2( band/4.0, ypos ) );
+			System.out.println("Server: Go to left end.");
+			return true;
+		} else
+			return false;
+	}
+	
+	public void createGui() {
+		ControlPanel panel = new ControlPanel();
+		panel.addButton("Go to other end., callback)
+	}
+	
+	public void run() {
+		running = true;
+		boolean kickOnce = false;
+		
+		int step = 0;
+		double ypos;
+
+		ctrl.setStationary( true );
+		
+		while( running ) {
+			timer.update();
+			world.update();
+		}
+	}
+	
+	public static void main( String args[] ) {
+		PcServer server = new PcServer();
+		server.run();
+	}
+}

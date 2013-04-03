@@ -1,0 +1,398 @@
+package sdp;
+
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.io.IOException;
+
+import com.googlecode.javacv.*;
+import com.googlecode.javacv.cpp.*;
+import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_highgui.*;
+import static com.googlecode.javacv.cpp.opencv_video.*;
+import static com.googlecode.javacv.cpp.opencv_features2d.*;
+import static com.googlecode.javacv.cpp.opencv_contrib.*;
+import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+import static com.googlecode.javacv.cpp.opencv_calib3d.*;
+import static com.googlecode.javacv.cpp.opencv_objdetect.*;
+import static com.googlecode.javacv.cpp.opencv_legacy.*;
+import com.googlecode.javacpp.Loader;
+import com.googlecode.javacpp.Pointer;
+import com.googlecode.javacpp.PointerPointer;
+import com.sun.jna.Native;
+
+
+public class Vision {
+	// This should be set to "", but I can't figure out where Eclipse puts its working directory
+	private static String dirRoot = "/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/code";
+	
+	public static int RED    = 0;
+	public static int YELLOW = 1;
+	public static int BLUE   = 2;
+	public static int PITCH  = 3;
+	
+	enum Mode {
+		RAW,
+		CHANNELS,
+		PITCH
+	}
+	
+	private boolean firstRun      = true;
+	private int     minValue      = 75;
+	private int     minSaturation = 78;
+	private int     frameId       = 0;
+	private Mode    mode          = Mode.PITCH;
+	
+	int[] minHue = { 0,  15, 55,  29 };
+	int[] maxHue = { 15, 33, 103, 39 };
+	
+	CvRect crop = cvRect(31, 87, 644, 343);
+	
+	public void setMode( Mode mode ) {
+		this.mode = mode;
+	}
+	
+	public void setMinHue( int colour, int newValue ) {
+		minHue[ colour ] = newValue;
+	}
+	
+	public void setMaxHue( int colour, int newValue ) {
+		maxHue[ colour ] = newValue;
+	}
+	
+	public void setMinValue( int newValue ) {
+		minValue = newValue;
+	}
+	
+	public void setMinSaturation( int newValue ) {
+		minSaturation = newValue;
+	}
+	
+	public int getMinValue() {
+		return minValue;
+	}
+	
+	public int getMinSaturation() {
+		return minSaturation;
+	}
+	
+	public int getMinHue( int colour ) {
+		return minHue[ colour ];
+	}
+	
+	public int getMaxHue( int colour ) {
+		return maxHue[ colour ];
+	}
+	
+	public void setCropLeft( int newValue ) {
+		crop.x( newValue );
+	}
+	
+	public void setCropTop( int newValue ) {
+		crop.y( newValue );
+	}
+	
+	public void setCropWidth( int newValue ) {
+		crop.width( newValue );
+	}
+	
+	public void setCropHeight( int newValue ) {
+		crop.height( newValue );
+	}
+	
+	public int getCropLeft() {
+		return crop.x();
+	}
+	
+	public int getCropTop() {
+		return crop.y();
+	}
+	
+	public int getCropWidth() {
+		return crop.width();
+	}
+	
+	public int getCropHeight() {
+		return crop.height();
+	}
+	
+	public BufferedImage drawChessboardCorners() {
+		IplImage gray = newImage(source,1);
+		cvCvtColor(source, gray, CV_BGR2GRAY);
+		CvSize chessSize = cvSize(8, 5);
+		CvPoint2D32f corners = new CvPoint2D32f( chessSize.width() * chessSize.height() ); 
+		int[] count = new int[ 1 ];
+		
+		
+		int r = cvFindChessboardCorners(source, chessSize, corners, count, CV_CALIB_CB_ADAPTIVE_THRESH);
+		cvDrawChessboardCorners(source, chessSize, corners, count[0], r);
+		
+		return source.getBufferedImage();
+	}
+	
+	public BufferedImage showRaw( BufferedImage frame ) {
+		source = applyCrop( makeIplImage(frame) );
+		return source.getBufferedImage();
+	}
+	
+	private void loadCalibrationInfo( IplImage frame ) {
+		CvMat intrinsics = new CvMat(cvLoad(dirRoot + "/distortion_info/Intrinsics.yml"));
+		CvMat distortion = new CvMat(cvLoad(dirRoot + "/distortion_info/Distortion.yml"));
+		
+		if( intrinsics == null || distortion == null ) {
+			System.err.println("Can't open distortion info.");
+		} else {
+			mapx = IplImage.create(cvGetSize(frame), IPL_DEPTH_32F, 1);
+			mapy = IplImage.create(cvGetSize(frame), IPL_DEPTH_32F, 1);
+			cvInitUndistortMap(intrinsics, distortion, mapx, mapy);
+		}
+	}
+	
+	public void addPitchData() {
+		IplImage cropped = applyCrop( source );
+		IplImage hsv = newImage( cropped, 3 );
+		cvCvtColor( cropped, hsv, CV_BGR2HSV );
+		
+		double[] data = new double[ 6 ];
+		
+		for( int i = 0 ; i < 3 ; ++ i ) {
+			cvSetImageCOI(hsv, i + 1);
+			data[ i ] = cvAvg( hsv, null ).getVal(0);
+		}
+		
+		data[ 3 ] = minHue[ PITCH ];
+		data[ 4 ] = maxHue[ PITCH ];
+		data[ 5 ] = minValue;
+		
+		CvMat pitchData = new CvMat( cvLoad(dirRoot + "/data/pitch.xml") );
+		cvSave(dirRoot + "/data/pitch.xml.bak", pitchData);
+		
+		if( pitchData.isNull() ) {
+			pitchData = CvMat.create(1, 6);
+		} else {
+			pitchData.rows( pitchData.rows() + 1 );
+		}
+		
+		int n = pitchData.rows() - 1;
+		
+		for( int i = 0 ; i < 6 ; ++ i ) {
+			pitchData.put( n, i, data[ i ] );
+			System.out.println(pitchData.get(n,i));
+		}
+		
+		cvSave(dirRoot + "/data/pitch.xml", pitchData);
+		
+		System.out.println("Vision: Added: " + data[0] + ", " + data[1] + ", " + data[2] + ", " + data[3] + ", " + data[ 4 ] + ", " + data[5] + " in pitch.xml.");
+	}
+	
+	public BufferedImage autoCrop() {
+		System.out.println(cvGetSize(source).height());
+		
+		
+		IplImage ret = source.clone();
+		
+		IplImage blur = newImage(ret,3);
+		IplImage hsv  = newImage(ret,3), hue = newImage(ret,1), sat = newImage(ret,1), val = newImage(ret,1);
+		IplImage tmp1 = newImage(ret,1), tmp2 = newImage(ret,1);
+		IplImage pitch = newImage(ret,1);
+		
+		cvSmooth(ret, blur, CV_BLUR, 5);
+		cvCvtColor(blur, hsv, CV_BGR2HSV);
+		cvSplit(hsv,hue,sat,val,null);
+		cvThreshold( hue, tmp1, minHue[PITCH], 255, CV_THRESH_BINARY );
+		cvThreshold( hue, tmp2, maxHue[PITCH], 255, CV_THRESH_BINARY_INV );
+		cvAnd( tmp1, tmp2,      pitch, null );
+		
+		// Find the non-dark pixels and AND to the pitch map
+		cvThreshold( val, tmp1, minValue*.5, 255, CV_THRESH_BINARY );
+		cvAnd( pitch, tmp1, pitch, null );
+		
+		// Find the largest contour in the pitch map
+		CvSeq seq = new CvSeq(null);
+		cvFindContours(pitch, storage, seq,Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+		
+		CvRect maxRect = null;
+		for( CvSeq s = seq ; s != null && !s.isNull() ; s = s.h_next() ) {
+			CvRect r = cvBoundingRect(s, 0);
+			if( maxRect == null || r.width()*r.height() > maxRect.width()*maxRect.height() )
+				maxRect = r;
+		}
+		
+		if( maxRect!=null ) {
+			System.out.println("Vision: Pitch: Rect = " + maxRect.x() + ", " + maxRect.y() + " ; " + maxRect.width() + ", " + maxRect.height() );
+			cvRectangle(ret,cvPoint(maxRect.x(), maxRect.y()),cvPoint(maxRect.x()+maxRect.width(), maxRect.y()+maxRect.height()), cvScalarAll(255), 1, 8, 0);		
+		}
+		
+		// Update the crop rectangle to the max rectangle
+		crop = maxRect;
+		
+		return ret.getBufferedImage();
+	}
+	
+	public BufferedImage removePitch1() {
+		IplImage ret = applyCrop( source );
+		
+		IplImage blur = newImage(ret,3);
+		IplImage hsv  = newImage(ret,3), hue = newImage(ret,1), sat = newImage(ret,1), val = newImage(ret,1);
+		IplImage tmp1 = newImage(ret,1), tmp2 = newImage(ret,1), tmp3 = newImage(ret,1);
+		IplImage pitch = newImage(ret,1);
+		
+		cvSmooth(ret, blur, CV_BLUR, 3);
+		cvCvtColor(blur, hsv, CV_BGR2HSV);
+		cvSplit(hsv,hue,sat,val,null);
+		
+		cvThreshold( hue, tmp1, minHue[PITCH], 255, CV_THRESH_BINARY );
+		cvThreshold( hue, tmp2, maxHue[PITCH], 255, CV_THRESH_BINARY_INV );
+		cvAnd( tmp1, tmp2,      pitch, null );
+		
+		cvThreshold( val, tmp1, minValue, 255, CV_THRESH_BINARY_INV );
+		cvOr( pitch, tmp1, pitch, null );
+		
+		cvMorphologyEx(pitch, pitch, null, null, CV_MOP_OPEN, 1 );
+		cvMorphologyEx(pitch, pitch, null, null, CV_MOP_CLOSE, 1 );
+		
+		//cvThreshold( val, tmp1, minSaturation, 255, CV_THRESH_BINARY_INV );
+		//cvAnd( pitch, tmp1, pitch, null );
+		
+		
+		CvSeq seq = new CvSeq(null);
+		cvFindContours(pitch, storage, seq,Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+		
+		cvDrawContours(ret, seq, cvScalar(255,255,0,255), cvScalar(255,255,0,255), 100, 1, 8);
+		
+		for( CvSeq s = seq ; s != null && !s.isNull() ; s = s.h_next() ) {
+			cvSet( tmp1, cvScalarAll(0) );	
+			cvDrawContours(tmp1, s, cvScalarAll(255), cvScalarAll(255), 0, CV_FILLED, 8);
+			double a = cvContourArea(s, CV_WHOLE_SEQ, 8);
+			double m = cvAvg( hue, tmp1 ).getVal(0);
+			CvPoint2D32f center = new CvPoint2D32f();
+			float[] rad = new float[1];
+			cvMinEnclosingCircle(s, center, rad);
+			
+			if( m >= minHue[RED] && m <= maxHue[RED] && Math.abs(Math.abs(a)-rad[0]*rad[0]*Math.PI) <= a*0.5 ) {
+				
+				
+				cvCircle(ret, cvPoint((int)center.x(),(int)center.y()), (int)rad[0], cvScalar(0,0,255,0), 3, 8,0 );
+				//cvRectangle(ret,cvPoint(r.x(), r.y()),cvPoint(r.x()+r.width(), r.y()+r.height()), cvScalar(0,0,255,0), 2, 8, 0);
+			}
+		}
+		
+		
+		
+		
+		return ret.getBufferedImage();
+	}
+	
+	public BufferedImage removePitch() {
+		IplImage ret = applyCrop( source );
+		
+		IplImage blur = newImage(ret,3);
+		IplImage hsv  = newImage(ret,3), hue = newImage(ret,1), sat = newImage(ret,1), val = newImage(ret,1);
+		IplImage tmp1 = newImage(ret,1), tmp2 = newImage(ret,1), tmp3 = newImage(ret,1);
+		IplImage pitch = newImage(ret,1);
+		
+		cvSmooth(ret, blur, CV_BLUR, 3);
+		cvCvtColor(blur, hsv, CV_BGR2HSV);
+		cvSplit(hsv,hue,sat,val,null);
+		
+		cvThreshold( hue, tmp1, minHue[PITCH], 255, CV_THRESH_BINARY );
+		cvThreshold( hue, tmp2, maxHue[PITCH], 255, CV_THRESH_BINARY_INV );
+		cvAnd( tmp1, tmp2,      pitch, null );
+		
+		
+		cvThreshold( val, tmp1, minValue, 255, CV_THRESH_BINARY_INV );
+		cvOr( pitch, tmp1, pitch, null );
+		
+		cvMorphologyEx(pitch, pitch, null, null, CV_MOP_OPEN, 1 );
+		cvMorphologyEx(pitch, pitch, null, null, CV_MOP_CLOSE, 1 );
+		
+		cvNot(pitch,pitch);
+		cvMerge(pitch,pitch,pitch,null,blur);
+		cvAnd(ret,blur,ret,null);
+		
+		//32.77707614115842, 155.3990458381281, 120.9691743383199, 
+		//29, 37, 69
+		
+		/*
+		CvSeq seq = new CvSeq(null);
+		cvFindContours(tmp2, storage, seq,Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+		
+		
+		seq = cvApproxPoly(seq,Loader.sizeof(CvContour.class),storage,CV_POLY_APPROX_DP,2.0,100);
+		
+		for( CvSeq s = seq ; s != null && !s.isNull() ; s = s.h_next() ) {
+			CvBox2D box = cvMinAreaRect2(s, storage);
+			
+			
+			//cvEllipseBox(ret, box, cvScalarAll(255), 1, 8, 0);
+		}
+		
+		cvDrawContours(ret, seq, cvScalar(255,255,0,255), cvScalar(255,255,0,255), 100, 1, 8);
+		*/
+		BufferedImage img = ret.getBufferedImage();
+		ret.release();
+		blur.release();
+		hsv.release();
+		hue.release();
+		sat.release();
+		val.release();
+		tmp1.release();
+		tmp2.release();
+		tmp3.release();
+		return img;
+	}
+	
+	public BufferedImage processImage( BufferedImage frame, RobotState robot1, RobotState robot2, BallState ball ) {
+		IplImage iplFrame = makeIplImage( frame );
+		if( frameId == 0 )
+			loadCalibrationInfo( iplFrame );
+		
+		source = undistort( iplFrame );
+		
+		BufferedImage ret = removePitch();
+		frameId ++;
+		
+		return ret;
+	}
+	
+	private IplImage undistort( IplImage frame ) {
+		if( mapx == null || mapy == null )
+			return frame;
+		IplImage t = frame.clone();
+		cvRemap( t, frame, mapx, mapy, CV_INTER_LINEAR | CV_WARP_FILL_OUTLIERS, cvScalarAll(0) );
+		t.release();
+		return frame;
+	}
+	
+	private IplImage newImage( IplImage img, int channels ) {
+		return IplImage.create( cvGetSize(img), img.depth(), channels );
+	}
+	
+	private IplImage applyCrop( IplImage raw ) {
+		IplImage r = IplImage.create( cvSize(crop.width(), crop.height()), raw.depth(), 3 );
+		
+		if( crop.x() < 0 ) crop.x(0);
+		if( crop.y() < 0 ) crop.y(0);
+		if( crop.width() > raw.width() )   crop.width(raw.width());
+		if( crop.height() > raw.height() ) crop.height(raw.height());
+		
+		cvSetImageROI(raw, crop);
+		cvCopy(raw, r);
+		cvResetImageROI(raw);
+		return r;
+	}
+	
+	private IplImage makeIplImage( BufferedImage frame ) {
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorModel cm = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+		BufferedImage copy = new BufferedImage(cm, frame.copyData(null), false, null);
+		return IplImage.createFrom(copy);
+	}
+	
+	private IplImage source;
+	private CvMemStorage storage = CvMemStorage.create();
+	private IplImage mapx, mapy;
+}

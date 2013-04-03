@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/v4l4j"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="v4l4j"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/v4l4j/v4l4j.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/v4l4j"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/javacv/javacpp.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/opencv/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/javacv/javacv.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/opencv/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/javacv/javacv-linux-x86.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/opencv/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/javacv/javacv-linux-x86_64.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/opencv/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/jna/jna.jar"/>
+	<classpathentry kind="lib" path="/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/jbox2d/jbox2d-library-2.1.2.1-SNAPSHOT-jar-with-dependencies.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/afs/inf.ed.ac.uk/user/s09/s0906176/SDP/jbox2d/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<entity_props type_id="opencv-matrix">
+  <rows>30</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    3. 3. 30. 8. 98. 19. 51. 65. 45. 6. 173. 88. 65. 29. 160. 125. 167.
+    132. 115. 125. 190. 133. 172. 42. 148. 101. 73. 15. 143. 128.</data></entity_props>
+</opencv_storage>

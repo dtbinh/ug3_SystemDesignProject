@@ -1,0 +1,323 @@
+package sdp;
+
+import java.awt.image.BufferedImage;
+import java.util.List;
+
+import au.edu.jcu.v4l4j.Control;
+import au.edu.jcu.v4l4j.FrameGrabber;
+import au.edu.jcu.v4l4j.V4L4JConstants;
+import au.edu.jcu.v4l4j.VideoDevice;
+import au.edu.jcu.v4l4j.VideoFrame;
+import au.edu.jcu.v4l4j.exceptions.V4L4JException;
+
+import java.io.IOException;
+
+/** This class wraps communication with the camera, abstracting away the V4L4J details. It provides
+ * 	methods for changing properties like brightness or contrast and provides a method for grabbing
+ *  the latest class
+ *  
+ * @author Cristian Cobzarenco.
+ *
+ */
+public class Camera {
+	private boolean       cameraConnected = false;
+	private VideoDevice   videoDevice;
+	private FrameGrabber  frameGrabber;
+	private VideoFrame    frame;
+	
+	// FIXME: Make this into a c-tor argument, with the default set to this.
+	public static final String videoDeviceName = "/dev/video0";
+	/** Get the camera's saturation range. */
+	public int[] getSaturationRange()
+	
+	
+	/** Set the camera's saturation.
+	 * 
+	 * @param newSaturation The desired value for the camera's saturation, in the range 0-127.
+	 */
+	public void setSaturation( int newSaturation ) {
+		setCameraProperty( "Saturation", newSaturation );
+	}
+	
+	/** Set the camera's contrast.
+	 * 
+	 * @param newContrast The desired value for the camera's contrast, in the range 0-127.
+	 */
+	public void setContrast( int newContrast ) {
+		setCameraProperty( "Contrast", newContrast );
+	}
+
+	/** Set the camera's brightness.
+	 * 
+	 * @param newBrightness The desired value for the camera's brightness, in the range 0-255.
+	 */
+	public void setBrightness( int newBrightness ) {
+		setCameraProperty( "Brightness", newBrightness );
+	}
+	
+	/** Set the camera's AGC. This method is deprecated because there seems to be no visible effect.
+	 * 
+	 * @param newChromaAGC Desired AGC value: 0 - Disabled, 1 - Enabled.
+	 */
+	@Deprecated
+	public void setChromaAGC( int newChromaAGC ) {
+		setCameraProperty( "Chroma AGC", newChromaAGC );
+	}
+	
+	/** Set the camera's gain. This method is deprecated because there seems to be no visible effect.
+	 * 
+	 * @param newGain The desired gain value in the 0-127 range.
+	 */
+	@Deprecated
+	public void setGain( int newGain ) {
+		setCameraProperty( "Chroma Gain", newGain );
+	}
+	
+	/** Set the camera's hue.
+	 * 
+	 * @param newHue The desired hue value from -128 up to 127.
+	 */
+	public void setHue( int newHue ) {
+		setCameraProperty( "Hue", newHue );
+	}
+	
+	/** Get the camera's current saturation value (0-127). */
+	public int getSaturation() {
+		try {
+			return getCameraProperty( "Saturation" );
+		} catch (IOException e) {
+			System.err.println("Camera: Could not get saturation from camera.");
+			return 63;
+		}
+	}
+	
+	/** Get the camera's current contrast value (0-127). */
+	public int getContrast() {
+		try {
+			return getCameraProperty( "Contrast" );
+		} catch (IOException e) {
+			System.err.println("Camera: Could not get contrast from camera.");
+			return 63;
+		}
+	}
+	
+	/** Get the camera's current brightness value (0-255). */
+	public int getBrightness() {
+		try {
+			return getCameraProperty( "Brightness" );
+		} catch (IOException e) {
+			System.err.println("Camera: Could not get brightness from camera.");
+			return 127;
+		}
+	}
+	
+	/** Get the camera's current hue value (-128-127). */
+	public int getHue() {
+		try {
+			return getCameraProperty( "Hue" );
+		} catch (IOException e) {
+			System.err.println("Camera: Could not get hue from camera.");
+			return 0;
+		}
+	}
+	
+	/** Get the camera's current AGC value (0-1). Deprecated because it doesn't work. */
+	@Deprecated
+	public int getChromaAGC() throws IOException  {
+		return 0;//getCameraProperty( "Chroma AGC" );
+	}
+	
+	/** Get the camera's current gain (0-127). Deprecated because it doesn't work. */
+	@Deprecated
+	public int getGain() throws IOException  {
+		return 0; //getCameraProperty( "Chroma Gain" );
+	}
+	
+	/** Set the value of a custom camera property.
+	 * 
+	 * @param propertyName The name of the custom camera property.
+	 * @param value The desired value for this property
+	 * @return true if the value could be set, false otherwise.
+	 */
+	public boolean setCameraProperty( String propertyName, int value ) {
+		int status = 2;
+		List<Control> controls = null;
+		try {
+			controls = videoDevice.getControlList().getList();
+			for(Control c: controls) {
+				if( c.getName().equals(propertyName) ) {
+					c.setValue( value );
+					status = 0;
+					break;
+				}
+			}
+		 } catch( V4L4JException e ) {
+			 e.printStackTrace();
+			 System.err.println("Camera: Could not set camera property '" + propertyName + "' to " + value);
+			 status = 1;
+		 } finally {
+			 if( controls != null )
+				 videoDevice.releaseControlList();
+		 }
+		 
+		 if( status == 2 )
+			 System.err.println("Camera: Could not find camera property '" + propertyName + "'");
+		 
+		 return status == 0;
+	}
+	
+	/** Retrieves the value of a custom camera property.
+	 * 
+	 * @param propertyName The name of the custom camera property.
+	 * @return The value of the property
+	 * @throws IOException If the property doesn't exist, or the value is outside the allowed range.
+	 */
+	public int getCameraProperty( String propertyName ) throws IOException {
+		List<Control> controls = null;
+		try {
+			controls = videoDevice.getControlList().getList();
+			for(Control c: controls) {
+				if( c.getName().equals(propertyName) )
+					return c.getValue();
+			}
+		 } catch( V4L4JException e ) {
+			 throw new IOException( e );
+		 } finally {
+			 if( controls != null )
+				 videoDevice.releaseControlList();
+		 }
+		 
+		 throw new IOException("Could not find camera property '" + propertyName + "'");
+	}
+	
+	/** Retrieves the range of a custom camera property.
+	 * 
+	 * @param propertyName The name of the custom camera property.
+	 * @return The range of the property ([min, max]).
+	 * @throws IOException if the property doesn't exist.
+	 */
+	public int getCameraProperty( String propertyName ) throws IOException {
+		List<Control> controls = null;
+		try {
+			controls = videoDevice.getControlList().getList();
+			for(Control c: controls) {
+				if( c.getName().equals(propertyName) )
+					return c.getValue();
+			}
+		 } catch( V4L4JException e ) {
+			 throw new IOException( e );
+		 } finally {
+			 if( controls != null )
+				 videoDevice.releaseControlList();
+		 }
+		 
+		 throw new IOException("Could not find camera property '" + propertyName + "'");
+	}
+	
+	/** Update method for the camera, should be called every frame. It grabs the newest frame from
+	 * the camera, which can then be retrieved from getFrame(). If not already connected it attempts
+	 * to connect to the camera.
+	 */
+	@SuppressWarnings("deprecation")
+	public void update() {
+		if( isConnected()  ) {
+			// TODO: Since getVideoFrame is deprecated, maybe a better idea would be
+			// to use the awesome frame callback feature that V4L4J offers.
+			if( frame != null )
+				frame.recycle();
+			
+			try {
+				frame = frameGrabber.getVideoFrame();
+			} catch (V4L4JException e) {
+				System.err.println("Camera: Could not grab frame: " + e.getMessage() + ". Attempting reconnection...");
+				disconnect();
+			}
+		} else {
+			try {
+				connect();
+				update();
+			} catch( IOException e ) {
+				System.err.println("Camera: Could not connect to camera this time-step (" + e.getMessage() + "). Attempting again soon.");
+			}
+		}
+	}
+	
+	/** Get the newest frame from the camera (from when update() was last called).
+	 * 
+	 * @return A buffered image containing the new frame.
+	 */
+	public BufferedImage getCameraImage() {
+		BufferedImage raw = frame.getBufferedImage();
+		return raw;
+	}
+	
+	/** Check whether the camera is connected.
+	 * 
+	 * @return true if the camera is connected, false otherwise.
+	 */
+	public boolean isConnected() {
+		return cameraConnected;
+	}
+	
+	/** Attempt to establish a connection to the camera.
+	 * 
+	 * @throws ConnectionFailed If the connection could not be established.
+	 */
+	public void connect() throws IOException {
+		try {
+			System.out.println("Camera: Opening video device '" + videoDeviceName + "'...");
+			videoDevice  = new VideoDevice( videoDeviceName );
+			
+			// Dump a list of the camera's properties and their ranges onto stdout.
+			System.out.println("Camera: Device opened. Adjustable properties are:");
+			List<Control> controls = null;
+			try {
+				controls = videoDevice.getControlList().getList();
+				for(Control c: controls)
+					System.out.println("Camera: " + c.getName() + " = " + c.getValue() + " in " + c.getMinValue() + "-" + c.getMaxValue());
+			 } catch( V4L4JException e ) {
+				 throw new IOException(e);
+			 } finally {
+				 if( controls != null )
+					 videoDevice.releaseControlList();
+			 }
+			
+			System.out.println("Camera: Creating frame grabber...");
+			frameGrabber = videoDevice.getBGRFrameGrabber(0, 0, 0, V4L4JConstants.STANDARD_PAL);
+			System.out.println("Camera: Feed resolution: " + frameGrabber.getWidth() + "x" + frameGrabber.getHeight());
+			System.out.println("Camera: Starting capture");
+			frameGrabber.startCapture();
+		} catch( V4L4JException e ) {
+			if( frameGrabber != null ) {
+				videoDevice.releaseFrameGrabber();
+				frameGrabber = null;
+			}
+			
+			if( videoDevice != null ) {
+				videoDevice.release();
+				videoDevice = null;
+			}
+			
+			throw new IOException( e );
+		}
+		System.out.println("Camera: Camera connected.");
+		cameraConnected = true;
+	}
+	
+	/** Terminates the connection to the camera, if connected. Does nothing if not. */
+	public void disconnect() {
+		System.out.println("Camera: Disconnecting camera.");
+		if( frameGrabber != null ) {
+			frameGrabber.stopCapture();
+			videoDevice.releaseFrameGrabber();
+			frameGrabber = null;
+		}
+		
+		if( videoDevice != null ) {
+			videoDevice.release();
+			videoDevice = null;
+		}
+		System.out.println("Camera: Camera disconnected.");
+		cameraConnected = false;
+	}
+}

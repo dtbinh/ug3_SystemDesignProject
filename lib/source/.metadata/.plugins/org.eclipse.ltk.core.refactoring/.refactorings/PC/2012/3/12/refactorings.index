@@ -1,0 +1,55 @@
+1332162125264	Delete element
+1332162134682	Copy file
+1332162163756	Delete element
+1332162170444	Copy file
+1332254229345	Rename type 'Renderer'
+1332316037160	Delete element
+1332316051744	Copy file
+1332316058597	Delete element
+1332316068304	Copy file
+1332317145414	Rename local variable 'towardsGoal'
+1332317304837	Rename local variable 'distance'
+1332511300032	Rename type 'MoveToAction'
+1332512373177	Change method 'applyAction'
+1332514577754	Delete element
+1332515437210	Rename compilation unit 'Action.java'
+1332515689179	Rename type 'MoveAction'
+1332520254386	Change method 'applyAction'
+1332594353733	Move compilation units
+1332594434776	Delete element
+1332606714766	Rename compilation unit 'KickBall.java'
+1332607241304	Copy compilation unit
+1332607283763	Delete element
+1332607525727	Rename type 'StopAction'
+1332608260933	Rename type 'DriveWithApproachAngle'
+1332608975707	Rename local variable 'kickTo'
+1332609718272	Move compilation unit
+1332617134752	Rename field 'ctrl'
+1332617661498	Rename method 'getGoalPosition'
+1332617668306	Rename field 'goalPosition'
+1332617696261	Rename field 'goalRotation'
+1332617719133	Rename method 'setGoalRotation'
+1332617730895	Rename local variable 'newGoalRotation'
+1332617928016	Rename method 'getRobotGoalPoint'
+1332618001141	Rename field 'goalOffset'
+1332618164401	Rename method 'getRotationDiff'
+1332618170790	Rename field 'rotationDiff'
+1332618342916	Rename field 'robot'
+1332618346859	Rename field 'intf'
+1332618802815	Rename method 'setGoalPosition'
+1332618810358	Rename local variable 'newGoalPosition'
+1332618850184	Rename method 'setGoalOffset'
+1332618855585	Rename local variable 'newGoalPointOffset'
+1332618926036	Rename method 'getGoalPointOffset'
+1332618944748	Rename method 'getNavPoint'
+1332618952286	Rename method 'getRobotPivot'
+1332619068931	Rename field 'F_GO_BACKWARDS'
+1332619089618	Rename field 'F_MATCH_ROTATION'
+1332619785400	Rename method 'getActionsLeftCount'
+1332619790849	Rename method 'hasActionsLeft'
+1332619873940	Extract local variable 'pitch'
+1332620076295	Rename field 'back'
+1332620168001	Delete elements
+1332621604236	Delete element
+1332686729206	Rename method 'areAllFlagsSet'
+1332688706090	Delete element

@@ -1,0 +1,22 @@
+1328530052109	Rename local variable 'a'
+1328530058229	Rename local variable 'b'
+1328531486230	Rename local variable 'i'
+1328532786791	Rename local variable 'robotIdx'
+1328532811294	Rename method 'processColours'
+1328532838831	Rename local variable 'ch'
+1328532852023	Rename local variable 'tmp31'
+1328532858102	Rename local variable 'tmp11'
+1328536365827	Rename local variable 's'
+1328537183807	Rename local variable 'maxScore'
+1328537201328	Rename local variable 'score'
+1328537216005	Rename method 'newContourScore'
+1328537224883	Rename local variable 'score'
+1328537913866	Rename method 'getCentroid'
+1328541582229	Rename field 'reset'
+1328629391749	Rename field 'angularVelocity'
+1328634874328	Copy compilation units
+1328635433228	Move compilation units
+1328635479207	Delete elements
+1328635505135	Move compilation unit
+1328713599458	Rename local variable 'c'
+1328713605577	Rename local variable 'c'

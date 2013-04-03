@@ -1,0 +1,115 @@
+package sdp;
+
+import javax.swing.JButton;
+
+public class PcServer {
+	private ImageViewer  viewer  = null;
+	private World        world   = null;
+	private Control      ctrl    = null;
+	private ControlPanel panel   = null;
+	private Timer        timer   = null;
+	private boolean      running = false;
+	private int          mode    = null;
+	
+	public PcServer() {
+		World.Settings settings = new World.Settings();
+		settings.ballState       = new BallState( new Vector2(0.0,0.0), 0.4);
+		settings.playerState     = new RobotState( RobotState.Team.BLUE,   new Vector2(0.5,0.5), new Vector2(0.3,0.3), 0.0 );
+		settings.opponentState   = new RobotState( RobotState.Team.YELLOW, new Vector2(0.5,0.5), new Vector2(0.3,0.3), 0.0 );
+		settings.pitchBottomLeft = new Vector2(0.0,0.0);
+		settings.pitchTopRight   = new Vector2(1.0,1.0);
+		
+		panel  = new ControlPanel();
+		viewer = new ImageViewer();
+		world  = new NxtWorld( settings, viewer, panel );
+		ctrl   = new Control( world, panel );
+	}
+	
+	
+	public boolean gotoOtherEnd( double ypos ) {
+		double band = 644.0/4;
+		Vector2 v = world.getPlayerState().getPosition();
+		if( v.getX() <= band ) {
+			ctrl.setGoalPosition( new Vector2( 3.0*band+3.0/4.0 * band, ypos ) );
+			System.out.println("Server: Go to right end.");
+			return true;
+		} else if( v.getX() >= 3*band ) {
+			ctrl.setGoalPosition( new Vector2( band/4.0, ypos ) );
+			System.out.println("Server: Go to left end.");
+			return true;
+		} else
+			return false;
+	}
+	
+	public void createGui() {
+		ControlPanel panel = new ControlPanel();
+		panel.setTitle( "Milestone 1 Controls" );
+		panel.addButton("Go to other end", new ControlPanel.ButtonCallback() {
+			@Override
+			public void buttonClicked(JButton b) {
+				mode = 1;
+			}
+		});
+		
+		panel.addButton("Penalty kick", new ControlPanel.ButtonCallback() {
+			@Override
+			public void buttonClicked(JButton b) {
+				mode = 2;
+			}
+		});
+		
+		panel.addButton("Follow ball", new ControlPanel.ButtonCallback() {
+			@Override
+			public void buttonClicked(JButton b) {
+				mode = 3;
+			}
+		});
+		
+		panel.addButton("Do nothing", new ControlPanel.ButtonCallback() {
+			@Override
+			public void buttonClicked(JButton b) {
+				mode = 0;
+			}
+		});
+		
+	}
+	
+	public void run() {
+		running = true;
+		
+		int step = 0;
+		double kickAgain = 0.0;
+
+		
+		while( running ) {
+			timer.update();
+			world.update();
+			
+			if( mode == 0 ) {
+				ctrl.setStationary( true );
+			} else if( mode == 1 ) {
+				
+			} else if( mode == 2 ) {
+				
+			} else if( mode == 3 ) {
+				if( ctrl.hasReachedGoal() )
+					ctrl.kick();
+				Vector2 pos  = world.getPlayerState().getPosition();
+				Vector2 goal = world.getBallState().getPosition();
+				Vector2 vel  = world.getBallState().getVelocity();
+				double  dist = goal.minus( pos ).computeNorm();
+				goal = goal.plus( vel.times( dist / 0.3 ) );
+				goal = goal.minus( goal.minus(pos).computeUnit().times(-0.05) );
+				ctrl.setStationary( false );
+				ctrl.setGoalPosition( goal );
+			}
+			
+			
+		}
+	}
+	
+	public static void main( String args[] ) {
+		PcServer server = new PcServer();
+		server.run();
+	}
+}

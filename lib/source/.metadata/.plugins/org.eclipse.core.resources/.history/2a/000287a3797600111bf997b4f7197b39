@@ -1,0 +1,91 @@
+package sdp.server.strategy.action;
+
+import sdp.server.Control;
+import sdp.server.World;
+import sdp.server.math.Line;
+import sdp.server.math.Vector2;
+import sdp.server.strategy.Strategy;
+
+public class KickBallAction extends StoredTagAction implements MovementAction {
+	public static final int IGNORE_OPPONENT = 0;
+	public static final int AROUND_OPPONENT = 1;
+		
+	public double  sigmoidK        = -32.0;
+	public double  maxDist         = 0.2;
+	public int     kickPointOption = IGNORE_OPPONENT;
+		
+		
+	public KickBallAction() {
+		
+	}
+		
+	public KickBallAction( int kickPointOption ) {
+		this.kickPointOption = kickPointOption;
+	}
+	
+	@Override
+	public Vector2 getPosition( Strategy strategy ) {
+		World   world = strategy.getWorld();
+		Control ctrl  = strategy.getControl();
+		
+		Vector2 ballPos = world.getBallState().getPosition();
+		double  ballRad = world.getBallState().getRadius();
+		Vector2 robPos  = ctrl.getCurrentNavPoint();
+		Vector2 kickAt  = null;
+		
+		if( kickPointOption == IGNORE_OPPONENT )
+			kickAt = strategy.computeNoOpponentKickPoint( ballPos );
+		else
+			kickAt = strategy.computeWithOpponentKickPoint( ballPos );
+		
+		Line ballGoalLine   = Line.fromTwoPoints( ballPos, kickAt );
+		Line ballGoalNormal = ballGoalLine.getNormal( robPos );
+		
+		double distToBallGoalLine = ballGoalLine.distanceTo( robPos );
+		double ourSide = strategy.getOurSide();
+		
+		ballPos = ballPos.plus( world.getBallState().getLinearVelocity().times( world.getTimeStep() * 2.0 ) );
+		
+		
+		Vector2 approachPoint = ballGoalLine.pointAt( 0.05 - robPos.minus(ballPos).computeNorm() * 0.7 );
+		double  intersect = Line.fromTwoPoints( robPos, approachPoint ).intersectCircle( ballPos, ballRad + ctrl.getTurnRadius() );
+		
+		
+		if( !Double.isNaN( intersect ) && intersect < approachPoint.minus( robPos ).computeNorm() && ballGoalLine.intersect( ballGoalNormal ) >= 0 ) {
+			Vector2 offset = (new Vector2( ourSide, -Math.signum( ballPos.getY() - robPos.getY() ) )).computeUnit();
+			return ballPos.plus( offset.times( ballPos.minus(robPos).computeNorm()*0.7 ) );
+		} else {
+			return approachPoint;
+		}
+	}
+	
+	public static double sigmoid( double x, double k ) {
+		double sigX;
+		
+		if( x < 0 ) {
+			x    = - x;
+			sigX = - 1.0;
+		} else {
+			sigX = 1.0;
+		}
+		
+		if( x > 1.0 )
+			x = 1.0;
+				
+		return sigX * k * x / ( k - x + 1 );
+	}
+		
+	@Override
+	protected boolean applyActionNoAbort( Strategy strategy ) {
+		Control ctrl = strategy.getControl();
+		ctrl.setDestination( getPosition( strategy ) );
+		ctrl.unsetFlags( Control.F_STATIONARY | Control.F_REVERSE | Control.F_STOP_AT_GOAL );
+		
+		if( strategy.shouldKick() ) {
+			System.out.println("KICK");
+			strategy.getControl().kick();
+		}
+		return false;
+	}
+	
+}

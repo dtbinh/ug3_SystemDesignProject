@@ -1,0 +1,739 @@
+package sdp;
+
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+
+import com.googlecode.javacv.cpp.opencv_core.CvContour;
+import com.googlecode.javacpp.Loader;
+
+import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+
+
+public class Vision {
+	// FIXME: This should be set to "", but I can't figure out where Eclipse puts its working directory
+	private static String dirRoot    = "/afs/inf.ed.ac.uk/user/s09/s0906176/SDP";
+	private static String dataFolder = dirRoot + "/data";
+	
+	private static final int CROPPED_ONE_CHANNEL_IMAGES = 16;
+	private static final int CROPPED_THREE_CHANNEL_IMAGES = 4;
+	private static final int UNCROPPED_THREE_CHANNEL_IMAGES = 4;
+	private static final int UNCROPPED_ONE_CHANNEL_IMAGES = 8;
+	
+	private IplImage   raw, undistorted, cropped;
+	private IplImage[] cropped1, cropped3;
+	private IplImage[] uncropped3, uncropped1;
+	private CvMemStorage storage = CvMemStorage.create();
+	private IplImage mapx, mapy;
+	private BufferedImage debugImage;
+	
+	private int frameId     = 0;
+	private int showChannel = -1;
+	
+	private EntityLearner[] learners = {
+			new EntityLearner( Entity.BALL ),
+			new EntityLearner( Entity.YELLOW_ROBOT ),
+			new EntityLearner( Entity.BLUE_ROBOT ),
+			new EntityLearner( Entity.BLACK_CIRCLE ),
+			new EntityLearner( Entity.PITCH )
+	};
+	
+	private int[][][] entProps = { { {   7,  8 }, {  24,  9 }, {  79, 24 }, { 0, 0 }, { 1,  2 } },   // HUE
+                                   { { 166, 88 }, { 166, 88 }, { 166, 88 }, { 0, 0 }, { 3,  4 } },   // SAT
+                                   { { 187, 67 }, { 187, 67 }, { 187, 67 }, { 0, 0 }, { 5,  6 } } }; // VAL
+	
+	private CvScalar[] entDbgCols = { cvScalar(0,0,255,0), cvScalar(0,255,255,0), cvScalar(255,0,0,0) };
+	private int[] suppressAngle = { 0, 0 };
+	
+	private CvRect cropRect = cvRect(30, 90, 640, 360);
+	//private CvRect cropRect = cvRect(40, 79, 543, 292);
+	//private CvRect cropRect = cvRect(0,0,720,576);
+	private CvRect trainRect   = null;
+	private Entity trainEntity = Entity.BALL;
+	private int    trainUntil = -1; 
+	private double kSigma   = 1.0;
+	
+	private double pixelsToWorld = 0.037037;
+	
+	public enum Mode {
+		RAW,
+		CHANNELS,
+		PITCH
+	}
+	
+	public enum Value {
+		MEAN,
+		RANGE
+	}
+	
+	public enum Property {
+		HUE, SATURATION, VALUE
+	}
+	
+	public enum Entity {
+		BALL, YELLOW_ROBOT, BLUE_ROBOT, BLACK_CIRCLE, PITCH
+	}
+	
+	public void processImage( BufferedImage frame, RobotState robot1, RobotState robot2, BallState ball, double timeStep ) {
+		if( frameId == 0 ) {
+			allocUncroppedImages( frame );
+			allocCroppedImages();
+			loadCalibrationInfo();
+			loadProperties();
+		} else {
+			raw.copyFrom( copyBufferedImageHack(frame) );
+		}
+		
+		undistort();
+		applyCrop();
+		
+		// FIXME: Move training in a separate method.
+		if( isTraining() ) {
+			learners[ trainEntity.ordinal() ].learn( trainRect );
+		} else if( isJustDoneTraining() ) {
+			System.out.println("Vision: Learning result:");
+			for( Property prop : Property.values() ) {
+				System.out.println("Vision: " + trainEntity.toString() + " " + prop.toString() + " = " + getPropertyMin(trainEntity, prop) + "-" + getPropertyMax(trainEntity, prop));
+			}
+			resetTrainRect();
+		}
+		
+		RobotState[] robotStates = { null, null };
+		if( robot1.getTeam() == RobotState.Team.YELLOW ) {
+			robotStates[ 0 ] = robot1;
+			robotStates[ 1 ] = robot2;
+		} else {
+			robotStates[ 0 ] = robot2;
+			robotStates[ 1 ] = robot1;
+		}
+		
+		debugImage = processColours( robotStates, ball, timeStep ).getBufferedImage();
+		frameId ++;
+	}
+	
+	public BufferedImage getDebugImage() {
+		return debugImage;
+	}
+	
+	public boolean isShowingChannel() {
+		// TODO: Change channel showing into a more robust debug level system.
+		return showChannel != -1;
+	}
+	
+	public void showEntityChannel( Entity e ) {
+		showChannel = e.ordinal(); 
+	}
+	
+	public void showNormal() {
+		showChannel = -1;
+	}
+	
+	// TODO: These methods, while general, are pretty cumbersome to use. Would be nice to have
+	// convenience methods that wrap them (e.g. setMeanHue( entity, newMeanValue ) etc. ).
+	public void setProperty( Entity entity, Property prop, Value valueType, int value ) {
+		entProps[ prop.ordinal() ][ entity.ordinal()  ][ valueType.ordinal() ] = value;
+	}
+	
+	public int getProperty( Entity type, Property prop, Value valueType ) {
+		return entProps[ prop.ordinal() ][ type.ordinal() ][ valueType.ordinal() ];
+	}
+	
+	public int getPropertyMean( Entity type, Property prop ) {
+		return getProperty( type, prop, Value.MEAN );
+	}
+	
+	public int getPropertyRange( Entity type, Property prop ) {
+		return getProperty( type, prop, Value.RANGE );
+	}
+	
+	public int getPropertyMin( Entity type, Property prop ) {
+		return clamp255( getProperty( type, prop, Value.MEAN) -
+		                 getProperty( type, prop, Value.RANGE)
+		);
+	}
+	
+	public int getPropertyMax( Entity type, Property prop ) {
+		return clamp255( getProperty( type, prop, Value.MEAN) +
+		                 getProperty( type, prop, Value.RANGE)
+		);
+	}
+	
+	public void setCropLeft( int newValue ) {
+		cropRect.x( newValue );
+	}
+	
+	public void setCropTop( int newValue ) {
+		cropRect.y( newValue );
+	}
+	
+	public void setCropWidth( int newValue ) {
+		cropRect.width( newValue );
+	}
+	
+	public void setCropHeight( int newValue ) {
+		cropRect.height( newValue );
+	}
+	
+	public int getCropLeft() {
+		return cropRect.x();
+	}
+	
+	public int getCropTop() {
+		return cropRect.y();
+	}
+	
+	public int getCropWidth() {
+		return cropRect.width();
+	}
+	
+	public int getCropHeight() {
+		return cropRect.height();
+	}
+	
+	public double getKSigma() {
+		return kSigma;
+	}
+	
+	public void setKSigma( double newValue ) {
+		kSigma = newValue;
+		for( EntityLearner el : learners )
+			el.refresh();
+	}
+	
+	public void setTrainRect( int x1, int y1, int x2, int y2 ) {
+		if(!isTraining()) {
+			int aux;
+			if( x1 > x2 ) { aux = x1; x1 = x2; x2 = aux; }
+			if( y1 > y2 ) { aux = y1; y1 = y2; y2 = aux; }
+			
+			trainRect = cvRect(x1,y1,x2-x1,y2-y1);
+		}
+	}
+	
+	public void resetTrainRect() {
+		if(!isTraining())
+			trainRect = null;
+	}
+	
+	public void train( Entity e ) {
+		if( trainRect == null ) {
+			System.out.println("Vision: No training rectangle.");
+		} else if( isTraining() ) {
+			System.out.println("Vision: Already training...");
+		} else {
+			System.out.println("Vision: Started training...");
+			trainUntil  = frameId + 50;
+			trainEntity = e;
+		}
+	}
+	
+	public void saveProperties() {
+		saveProperties("entity_props.xml");
+	}
+	
+	public void saveProperties( String filename ) {
+		CvMat data = new CvMat( cvLoad(dataFolder + "/" + filename) );
+		
+		if( !data.isNull() ) {
+			System.out.println("Vision: Property file already exists, backing up...");
+			cvSave(dataFolder + "/b4save_" + filename, data);
+		}
+		
+		int m = Property.values().length;
+		int n = Entity.values().length;
+		int p = Value.values().length;
+		
+		data = CvMat.create( m*n*p, 1 );
+		
+		int s = 0;
+		for( int i = 0 ; i < m ; ++ i )
+			for( int j = 0 ; j < n ; ++ j )
+				for( int k = 0 ; k < p ; ++ k ) {
+					data.put(s ++, entProps[i][j][k] );
+				
+				}
+		
+		cvSave(dataFolder + "/" + filename, data);
+		System.out.println("Vision: Properties saved.");
+	}
+	
+	public void loadProperties() {
+		loadProperties("entity_props.xml");
+	}
+	
+	public void loadProperties( String filename ) {
+		System.out.println("Vision: Saving current properties...");
+		saveProperties( "b4load_entity_props.xml" );
+		System.out.println("Vision: Loading new properties...");
+		CvMat data = new CvMat( cvLoad(dataFolder + "/" + filename) );
+		
+		int m = Property.values().length;
+		int n = Entity.values().length;
+		int p = Value.values().length;
+		
+		if( data.isNull() ) {
+			System.err.println("Vision: Could not open file.");
+		} else if( data.rows() != m*n*p || data.cols() != 1 ) {
+			System.err.println("Vision: Invalid dimensions in file.");
+		} else {
+			int s = 0;
+			for( int i = 0 ; i < m ; ++ i )
+				for( int j = 0 ; j < n ; ++ j )
+					for( int k = 0 ; k < p ; ++ k )
+						entProps[ i ][ j ][ k ] = (int)data.get( s ++ );
+		}
+	}
+	
+	public BufferedImage autoCrop() {
+		IplImage blur  = uncropped3[ 0 ], hsv = uncropped3[ 1 ];
+		IplImage hue   = uncropped1[ 0 ], sat = uncropped1[ 1 ], val = uncropped1[ 2 ];
+		IplImage tmp1  = uncropped1[ 3 ], tmp2 = uncropped1[ 4 ];
+		IplImage pitch = uncropped1[ 5 ];
+		
+		// Add a linear blur filter to get rid of a bit of grain (we don't care about fine detail here)
+		cvSmooth( raw, blur, CV_BLUR, 5 );
+		
+		// Convert the blurred image to HSV, save the channels in hue,sat and val
+		cvCvtColor( blur, hsv, CV_BGR2HSV );
+		cvSplit( hsv, hue, sat, val, null );
+		
+		// Select pixels with minHue[PITCH] < hue < maxHue[PITCH], save mask in pitch
+		cvThreshold( hue, tmp1, getPropertyMin( Entity.PITCH, Property.HUE ), 255, CV_THRESH_BINARY );
+		cvThreshold( hue, tmp2, getPropertyMax( Entity.PITCH, Property.HUE ), 255, CV_THRESH_BINARY_INV );
+		cvAnd( tmp1, tmp2, pitch, null );
+		
+		// Further select non-dark pixels (val > minValue / 2) to get rid of black boundaries of the pitch.
+		cvThreshold( val, tmp1, getPropertyMin( Entity.PITCH, Property.VALUE ) * .5, 255, CV_THRESH_BINARY );
+		cvAnd( pitch, tmp1, pitch, null );
+		
+		// Get the contours in the pitch mask
+		CvSeq seq = new CvSeq(null);
+		cvFindContours(pitch, storage, seq,Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+		
+		// If there are any contours, find the one with the largest bounding box in pitch
+		if( !seq.isNull() ) {
+			CvRect maxRect = null;
+			for( CvSeq s = seq ; s != null && !s.isNull() ; s = s.h_next() ) {
+				CvRect r = cvBoundingRect(s, 0);
+				if( maxRect == null || r.width()*r.height() > maxRect.width()*maxRect.height() )
+					maxRect = r;
+			}
+			
+			// Update the crop rectangle to the max rectangle
+			System.out.println("Vision: Pitch: Rect = " + maxRect.x() + ", " + maxRect.y() + " ; " + maxRect.width() + ", " + maxRect.height() );
+			cropRect = maxRect;
+			
+			// Realloc images to the size of the crop rectangle
+			allocCroppedImages();
+		}
+		
+		return raw.getBufferedImage();
+	}
+	
+	private IplImage processColours( RobotState[] robots, BallState ball, double timeStep ) {
+		// FIXME: Break this into many little, nice, reusable methods.
+		// FIXME: Add a more controlled pipeline (blur on/off, median filter on/off, open&close on/off etc.)
+		
+		IplImage   ret = cropped3[ 0 ], tmp31 = cropped3[ 1 ];
+		IplImage   a   = cropped1[ 0 ], b    = cropped1[ 1 ];
+		IplImage[] hsv = { cropped1[ 2 ], cropped1[ 3 ], cropped1[ 4 ] };
+		IplImage[] ch  = { cropped1[ 5 ], cropped1[ 6 ], cropped1[ 7 ], cropped1[ 8 ], cropped1[ 9 ] };
+		
+		cvCopy( cropped, ret );
+		cvCvtColor( ret, tmp31, CV_BGR2HSV ); 
+		cvSplit( tmp31, hsv[0], hsv[1], hsv[2], null );
+		
+		for( int i = 0 ; i < 5; ++ i ) {
+			maskProperties( hsv, Entity.values()[ i ], a, ch[ i ] );
+			cvSmooth( ch[ i ], ch[ i ], CV_MEDIAN, 5);
+			//cvMorphologyEx(ch[ i ], ch[ i ], null, null, CV_MOP_OPEN, 1 );
+			//cvMorphologyEx(ch[ i ], ch[ i ], null, null, CV_MOP_CLOSE, 1 );
+		}
+		
+		if( isShowingChannel() && showChannel <= 2 ) {
+			cvAndS( b, cvScalarAll(0), b, null);
+			cvOr( b, ch[0], b, null);
+			cvOr( b, ch[1], b, null);
+			cvOr( b, ch[2], b, null);
+			
+			cvMerge( ch[2], ch[1], ch[0], null, tmp31 );
+			cvAndS( ret, cvScalarAll(0), ret, b );
+			cvOr( ret, tmp31, ret, null );
+		}
+		
+		////////// DETECT ROBOTS
+		for( int robotIdx = 0 ; robotIdx < 2 ; ++ robotIdx ) {
+			RobotState robot = robots[ robotIdx ];
+			CvSeq contour = getLargestContour( ch[ robotIdx + 1 ], a);
+			
+			if( contour != null ) {
+				// - Get the centroid of the whole contour.
+				Vector2 centroid = getCentroid(contour);
+				Vector2 dirLine  = null;
+				
+				if( frameId != 0 )
+					centroid = centroid.times(0.9).plus( robot.getPosition().times(0.1).times( 1.0 / pixelsToWorld ) );
+				
+				// - Find the two largest convexity defects.
+				CvSeq hull   = cvConvexHull2( contour, storage, CV_CLOCKWISE, 0 );
+				CvSeq defect = cvConvexityDefects( contour, hull, storage );
+				
+				// We need to have at least two defects.
+				if( defect.total() >= 2 ) {
+					// Find the two defects of largest depth
+					CvConvexityDefect[] bigDefects = { null, null };
+					for( int i = 0 ; i < defect.total() ; ++ i ) {
+						CvConvexityDefect d = new CvConvexityDefect( cvGetSeqElem( defect, i ) );
+						if( bigDefects[ 0 ] == null || d.depth() > bigDefects[ 0 ].depth() ) {
+							bigDefects[ 1 ] = bigDefects[ 0 ];
+							bigDefects[ 0 ] = d;
+						} else if( bigDefects[ 1 ] == null || d.depth() > bigDefects[ 1 ].depth() ) {
+							bigDefects[ 1 ] = d;
+						}
+					}
+					
+					// - Find the line between the two defects - we'll cut the contour along it. 
+					CvPoint[] cutLine = { bigDefects[ 0 ].depth_point(), bigDefects[ 1 ].depth_point() };
+					int[] cutIdx = { -1, -1 };
+					for( int i = 0 ; i < contour.total() ; ++ i ) {
+						CvPoint point = new CvPoint( cvGetSeqElem( contour, i ) );
+						if( point.x() == cutLine[ 0 ].x() && point.y() == cutLine[ 0 ].y() ) {
+							cutIdx[ 0 ] = i;
+							if( cutIdx[ 1 ] != -1 )
+								break;
+						}
+						if( point.x() == cutLine[ 1 ].x() && point.y() == cutLine[ 1 ].y() ) {
+							cutIdx[ 1 ] = i;
+							if( cutIdx[ 0 ] != -1 )
+								break;
+						}
+					}
+					
+					// Put the indices in ascending order
+					if( cutIdx[ 0 ] > cutIdx[ 1 ] ) {
+						int aux = cutIdx[ 0 ];
+						cutIdx[ 0 ] = cutIdx[ 1 ];
+						cutIdx[ 1 ] = aux;
+					}
+					
+					// - Cut up the contour into two pieces, along cutLine
+					CvSeq[] cutContours = { null, null };
+					cutContours[ 0 ] = cvSeqSlice( contour, cvSlice( cutIdx[0], cutIdx[1] + 1), storage, 0 );
+					cutContours[ 1 ] = cvSeqSlice( contour, cvSlice( cutIdx[1] - contour.total(), cutIdx[0] + 1), storage, 0 );
+					
+					// - Get the direction line.
+					// The line is defined by the centroids of the two contour slices
+					Vector2[] cutPoints = { getCentroid( cutContours[ 0 ] ), getCentroid( cutContours[ 1 ] ) };				
+					dirLine = cutPoints[ 1 ].minus(cutPoints[ 0 ]).computeUnit();
+					
+					if( isShowingChannel() ) {
+						cvCircle(ret, new CvPoint( cutPoints[0].getIntX(), cutPoints[0].getIntY() ), 3, cvScalar(255,255,255,0), -1, 8, 0);
+						cvCircle(ret, new CvPoint( cutPoints[1].getIntX(), cutPoints[1].getIntY() ), 3, cvScalar(255,255,255,0), -1, 8, 0);
+					}
+					
+					// To figure out the direction along the line, w compute the intersection of dirLine
+					// with both contour slices. The direction will be from the intersection point closer to 
+					// the centroid towards the one further away.
+					for( int i = 0 ; i < 2 ; ++ i ) {
+						CvSeq c = cutContours[ i ];
+						for( int j = 1 ; j < c.total() ; ++ j ) {
+							Vector2 p1 = new Vector2( new CvPoint(cvGetSeqElem(c,j-1)) );
+							Vector2 p2 = new Vector2( new CvPoint(cvGetSeqElem(c,j)) );
+							Vector2 v  = p2.minus(p1);
+							double d = lineIntersection( p1, v, centroid, dirLine );
+							double pix = 1.0 / v.computeNorm();
+							if( d >= -pix && d <= 1.0+pix ) {
+								cutPoints[ i ] = p1.plus( v.times(d) );
+								break;
+							}
+						}
+					}
+					
+					// If the intersection point of slice 1 is closer to the centroid, we need to reverse the line.
+					if( cutPoints[0] == null || cutPoints[1] == null  ) continue;
+					if( cutPoints[0].minus( centroid ).computeSquaredNorm() > cutPoints[1].minus(centroid).computeSquaredNorm() )
+						dirLine  = dirLine.times( -1 );
+					
+					// - Draw debug info if needed
+					if( isShowingChannel() ) {
+						cvCircle(ret, new CvPoint( cutPoints[0].getIntX(), cutPoints[0].getIntY() ), 3, cvScalar(255,255,255,0), -1, 8, 0);
+						cvCircle(ret, new CvPoint( cutPoints[1].getIntX(), cutPoints[1].getIntY() ), 3, cvScalar(255,255,255,0), -1, 8, 0);
+						cvLine( ret, cutLine[0], cutLine[1], cvScalar(0,0,255,0), 1, 8, 0 );
+						//cvCircle(ret, cutLine[0], 3, cvScalar(0,0,255,0), 1, 8, 0);
+						//cvCircle(ret, cutLine[1], 3, cvScalar(0,0,255,0), 1, 8, 0);
+					}
+					
+					// - Compute the rotation angle based on the line, perform smoothing and update the robot state.
+					double newAngle = Control.capAngle( Math.atan2(dirLine.getY(),dirLine.getX()) );
+					double oldAngle = Control.capAngle( robot.getRotation() );
+					
+					if( frameId == 0 || suppressAngle[ robotIdx ] > 25 ) {
+						suppressAngle[ robotIdx ] = 0;
+					} else if(  Math.abs( Control.angleDiff( newAngle, oldAngle ) ) <= Math.PI/2 ) {	
+						//newAngle = Control.capAngle( newAngle * 0.9 + oldAngle * 0.1 );
+						suppressAngle[ robotIdx ] = Math.max(0, suppressAngle[ robotIdx ] - 1 );
+					} else {
+						suppressAngle[ robotIdx ] ++;
+						newAngle = robot.getRotation();
+						if( isShowingChannel() ) {
+							dirLine  = new Vector2( Math.cos( newAngle ), Math.sin( newAngle ) );
+							dirLine  = dirLine.times(50.0).plus(centroid);
+							CvPoint p1 = new CvPoint( centroid.getIntX(), centroid.getIntY() );
+							CvPoint p2 = new CvPoint( dirLine.getIntX(),  dirLine.getIntY() );
+							cvLine(ret,p1,p2,cvScalar(0,0,255,0),1,8,0);
+							
+						}
+					}
+					
+					robot.update(centroid, newAngle);
+	
+					dirLine  = new Vector2( Math.cos( newAngle ), Math.sin( newAngle ) );
+					dirLine  = dirLine.times(15.0).plus(centroid);
+					// - Draw the position/orientation
+					CvPoint p1 = new CvPoint( centroid.getIntX(), centroid.getIntY() );
+					CvPoint p2 = new CvPoint( dirLine.getIntX(), dirLine.getIntY() );
+					//cvLine(ret,p1,p2,cvScalarAll(0),4,8,0);
+					//cvCircle(ret, p1, 6, cvScalarAll(0), -1, 8, 0);
+					//cvCircle(ret, p1, 4, entDbgCols[ robotIdx + 1 ], -1, 8, 0);
+					cvLine(ret,p1,p2,cvScalar(0,0,0,0),2,8,0);
+				}
+			}
+		}
+		////////// DETECT BALL
+		CvSeq contour = getLargestContour( ch[0], a );
+		if( contour != null ) {
+			Vector2 ballPos = getCentroid( contour );
+			ball.update( ballPos, timeStep );
+			CvRect r = cvRect( ballPos.getIntX(), ballPos.getIntY(), 10, 10);
+			r.x( r.x() - 5 ); r.y( r.y() - 5 );
+			cvRectangleR( ret, r, entDbgCols[Entity.BALL.ordinal()], 1, 8, 0);
+		}
+		
+		if( trainRect != null )
+			cvRectangleR(ret, trainRect, cvScalar(255,255,0,0), 1, 8, 0);
+		
+		if( isShowingChannel() && showChannel > 2 )
+			return ch[ showChannel ];
+		else
+			return ret;
+		
+	}
+
+	private double lineIntersection( Vector2 o1, Vector2 d1, Vector2 o2, Vector2 d2 ) {
+		return ( o2.minus(o1) ).cross(d2) / d1.cross(d2);
+	}
+	
+	private CvSeq getLargestContour( IplImage img, IplImage temp ) {
+		CvSeq seq = new CvSeq(null);
+		cvCopy( img, temp );
+		cvFindContours( temp, storage, seq,Loader.sizeof(CvContour.class), CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE );
+		
+		if( seq.isNull() )
+			return null;
+		else if( seq.elem_size() == 1 )
+			return seq;
+		else {
+			CvSeq  maxSeq  = null;
+			double maxArea = -1;
+			for( CvSeq s = seq ; s != null && !s.isNull() ; s = s.h_next() ) {
+				double area = Math.abs( cvContourArea( s, CV_WHOLE_SEQ, 0  ) );
+				if( area > maxArea ) {
+					maxArea = area;
+					maxSeq  = s;
+				}
+			}
+			
+			return maxSeq;
+		}
+	}
+	
+	private Vector2 getCentroid( CvSeq contour ) {
+		CvMoments moments = new CvMoments();
+		cvMoments( contour, moments, 0 );
+		return new Vector2(moments.m10() / moments.m00(), ( moments.m01() / moments.m00() ));
+	}
+	
+	private void maskProperties( IplImage[] hsv, Entity entity, IplImage temp, IplImage dest ) {
+		cvThreshold( hsv[ 0 ], dest, getPropertyMin(entity, Property.HUE), 255.0, CV_THRESH_BINARY );
+		cvThreshold( hsv[ 0 ], temp, getPropertyMax(entity, Property.HUE), 255.0, CV_THRESH_BINARY_INV );
+		cvAnd( dest, temp, dest, null );
+		
+		
+		for( int i = 1; i < 3 ; ++ i ) {
+			cvThreshold( hsv[ i ], temp, getPropertyMin(entity, Property.values()[ i ]), 255.0, CV_THRESH_BINARY );
+			cvAnd( dest, temp, dest, null );
+			cvThreshold( hsv[ i ], temp, getPropertyMax(entity, Property.values()[ i ]), 255.0, CV_THRESH_BINARY_INV );
+			cvAnd( dest, temp, dest, null );
+		}
+	}
+
+	private void loadCalibrationInfo() {
+		CvMat intrinsics = new CvMat(cvLoad(dataFolder + "/Intrinsics.yml"));
+		CvMat distortion = new CvMat(cvLoad(dataFolder + "/Distortion.yml"));
+		
+		if( intrinsics == null || distortion == null ) {
+			System.err.println("Can't open distortion info.");
+		} else {
+			mapx = IplImage.create(cvGetSize(raw), IPL_DEPTH_32F, 1);
+			mapy = IplImage.create(cvGetSize(raw), IPL_DEPTH_32F, 1);
+			cvInitUndistortMap(intrinsics, distortion, mapx, mapy);
+		}
+	}
+	
+	private void undistort() {
+		if( mapx == null || mapy == null ) {
+			undistorted = raw;
+		} else {
+			cvCopy( raw, uncropped3[0] );
+			cvRemap( uncropped3[0], undistorted, mapx, mapy, CV_INTER_LINEAR | CV_WARP_FILL_OUTLIERS, cvScalarAll(0) );
+		}
+	}
+	
+	private void applyCrop() {
+		clampCropRect( cropRect, undistorted );
+		cvSetImageROI( undistorted, cropRect );
+		cvCopy( undistorted, cropped );
+		cvResetImageROI( undistorted );
+	}
+	
+	private void allocUncroppedImages( BufferedImage frame ) {
+		raw         = IplImage.createFrom( copyBufferedImageHack(frame) );
+		undistorted = newImage( raw, 3 );
+		
+		uncropped3 = new IplImage[ UNCROPPED_THREE_CHANNEL_IMAGES ];
+		for( int i = 0 ; i < uncropped3.length ; ++ i )
+			uncropped3[ i ] = newImage( raw, 3 );
+		
+		uncropped1 = new IplImage[ UNCROPPED_ONE_CHANNEL_IMAGES ];
+		for( int i = 0 ; i < uncropped1.length ; ++ i )
+			uncropped1[ i ] = newImage( raw, 1 );
+	}
+	
+	private void allocCroppedImages() {
+		assert raw != null;
+		
+		cropped = IplImage.create( cvSize(cropRect.width(), cropRect.height()), raw.depth(), 3 );
+		
+		cropped1 = new IplImage[  CROPPED_ONE_CHANNEL_IMAGES  ];
+		cropped3 = new IplImage[ CROPPED_THREE_CHANNEL_IMAGES ];
+		
+		for( int i = 0 ; i < cropped1.length ; ++ i )
+			cropped1[ i ] = newImage( cropped, 1 );
+		
+		for( int i = 0 ; i < cropped3.length ; ++ i )
+			cropped3[ i ] = newImage( cropped, 3 );
+	}
+	
+	private static IplImage newImage( IplImage img, int channels ) {
+		return IplImage.create( cvGetSize(img), img.depth(), channels );
+	}
+	
+	private static void clampCropRect( CvRect crop, IplImage img ) {
+		if( crop.x() < 0 ) crop.x(0);
+		if( crop.y() < 0 ) crop.y(0);
+		
+		if( crop.width()  + crop.x() > img.width() )
+			crop.width(img.width() - crop.x() );
+		
+		if( crop.height() + crop.y() > img.height() )
+			crop.height(img.height() - crop.y() );
+	}
+
+	private static BufferedImage copyBufferedImageHack( BufferedImage frame ) {
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorModel cm = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+		BufferedImage copy = new BufferedImage(cm, frame.copyData(null), false, null);
+		return copy;
+	}
+	
+	private static int clamp255( int x ) {
+		if( x < 0 )
+			return 0;
+		else if( x > 255 )
+			return 255;
+		else
+			return x;
+	}
+	
+	private boolean isTraining() {
+		return frameId < trainUntil;
+	}
+	
+	private boolean isJustDoneTraining() {
+		return frameId == trainUntil;
+	}
+	
+	private class EntityLearner {
+		private double   sum0 = 0;
+		private double[] sum1 = { 0, 0, 0 };
+		private double[] sum2 = { 0, 0, 0 };
+		private Entity entity;
+		
+		public EntityLearner( Entity e ) {
+			entity = e;
+		}
+		
+		public void learn( CvRect rect ) {
+			clampCropRect( rect, cropped );
+			int newCount = rect.width()*rect.height();
+			
+			if( newCount == 0 )
+				return;
+			
+			// udpate sum0: sum(x^0)
+			sum0 += newCount;
+			
+			IplImage hsv = cropped3[0], blur = cropped3[1];
+			IplImage tmp = IplImage.create(cvSize(rect.width(),rect.height()), IPL_DEPTH_64F, 3);
+			
+			cvSmooth(cropped, blur, CV_BLUR, 3);
+			cvCvtColor( blur, hsv, CV_BGR2HSV );
+			cvSetImageROI( hsv, rect );
+			cvConvertScale( hsv, tmp, 1.0/255.0, 0);
+			cvResetImageROI( hsv );
+			
+			// update sum1: sum(x^1)
+			CvScalar scalar = cvSum( tmp );
+			sum1[ 0 ] += scalar.getVal(0);
+			sum1[ 1 ] += scalar.getVal(1);
+			sum1[ 2 ] += scalar.getVal(2);
+			
+			// update sum2: sum(x^2)
+			cvMul(tmp, tmp, tmp, 1.0);
+			scalar = cvSum( tmp );
+			sum2[ 0 ] += scalar.getVal(0);
+			sum2[ 1 ] += scalar.getVal(1);
+			sum2[ 2 ] += scalar.getVal(2);
+			
+			refresh();
+		}
+		
+		public void refresh() {
+			if( sum0 > 0 ) {
+				// Update mean & std. dev
+				setProperty( entity, Property.HUE,        Value.MEAN,  getMean( 0 ) );
+				setProperty( entity, Property.HUE,        Value.RANGE, getRange( 0 ) );
+				setProperty( entity, Property.VALUE,      Value.MEAN,  getMean( 1 ) );
+				setProperty( entity, Property.VALUE,      Value.RANGE, getRange( 1 ) );
+				setProperty( entity, Property.SATURATION, Value.MEAN,  getMean( 2 ) );
+				setProperty( entity, Property.SATURATION, Value.RANGE, getRange( 2 ) );
+			}
+		}
+		
+		public int getMean( int i ) {
+			return (int) Math.round((sum1[ i ] / sum0) * 255.0);
+		}
+		
+		public double getStd( int i ) {
+			return Math.sqrt( sum0 * sum2[ i ] - sum1[ i ] * sum1[ i ] ) / sum0 * 255.0 * (i>0?4.0:1.0);
+		}
+		
+		public int getRange( int i ) {
+			return (int) Math.round( getStd( i ) * kSigma );
+		}
+	}
+}
