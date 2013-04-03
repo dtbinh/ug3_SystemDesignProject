@@ -18,7 +18,6 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 		while (true) {
 			updateWorldState();
 			if (ball.getCoors() == null) continue;
-			System.out.println("HERE");
 			switch (robotMode) {
 				case PLAY:
 					playMode();
@@ -73,22 +72,28 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 		    (int) ourRobot.getCoors().euclidDistTo(theirRobot.getCoors())).getY();
 		
 		// if they aren't pointing into the goal
-		if (defendY < 125 || defendY > 300) return;
+		if (defendY < 115 || defendY > 310) {
+			plannedCommands.clear(); sendZeros();
+			System.out.println("Currently defending");
+			return;
+		}
 		
 		// we'll towards a point (but stop before getting there)
 		int targetX = shootingRight ? 60 : 655;
 		int targetY = ourRobot.getCoors().getY();
-		if (ourRobot.getCoors().getY() - defendY > GOT_THERE_DIST) {
+		if (ourRobot.getCoors().getY() - defendY > 20) {
 			targetY -= 100;
-		} else if (defendY - ourRobot.getCoors().getY() > GOT_THERE_DIST) {
+		} else if (defendY - ourRobot.getCoors().getY() > 20) {
 			targetY += 100;
 		} else {
+			plannedCommands.clear(); sendZeros();
+			System.out.println("Currently defending");
 			return;
 		}
 		Position target = new Position(targetX, targetY);
 		
 		// always point downwards
-		Position frontOfUs = ourRobot.getCoors().projectPoint(Math.PI/2, 50);
+		Position frontOfUs = ourRobot.getCoors().projectPoint(Math.PI/2, 150);
 		
 		planMoveToFace(target, frontOfUs);
 		System.out.println("defending to " + target);
