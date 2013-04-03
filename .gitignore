@@ -34,3 +34,7 @@
 **/**/**/**/**/*~
 
 bin/
+
+.classpath
+g9_2012/source/.metadata/
+
