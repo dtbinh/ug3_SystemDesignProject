@@ -210,8 +210,8 @@ public class Vision extends WindowAdapter {
 			yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
 		}
 
-		worldState.setBlueOrientation((float) Math.toRadians(360 - blueAngle));
-		worldState.setYellowOrientation((float) Math.toRadians(360 - blueAngle));
+		worldState.setBlueOrientation((float) Math.toRadians((90-blueAngle) % 360));
+		worldState.setYellowOrientation((float) Math.toRadians((90-yellowAngle) % 360));
 
 		worldState.setBallX(ball.getX());
 		worldState.setBallY(ball.getY());
