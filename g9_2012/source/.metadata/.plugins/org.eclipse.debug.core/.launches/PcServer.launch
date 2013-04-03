@@ -7,7 +7,7 @@
 <listEntry value="1"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="LD_LIBRARY_PATH" value="${workspace_loc}/../v4l4j:${workspace_loc}/../bluez/lib:/afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib:/afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/lib/lib"/>
+<mapEntry key="LD_LIBRARY_PATH" value="${workspace_loc}/../v4l4j:${workspace_loc}/../bluez/lib:/afs/inf.ed.ac.uk/user/s10/s1047194/SDP:/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/lib"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="sdp.server.PcServer"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="PC"/>

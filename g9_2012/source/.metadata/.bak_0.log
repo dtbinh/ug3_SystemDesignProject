@@ -3,7 +3,7 @@ eclipse.buildId=M20100909-0800
 java.version=1.6.0_20
 java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
-Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source -os linux -ws gtk -arch x86_64
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.core.jobs 4 2 2012-01-26 12:42:26.723
 !MESSAGE An internal error occurred during: "Refreshing external folders".
@@ -584,9 +584,9 @@ java.lang.InterruptedException
 	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:25:01.542
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a/405ac5a57c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a/405ac5a57c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a/405ac5a57c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a/405ac5a57c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -693,9 +693,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:25:43.822
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d1/c0c4f8be7c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d1/c0c4f8be7c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d1/c0c4f8be7c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d1/c0c4f8be7c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -802,9 +802,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:25:53.951
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/cf/d05402c57c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/cf/d05402c57c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/cf/d05402c57c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/cf/d05402c57c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -911,9 +911,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:26:00.310
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/6e/40a3ccc87c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/6e/40a3ccc87c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/6e/40a3ccc87c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/6e/40a3ccc87c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1020,9 +1020,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:26:09.886
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c0/c0d181ce7c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c0/c0d181ce7c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c0/c0d181ce7c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c0/c0d181ce7c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1129,9 +1129,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:27:26.102
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/8f/4075effb7c4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/8f/4075effb7c4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/8f/4075effb7c4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/8f/4075effb7c4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1238,9 +1238,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:27:36.791
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/1e/609f4e027d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/1e/609f4e027d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/1e/609f4e027d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/1e/609f4e027d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1347,9 +1347,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:27:44.807
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/27/509d15077d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/27/509d15077d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/27/509d15077d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/27/509d15077d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1456,9 +1456,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:27:52.447
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/16/d062a30b7d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/16/d062a30b7d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/16/d062a30b7d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/16/d062a30b7d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1565,9 +1565,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:28:31.345
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/af/d071d2227d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/af/d071d2227d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/af/d071d2227d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/af/d071d2227d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1674,9 +1674,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:28:56.624
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a4/e004e4317d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a4/e004e4317d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a4/e004e4317d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a4/e004e4317d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1783,9 +1783,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:29:00.104
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c5/6006f7337d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c5/6006f7337d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c5/6006f7337d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/c5/6006f7337d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -1892,9 +1892,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:29:24.201
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/b2/70ef53427d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/b2/70ef53427d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/b2/70ef53427d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/b2/70ef53427d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2001,9 +2001,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:29:31.772
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/99/b054d7467d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/99/b054d7467d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/99/b054d7467d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/99/b054d7467d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2110,9 +2110,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:29:53.975
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d7/603d13547d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d7/603d13547d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d7/603d13547d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d7/603d13547d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2219,9 +2219,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:30:41.617
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7d/f0ad78707d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7d/f0ad78707d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7d/f0ad78707d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7d/f0ad78707d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2328,9 +2328,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:30:46.233
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/5f/700639737d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/5f/700639737d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/5f/700639737d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/5f/700639737d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2437,9 +2437,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:31:12.801
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3f/f0fa0e837d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3f/f0fa0e837d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3f/f0fa0e837d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3f/f0fa0e837d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2546,9 +2546,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:31:21.658
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/e9/807356887d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/e9/807356887d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/e9/807356887d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/e9/807356887d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2655,9 +2655,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:31:43.234
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a9/00b032957d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a9/00b032957d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a9/00b032957d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a9/00b032957d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2764,9 +2764,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:33:27.932
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/93/902e9ad37d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/93/902e9ad37d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/93/902e9ad37d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/93/902e9ad37d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2873,9 +2873,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:34:34.194
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/81/001d19fb7d4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/81/001d19fb7d4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/81/001d19fb7d4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/81/001d19fb7d4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -2982,9 +2982,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:35:28.492
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/dc/a054761b7e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/dc/a054761b7e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/dc/a054761b7e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/dc/a054761b7e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3091,9 +3091,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:36:04.261
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/303fc8307e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/303fc8307e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/303fc8307e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/303fc8307e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3200,9 +3200,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:36:16.276
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/9f/2097f1377e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/9f/2097f1377e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/9f/2097f1377e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/9f/2097f1377e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3309,9 +3309,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:36:27.852
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3a/a0f2d73e7e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3a/a0f2d73e7e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3a/a0f2d73e7e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/3a/a0f2d73e7e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3418,9 +3418,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:38:07.901
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a0/c05d7a7a7e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a0/c05d7a7a7e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a0/c05d7a7a7e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a0/c05d7a7a7e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3527,9 +3527,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:38:12.861
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/c0336f7d7e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/c0336f7d7e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/c0336f7d7e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/c0336f7d7e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3636,9 +3636,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:38:14.846
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d6/b0c89d7e7e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d6/b0c89d7e7e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d6/b0c89d7e7e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/d6/b0c89d7e7e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3745,9 +3745,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:38:17.173
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7f/300201807e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7f/300201807e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7f/300201807e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/7f/300201807e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3854,9 +3854,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 13:39:38.023
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/62/409631b07e4a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/62/409631b07e4a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/62/409631b07e4a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/62/409631b07e4a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -3963,9 +3963,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:50:13.046
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/54/402fc4b1a14a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/54/402fc4b1a14a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/54/402fc4b1a14a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/54/402fc4b1a14a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4074,7 +4074,7 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 !ENTRY org.eclipse.jface.text 4 0 2012-01-29 17:50:14.710
 !MESSAGE Unexpected runtime error while computing a text hover
 !STACK 0
-org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/15.png (Disk quota exceeded))
+org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/15.png (Disk quota exceeded))
 	at org.eclipse.swt.SWT.error(SWT.java:4083)
 	at org.eclipse.swt.SWT.error(SWT.java:3998)
 	at org.eclipse.swt.graphics.ImageLoader.save(ImageLoader.java:241)
@@ -4087,7 +4087,7 @@ org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf
 	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:141)
 	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:82)
 	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
-Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/15.png (Disk quota exceeded)
+Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/15.png (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:99)
@@ -4096,9 +4096,9 @@ Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SD
 	... 9 more
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:52:07.175
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/46/50e3caf5a14a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/46/50e3caf5a14a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/46/50e3caf5a14a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/46/50e3caf5a14a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4205,9 +4205,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:52:11.663
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/55/d0b377f8a14a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/55/d0b377f8a14a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/55/d0b377f8a14a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/55/d0b377f8a14a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4314,9 +4314,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:52:46.065
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/79/e0e0f80ca24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/79/e0e0f80ca24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/79/e0e0f80ca24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/79/e0e0f80ca24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4423,9 +4423,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:53:02.344
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a1/6002ad16a24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a1/6002ad16a24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a1/6002ad16a24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/a1/6002ad16a24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4532,9 +4532,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:53:08.640
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/e0b36d1aa24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/e0b36d1aa24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/e0b36d1aa24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/64/e0b36d1aa24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4641,9 +4641,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:53:17.313
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/ce/0040991fa24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/ce/0040991fa24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/ce/0040991fa24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/ce/0040991fa24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4750,9 +4750,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:53:30.816
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/66/e07da527a24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/66/e07da527a24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/66/e07da527a24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/66/e07da527a24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4859,9 +4859,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:53:44.656
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/e04ee52fa24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/e04ee52fa24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/e04ee52fa24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/e04ee52fa24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -4968,9 +4968,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:54:02.137
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/91/70b2503aa24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/91/70b2503aa24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/91/70b2503aa24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/91/70b2503aa24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -5077,9 +5077,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:54:32.505
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/61/707c6a4ca24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/61/707c6a4ca24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/61/707c6a4ca24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/61/707c6a4ca24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -5186,9 +5186,9 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
 
 !ENTRY org.eclipse.core.filesystem 4 272 2012-01-29 17:57:22.250
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/808497b1a24a00111b87ff931bb01e21.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/808497b1a24a00111b87ff931bb01e21.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/808497b1a24a00111b87ff931bb01e21 (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.core.resources/.history/39/808497b1a24a00111b87ff931bb01e21 (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -5297,7 +5297,7 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.m
 !ENTRY org.eclipse.jdt.core 4 4 2012-01-29 18:05:02.217
 !MESSAGE JavaBuilder handling CoreException
 !STACK 1
-org.eclipse.core.runtime.CoreException: Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/pc/bin/sdp/Control$3.class.
+org.eclipse.core.runtime.CoreException: Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/pc/bin/sdp/Control$3.class.
 	at org.eclipse.core.internal.filesystem.Policy.error(Policy.java:55)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:391)
 	at org.eclipse.core.internal.localstore.FileSystemResourceManager.write(FileSystemResourceManager.java:1000)
@@ -5325,15 +5325,15 @@ org.eclipse.core.runtime.CoreException: Could not write file: /afs/inf.ed.ac.uk/
 	at org.eclipse.core.internal.events.AutoBuildJob.doBuild(AutoBuildJob.java:144)
 	at org.eclipse.core.internal.events.AutoBuildJob.run(AutoBuildJob.java:242)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
-Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/pc/bin/sdp/Control$3.class (Disk quota exceeded)
+Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/pc/bin/sdp/Control$3.class (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
 	... 25 more
 !SUBENTRY 1 org.eclipse.core.filesystem 4 272 2012-01-29 18:05:02.241
-!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/pc/bin/sdp/Control$3.class.
+!MESSAGE Could not write file: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/pc/bin/sdp/Control$3.class.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/pc/bin/sdp/Control$3.class (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/pc/bin/sdp/Control$3.class (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at org.eclipse.core.internal.filesystem.local.LocalFile.openOutputStream(LocalFile.java:382)
@@ -5369,7 +5369,7 @@ java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/pc
 !ENTRY org.tigris.subversion.subclipse.core 4 4 2012-01-29 18:06:20.136
 !MESSAGE Error saving state.
 !STACK 1
-org.eclipse.team.core.TeamException: An I/O Exception occurred while saving the state file '/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState'.
+org.eclipse.team.core.TeamException: An I/O Exception occurred while saving the state file '/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState'.
 	at org.tigris.subversion.subclipse.core.repo.SVNRepositories.saveState(SVNRepositories.java:283)
 	at org.tigris.subversion.subclipse.core.repo.SVNRepositories.shutdown(SVNRepositories.java:359)
 	at org.tigris.subversion.subclipse.core.SVNProviderPlugin.stop(SVNProviderPlugin.java:203)
@@ -5395,16 +5395,16 @@ org.eclipse.team.core.TeamException: An I/O Exception occurred while saving the 
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:574)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1407)
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
-Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState.tmp (Disk quota exceeded)
+Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState.tmp (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:160)
 	at org.tigris.subversion.subclipse.core.repo.SVNRepositories.saveState(SVNRepositories.java:272)
 	... 24 more
 !SUBENTRY 1 org.tigris.subversion.subclipse.core 4 -6 2012-01-29 18:06:20.136
-!MESSAGE An I/O Exception occurred while saving the state file '/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState'.
+!MESSAGE An I/O Exception occurred while saving the state file '/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState'.
 !STACK 0
-java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState.tmp (Disk quota exceeded)
+java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.tigris.subversion.subclipse.core/.svnProviderState.tmp (Disk quota exceeded)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:160)
@@ -12032,7 +12032,7 @@ java.lang.StringIndexOutOfBoundsException: String index out of range: -10
 
 !ENTRY org.eclipse.team.core 4 0 2012-03-04 21:11:59.673
 !MESSAGE org.tigris.subversion.javahl.ClientException: Bogus filename
-svn: '/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/PC/src/Ball.java' does not exist
+svn: '/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/PC/src/Ball.java' does not exist
 
 
 !ENTRY org.tigris.subversion.subclipse.core 4 -6 2012-03-04 21:12:47.214

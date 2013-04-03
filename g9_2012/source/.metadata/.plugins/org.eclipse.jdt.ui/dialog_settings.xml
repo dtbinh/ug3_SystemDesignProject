@@ -2,8 +2,8 @@
 <section name="Workbench">
 	<item value="filter_imports;" key="filters_last_used"/>
 	<item value="false" key="delegateUpdating"/>
-	<item value="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/share/java" key="org.eclipse.jdt.ui.lastextjar"/>
-	<item value="/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/v4l4j" key="org.eclipse.jdt.ui.last.external.project"/>
+	<item value="/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/lejos_nxj/lib/pc/3rdparty" key="org.eclipse.jdt.ui.lastextjar"/>
+	<item value="/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/v4l4j" key="org.eclipse.jdt.ui.last.external.project"/>
 	<section name="OptionalMessageDialog.hide.">
 		<item value="true" key="org.eclipse.jdt.ui.typecomment.deprecated"/>
 	</section>
@@ -13,8 +13,8 @@
 	<section name="DialogBounds_SuperInterfaceSelectionDialog">
 		<item value="422" key="DIALOG_WIDTH"/>
 		<item value="-106" key="DIALOG_Y_ORIGIN"/>
-		<item value="111" key="DIALOG_X_ORIGIN"/>
 		<item value="629" key="DIALOG_HEIGHT"/>
+		<item value="111" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Sans|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="RefactoringWizard.preview">
@@ -29,10 +29,10 @@
 			<item value="11" key="includeMask"/>
 			<item value="3" key="limitTo"/>
 			<item value="0" key="scope"/>
-			<item value="" key="javaElement"/>
 			<item value="new StrategyGoal" key="pattern"/>
-			<item value="0" key="matchLocations"/>
+			<item value="" key="javaElement"/>
 			<item value="0" key="searchFor"/>
+			<item value="0" key="matchLocations"/>
 			<item value="false" key="isCaseSensitive"/>
 			<list key="workingSets">
 			</list>
@@ -58,8 +58,8 @@
 	</section>
 	<section name="org.eclipse.jdt.internal.ui.typehierarchy.QuickHierarchy">
 		<item value="408" key="org.eclipse.jdt.internal.ui.typehierarchy.HierarchyInformationControlDIALOG_WIDTH"/>
-		<item value="false" key="org.eclipse.jdt.internal.ui.typehierarchy.HierarchyInformationControlDIALOG_USE_PERSISTED_LOCATION"/>
 		<item value="397" key="org.eclipse.jdt.internal.ui.typehierarchy.HierarchyInformationControlDIALOG_HEIGHT"/>
+		<item value="false" key="org.eclipse.jdt.internal.ui.typehierarchy.HierarchyInformationControlDIALOG_USE_PERSISTED_LOCATION"/>
 		<item value="true" key="org.eclipse.jdt.internal.ui.typehierarchy.HierarchyInformationControlDIALOG_USE_PERSISTED_SIZE"/>
 	</section>
 	<section name="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
@@ -73,16 +73,16 @@
 	</section>
 	<section name="JavaElementSearchActions">
 	</section>
-	<section name="RenameInformationPopup">
-	</section>
 	<section name="org.eclipse.ltk.ui.refactoring.settings">
-		<item value="*" key="patterns"/>
-		<item value="false" key="updateQualifiedNames"/>
 		<item value="true" key="renameSubpackages"/>
-		<item value="false" key="renameGetter"/>
+		<item value="false" key="updateQualifiedNames"/>
+		<item value="*" key="patterns"/>
 		<item value="1" key="updateSimilarElementsMatchStrategy"/>
+		<item value="false" key="renameGetter"/>
 		<item value="false" key="updateTextualMatches"/>
 		<item value="false" key="updateSimilarElements"/>
+	</section>
+	<section name="RenameInformationPopup">
 	</section>
 	<section name="org.eclipse.jdt.internal.ui.text.QuickOutline">
 		<item value="false" key="GoIntoTopLevelTypeAction.isChecked"/>

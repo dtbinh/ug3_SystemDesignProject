@@ -5,7 +5,7 @@ java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
 Command-line arguments:  -os linux -ws gtk -arch x86_64
 
-This is a continuation of log file /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.bak_0.log
+This is a continuation of log file /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.bak_0.log
 Created Time: 2012-03-20 18:02:45.151
 
 !ENTRY org.eclipse.jface.text 2 0 2012-03-20 18:02:45.152
@@ -3856,7 +3856,7 @@ Command-line arguments:  -os linux -ws gtk -arch x86_64
 !ENTRY org.eclipse.jface.text 4 0 2012-04-04 14:29:27.513
 !MESSAGE Unexpected runtime error while computing a text hover
 !STACK 0
-org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/5.png (No such file or directory))
+org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/5.png (No such file or directory))
 	at org.eclipse.swt.SWT.error(SWT.java:4083)
 	at org.eclipse.swt.SWT.error(SWT.java:3998)
 	at org.eclipse.swt.graphics.ImageLoader.save(ImageLoader.java:241)
@@ -3869,7 +3869,7 @@ org.eclipse.swt.SWTException: i/o error (java.io.FileNotFoundException: /afs/inf
 	at org.eclipse.jdt.internal.ui.text.java.hover.BestMatchHover.getHoverInfo2(BestMatchHover.java:141)
 	at org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy.getHoverInfo2(JavaEditorTextHoverProxy.java:82)
 	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
-Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/5.png (No such file or directory)
+Caused by: java.io.FileNotFoundException: /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/5.png (No such file or directory)
 	at java.io.FileOutputStream.open(Native Method)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:209)
 	at java.io.FileOutputStream.<init>(FileOutputStream.java:99)
@@ -3906,7 +3906,7 @@ eclipse.buildId=M20100909-0800
 java.version=1.6.0_24
 java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
-Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1039442/Downloads/final/source -os linux -ws gtk -arch x86_64
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/Downloads/final/source -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.core.resources 4 567 2012-12-04 16:43:34.014
 !MESSAGE Workspace restored, but some problems occurred.
@@ -3982,7 +3982,7 @@ eclipse.buildId=M20100909-0800
 java.version=1.6.0_24
 java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
-Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1039442/SDP/source -os linux -ws gtk -arch x86_64
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/SDP/source -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.core.resources 4 567 2012-12-04 16:45:02.150
 !MESSAGE Workspace restored, but some problems occurred.
@@ -4373,7 +4373,7 @@ eclipse.buildId=M20100909-0800
 java.version=1.6.0_24
 java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
-Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1039442/sdp2/ug3_SDP/g9_2012/source -os linux -ws gtk -arch x86_64
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/sdp2/ug3_SDP/g9_2012/source -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.core.resources 2 10035 2013-04-03 02:44:15.610
 !MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
@@ -4945,7 +4945,29 @@ eclipse.buildId=M20100909-0800
 java.version=1.6.0_24
 java.vendor=Sun Microsystems Inc.
 BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
-Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1039442/ug3_SDP/g9_2012/source -os linux -ws gtk -arch x86_64
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/ug3_SDP/g9_2012/source -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.core.resources 2 10035 2013-04-03 04:26:01.951
 !MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2013-04-03 03:58:49.922 -----------------------------------------------
+eclipse.buildId=M20100909-0800
+java.version=1.6.0_24
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Command-line arguments:  -data /afs/inf.ed.ac.uk/user/s10/s1047194/Documents/SDP/ug3_SDP/g9_2012/source -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.jdt.core 4 4 2013-04-03 04:46:36.150
+!MESSAGE Background Indexer Crash Recovery
+!STACK 0
+java.lang.OutOfMemoryError: Java heap space
+	at org.eclipse.jdt.internal.compiler.util.HashtableOfObject.<init>(HashtableOfObject.java:38)
+	at org.eclipse.jdt.internal.core.index.DiskIndex.readCategoryTable(DiskIndex.java:636)
+	at org.eclipse.jdt.internal.core.index.DiskIndex.mergeCategory(DiskIndex.java:461)
+	at org.eclipse.jdt.internal.core.index.DiskIndex.mergeCategories(DiskIndex.java:453)
+	at org.eclipse.jdt.internal.core.index.DiskIndex.mergeWith(DiskIndex.java:543)
+	at org.eclipse.jdt.internal.core.index.Index.save(Index.java:192)
+	at org.eclipse.jdt.internal.core.search.indexing.IndexManager.saveIndex(IndexManager.java:774)
+	at org.eclipse.jdt.internal.core.search.indexing.IndexManager.saveIndexes(IndexManager.java:816)
+	at org.eclipse.jdt.internal.core.search.indexing.IndexManager.notifyIdle(IndexManager.java:546)
+	at org.eclipse.jdt.internal.core.search.processing.JobManager.run(JobManager.java:387)
+	at java.lang.Thread.run(Thread.java:679)
