@@ -58,7 +58,7 @@ public class TestingScript extends AbstractBaseScript {
 //				System.out.printf("|  Goal %s  |  Ball %s  |  BehindBall %s  |\n",
 //					theirGoal.getCoors(), ball.getCoors(), behindBall);
 //				System.out.println(ourRobot.getRobotAngle() + " " + ball.getCoors().getAngleToPosition(ourRobot.getCoors()));
-				System.out.println(ball.robotHasBall(ourRobot));
+//				System.out.println(ball.getCoors());
 				break;
 	
 			case GO_STRAIGHT_TO_BALL:

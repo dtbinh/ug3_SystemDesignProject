@@ -415,8 +415,8 @@ public class Robot extends PitchObject {
 								  goal.getAngle() - this.getAngle());
 		int hitY = this.getCoors().getY() +
 		           (int) (Math.abs(this.getCoors().getX() - goalX) * tan);
-		int d1 = botY - hitY;
-		int d2 = hitY - topY;
+		int d1 = botY - hitY + 10;
+		int d2 = hitY - topY + 10;
 		return Math.min(1.0 * d1 / d2, 1.0 * d2 / d1);
 	}
 	

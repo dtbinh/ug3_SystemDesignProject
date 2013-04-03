@@ -119,10 +119,6 @@ public class VisionReader extends Thread {
 	public void setRobotMode(RobotMode robotMode) {
 		state.setRobotMode(robotMode);
 	}
-
-	public boolean penaltyTimeUp() {
-		return state.penaltyTimeUp();
-	}
 	
 	public int getMinX() { return vision.getMinX(); }
 	public int getMaxX() { return vision.getMaxX(); }

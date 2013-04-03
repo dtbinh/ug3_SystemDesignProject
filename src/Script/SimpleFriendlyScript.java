@@ -18,17 +18,18 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 		while (true) {
 			updateWorldState();
 			if (ball.getCoors() == null) continue;
+			System.out.println("HERE");
 			switch (robotMode) {
 				case PLAY:
 					playMode();
 					break;
 				case PENALTY_DEF:
 					penaltyDefMode();
-					if (penaltyTimeUp() || ball.isMoving())	endPenalty();
+					if (ball.isMoving()) endPenalty();
 					break;
 				case PENALTY_ATK:
 					penaltyAtkMode();
-					if (penaltyTimeUp() || !ball.robotHasBall(ourRobot)) endPenalty();
+					if (!ball.robotHasBall(ourRobot)) endPenalty();
 					break;
 				default:
 	        		System.err.println("ERROR: unhandled mode");
@@ -49,18 +50,9 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 			int dist = (int) target.euclidDistTo(ourRobot.getCoors());
 			Robot.MAX_SPEED = Math.min(maxSpeed,
 					(minSpeed + (dist-minDist) / (maxDist-minDist) * (maxSpeed-minSpeed)));
-			System.out.println(Robot.MAX_SPEED);
 		}
 		else {
-			/*if (ourRobot.isFacing(theirRobot.getCoors())) {
-				Position target = theirGoal.getOptimalPosition();
-				target.setY((theirRobot.getCoors().getY() > 240) ? 215 : 265);
-				Position toFace = theirGoal.getCoors();
-				toFace.setY(target.getY());
-				planMoveToFace(target, toFace);
-				System.out.println("planning to GO AROUND");
-			}
-			else */if (wantToKick()) {
+			if (wantToKick()) {
 				planKick();
 				System.out.println("planning to kick");
 			}
@@ -68,7 +60,7 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 				planMoveStraight(theirGoal.getCoors());
 				System.out.println("planning to DRIBBLE");
 			}
-			Robot.MAX_SPEED = 255;
+			Robot.MAX_SPEED = 180;
 		}
 
 		// !!!! execution phase !!!!
@@ -76,26 +68,30 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 	}
 
 	static void penaltyDefMode() {
-		Position frontOfUs = ourRobot.getCoors().projectPoint(Math.PI/2, 30);
 		// !!!! planning phase !!!!
-		Position defendCoors = theirRobot.getCoors().projectPoint(theirRobot.getRobotAngle(),
-		    (int) ourRobot.getCoors().euclidDistTo(theirRobot.getCoors()));
-
-		System.out.println("ourRobot " + ourRobot.getCoors());
-		System.out.println("frontOfUs " + frontOfUs);
-		System.out.println("defendCoors " + defendCoors);
-
-		double angle;
-		if (ourRobot.getCoors().getY() - defendCoors.getY() > GOT_THERE_DIST) {
-			angle = 3*Math.PI/2;
-		} else if (defendCoors.getY() - ourRobot.getCoors().getY() > GOT_THERE_DIST) {
-			angle = Math.PI/2;
+		int defendY = theirRobot.getCoors().projectPoint(theirRobot.getRobotAngle(),
+		    (int) ourRobot.getCoors().euclidDistTo(theirRobot.getCoors())).getY();
+		
+		// if they aren't pointing into the goal
+		if (defendY < 125 || defendY > 300) return;
+		
+		// we'll towards a point (but stop before getting there)
+		int targetX = shootingRight ? 60 : 655;
+		int targetY = ourRobot.getCoors().getY();
+		if (ourRobot.getCoors().getY() - defendY > GOT_THERE_DIST) {
+			targetY -= 100;
+		} else if (defendY - ourRobot.getCoors().getY() > GOT_THERE_DIST) {
+			targetY += 100;
 		} else {
 			return;
 		}
-		Position target = ourRobot.getCoors().projectPoint(angle, 100);
-		System.out.println("target " + target);
+		Position target = new Position(targetX, targetY);
+		
+		// always point downwards
+		Position frontOfUs = ourRobot.getCoors().projectPoint(Math.PI/2, 50);
+		
 		planMoveToFace(target, frontOfUs);
+		System.out.println("defending to " + target);
 		Robot.MAX_SPEED = 150;
 		
 		// !!!! execution phase !!!!

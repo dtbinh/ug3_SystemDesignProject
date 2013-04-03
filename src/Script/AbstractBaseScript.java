@@ -14,7 +14,6 @@ import PitchObject.*;
 
 public abstract class AbstractBaseScript extends Thread {
 	public final static int GOT_THERE_DIST = 20;
-    public final static int DRIBBLE_DIST = 60;
     public final static int BEHIND_BALL_DIST = 50;
 	public final static int KICK_ALLOWANCE = 1500;
     
@@ -270,34 +269,32 @@ public abstract class AbstractBaseScript extends Thread {
 		return vision;
 	}
 
-	public static boolean openPlay() {
-		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 150;
-	}
+//	public static boolean openPlay() {
+//		return Math.abs(ball.getCoors().getX() - ourGoal.getCoors().getX()) < 150;
+//	}
 
-	public static Position getRetreatPoint(boolean shootingRight) {
-		// close to goal (on x axis)
-		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +40 : -40);
-		// close to where the ball will be (on y axis)
-		// int y = ball.getCoors().getY();
-		int y = ball.getCoors().getY();
-		return new Position (x, y);
-	}
+//	public static Position getRetreatPoint(boolean shootingRight) {
+//		// close to goal (on x axis)
+//		int x =  ourGoal.getOptimalPosition().getX() + (shootingRight ? +40 : -40);
+//		// close to where the ball will be (on y axis)
+//		// int y = ball.getCoors().getY();
+//		int y = ball.getCoors().getY();
+//		return new Position (x, y);
+//	}
 
 	public static boolean wantToKick() {
-		double positionScore = ourRobot.getPositionScore(shootingRight);
+		// double positionScore = ourRobot.getPositionScore(shootingRight);
 		double hitScore = ourRobot.getHitScore(shootingRight);
 		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
-		return kickingAllowed && (positionScore > 0.0) && (hitScore > 0.4);
-	}
-
-	public static boolean penaltyTimeUp() {
-		return vision.penaltyTimeUp();
+		boolean closeEnough = ball.withinKickingDist(ourRobot);
+		return closeEnough && kickingAllowed && (hitScore > 0.4);
 	}
 
 	public static void endPenalty() {
 		if (started) vision.setRobotMode(RobotMode.PLAY);
 	}
 
+	// this is only used in testing script so that's ok
 	static boolean timeOut(long startTime, int allowance) {
 		return startTime + allowance < System.currentTimeMillis();
 	}

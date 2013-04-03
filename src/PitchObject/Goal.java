@@ -1,14 +1,14 @@
 package PitchObject;
 
 public class Goal extends PitchObject {
-	private static final Goal goalL = new Goal(new Position(35, 240),
-											   new Position(35, 171),
-											   new Position(35, 325),
-											   new Position(55, 240));
-	private static final Goal goalR = new Goal(new Position(603, 240),
-			   								   new Position(603, 166),
-			   								   new Position(603, 312),
-			   								   new Position(583, 240));
+	private static final Goal goalL = new Goal(new Position(18, 218),
+											   new Position(18, 131),
+											   new Position(18, 306),
+											   new Position(60, 218));
+	private static final Goal goalR = new Goal(new Position(698, 210),
+			   								   new Position(698, 122),
+			   								   new Position(698, 299),
+			   								   new Position(655, 210));
 	private Position top;
 	private Position bottom;
 	private Position optimalPosition;

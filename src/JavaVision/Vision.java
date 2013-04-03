@@ -115,7 +115,7 @@ public class Vision extends WindowAdapter {
 		socket.send("P", 0);
 		String pitchConstants = socket.recvStr();
 		String[] tokens = split(pitchConstants, " ");
-		//System.out.println("Pitch constants + " + pitchConstants);
+		System.out.println("Pitch constants + " + pitchConstants);
 
 		// TODO: verify
 		this.minX = Integer.parseInt(tokens[0]);
@@ -169,6 +169,12 @@ public class Vision extends WindowAdapter {
 			tokens = split(data, " ");
 
 			time = Long.parseLong(tokens[8]);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} while (time <= this.last_update);
 
 		this.last_update = time;
@@ -231,10 +237,10 @@ public class Vision extends WindowAdapter {
 	}
 
 	// TODO: test these values!
-	public int getMinX() { return this.minX; }
-	public int getMaxX() { return this.maxX; }
-	public int getMinY() { return this.minY; }
-	public int getMaxY() { return this.maxY; }
+	public int getMinX() { return 47; }//this.minX; }
+	public int getMaxX() { return 670; }//this.maxX; }
+	public int getMinY() { return 38; }//this.minY; }
+	public int getMaxY() { return 386; }//this.maxY; }
 
 	static String[] split(String str, String delim) {
 		StringTokenizer tokenizer = new StringTokenizer(str, delim);

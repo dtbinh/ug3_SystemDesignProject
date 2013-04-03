@@ -1,7 +1,8 @@
 package PitchObject;
 
 public class Ball extends PitchObject {
-	public final static int DRIBBLE_DIST = 45;
+	public final static int DRIBBLE_DIST = 60;
+	public final static int KICK_DIST = 55;
 
 	public Position intersectinPosition(Robot robot) {
 		Position robotCoors = robot.getCoors();
@@ -37,5 +38,15 @@ public class Ball extends PitchObject {
 	public Position pointBehindBall(Position fromCoors, int distance) {
 		double angle = fromCoors.getAngleToPosition(this.getCoors());
 		return this.getCoors().projectPoint(angle, distance);
+	}
+
+	public boolean withinKickingDist(Robot robot) {
+		Position robotCoors = robot.getCoors();
+		Position ballCoors = this.getCoors();
+		if (robotCoors == null || ballCoors == null) {
+			return false;
+		}
+		double distToBall = robotCoors.euclidDistTo(ballCoors);
+		return distToBall <= KICK_DIST;
 	}
 }

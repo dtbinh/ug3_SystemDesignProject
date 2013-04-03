@@ -151,7 +151,8 @@ public class AStar {
 				//check whether grid is on the "blacklist"
 				if (!invalidGrids.contains(pt)) {
 					//check in range of grids
-					if (x > 1 && y > 2 && x <= 35 && y <= 25) 
+					if (x > 2 && y > 1 && x <= 33 && y < 20)
+					//if (x > 1 && y > 2 && x <= 35 && y <= 25) 
 					{
 						//if it's not already on check list, add it
 						if (!validGrids.contains(pt)) {
@@ -195,7 +196,8 @@ public class AStar {
 
 	private static int calcMovementCost(GridPoint currentPoint, GridPoint newPoint) {
 		int score = 0;
-		if (/*newPoint.x == 3 ||*/ newPoint.y <= 4 || /*newPoint.x == 29 ||*/ newPoint.y >= 20) {
+		if (newPoint.y < 4 || newPoint.y > 18) {
+		//if (/*newPoint.x == 3 ||*/ newPoint.y <= 4 || /*newPoint.x == 29 ||*/ newPoint.y >= 20) {
 			score = 900;
 		}
 		if (oppGridPosition.distance(newPoint) < 4) {

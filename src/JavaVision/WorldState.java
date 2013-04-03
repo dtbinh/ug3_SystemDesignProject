@@ -20,10 +20,6 @@ public class WorldState {
 	private boolean newFrame;
 	private RobotMode robotMode;
 	
-	public final static int PENALTY_ALLOWANCE = 20000;
-    static volatile long penaltyTimeOut = -1;
-    static volatile long startTime = System.currentTimeMillis();
-
 	public WorldState() {
 
 		/* control properties */
@@ -60,10 +56,6 @@ public class WorldState {
 	
 	public void setStarted(boolean started) {
 		this.started = started;
-		if (penaltyTimeOut < 0 && (robotMode == RobotMode.PENALTY_ATK || 
-				robotMode == RobotMode.PENALTY_DEF) && started) {
-			penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
-		}
 	}
 	
 	public int getBlueX() {
@@ -168,13 +160,6 @@ public class WorldState {
 	
 	public void setRobotMode(RobotMode robotMode) {
 		this.robotMode = robotMode;
-		if (robotMode!=RobotMode.PENALTY_ATK && robotMode!=RobotMode.PENALTY_DEF) {
-			penaltyTimeOut = -1;
-		}
-	}
-
-	public boolean penaltyTimeUp() {
-		return System.currentTimeMillis() > penaltyTimeOut;
 	}
 
 }
