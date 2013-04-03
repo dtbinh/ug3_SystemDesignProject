@@ -287,7 +287,8 @@ public abstract class AbstractBaseScript extends Thread {
 		double hitScore = ourRobot.getHitScore(shootingRight);
 		boolean kickingAllowed = System.currentTimeMillis() > kickTimeOut;
 		boolean closeEnough = ball.withinKickingDist(ourRobot);
-		return closeEnough && kickingAllowed && (hitScore > 0.4);
+		return closeEnough && kickingAllowed && (hitScore > 0.30
+				);
 	}
 
 	public static void endPenalty() {

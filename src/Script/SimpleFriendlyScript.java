@@ -44,7 +44,7 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 			Position target = ball.pointBehindBall(theirGoal.getCoors(), BEHIND_BALL_DIST);
 			planMoveToFace(target, theirGoal.getCoors());
 			System.out.println("planning for " + target);
-			int minSpeed = 100; int maxSpeed = 255; 
+			int minSpeed = 120; int maxSpeed = 255; 
 			int minDist  = 0;   int maxDist  = 150;
 			int dist = (int) target.euclidDistTo(ourRobot.getCoors());
 			Robot.MAX_SPEED = Math.min(maxSpeed,
