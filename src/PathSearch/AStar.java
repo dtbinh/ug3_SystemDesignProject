@@ -201,7 +201,7 @@ public class AStar {
 			score = 900;
 		}
 		if (oppGridPosition.distance(newPoint) < 4) {
-			return score + 5.5*((int) Math.pow(5, 5- oppGridPosition.distance(newPoint)));
+			return score + ((int) (5.5*Math.pow(5, 5- oppGridPosition.distance(newPoint))));
 		}
 		if (oppGridPosition.distance(newPoint) < 6) {
 			return score + 20;

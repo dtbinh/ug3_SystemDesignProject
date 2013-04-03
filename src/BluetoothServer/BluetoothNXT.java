@@ -61,6 +61,21 @@ public class BluetoothNXT {
 		sensor2 = new TouchSensor(SensorPort.S2);
 		sensor3 = new TouchSensor(SensorPort.S3);
 
+		
+		// instinctively back off
+        SensorPort.S3.addSensorPortListener(new SensorPortListener() {
+            public void stateChanged(SensorPort aSource, int aOldValue, int aNewValue) {
+            	robot.set_speed(3, -100);
+            	robot.set_speed(0, 100);
+                try {
+                    // Sleep for 1000 msec to allow the robot to reverse
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+
+                }
+            }
+        });
+
 		// Sound.setVolume(50);
 
 		// Max kicker speed
