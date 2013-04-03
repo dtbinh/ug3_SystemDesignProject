@@ -6,7 +6,6 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import PitchObject.Ball;
 import PitchObject.Position;
 import PitchObject.Robot;
-import Script.RobotMode;
 
 public class VisionReader extends Thread {
 	private static final int YELLOW = 0;
@@ -20,9 +19,10 @@ public class VisionReader extends Thread {
 	private static volatile Ball ball;
 	private static volatile int colour;
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws V4L4JException {
 		VisionReader vr = new VisionReader(args[0]);
 		vr.run();
+		
 	}
 
 	public VisionReader(String string) {
@@ -34,45 +34,24 @@ public class VisionReader extends Thread {
 	}
 
 	public void run() {
-		startVision();
-		
-		while (true) {
-			updatePitchVariables();
-		}
-	}
-
-	private void startVision() {	    
-		/*
-		 * Creates the control
-		 * GUI, and initialises the image processing.
-		 */
 		WorldState worldState = new WorldState();
 		ThresholdsState thresholdsState = new ThresholdsState();
-
-		/* Default to main pitch. */
 		VisionConstants pitchConstants = new VisionConstants(0);
-
-		/* Default values for the main vision window. */
-		String videoDevice = "/dev/video0";
-		int width = 640;
-		int height = 480;
-		int channel = 0;
-		int videoStandard = V4L4JConstants.STANDARD_PAL;
-		int compressionQuality = 80; //dropped compression of the camera slightly - feel free to experiment further
-
+		
 		try {
-			/* Create a new Vision object to serve the main vision window. */
-			vision = new Vision(videoDevice, width, height, channel, videoStandard,
-					compressionQuality, worldState, thresholdsState, pitchConstants);
-
-			/* Create the Control GUI for threshold setting/etc. */
+			vision = new Vision(worldState);
 			thresholdsGUI = new ControlGUI(thresholdsState, worldState, pitchConstants);
 			thresholdsGUI.initGUI();
-			
 		} catch (V4L4JException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		
+
+		
+		while (true) {
+			vision.processAndUpdateImage();
+			updatePitchVariables();
 		}
 	}
 
@@ -82,6 +61,7 @@ public class VisionReader extends Thread {
 	public void updatePitchVariables() {
 		// Get pitch information from vision
 		state = vision.getWorldState();
+		
 		if (state.getNewFrame()) {
 			ball.setCoors(new Position(state.getBallX(), state.getBallY()));	
 	
@@ -127,13 +107,29 @@ public class VisionReader extends Thread {
 		return state.getStarted();
 	}
 	
+<<<<<<< HEAD
+=======
 	public RobotMode getRobotMode() {
-		return RobotMode.PLAY;
+		if (state == null) {
+			return RobotMode.PLAY;
+		}
+		
+		return state.getRobotMode();
 	}
-	
+
+	public void setRobotMode(RobotMode robotMode) {
+		state.setRobotMode(robotMode);
+	}
+
+	public boolean penaltyTimeUp() {
+		return state.penaltyTimeUp();
+	}
+>>>>>>> 7281fd5ade917cc77cb25e5d0a35c5ed6bdbfa8e
 		
 	public int getMinX() { return vision.getMinX(); }
 	public int getMaxX() { return vision.getMaxX(); }
 	public int getMinY() { return vision.getMinY(); }
 	public int getMaxY() { return vision.getMaxY(); }
+
+
 }
