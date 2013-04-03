@@ -22,20 +22,12 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 					playMode();
 					break;
 				case PENALTY_DEF:
-					System.out.println("********* Start Defend Penalty *********");
 					penaltyDefMode();
-					if (penaltyTimeUp() || ball.isMoving()) {
-						robotMode = RobotMode.PLAY;
-					}
-					System.out.println("********* End Defend Penalty *********");
+					if (penaltyTimeUp() || ball.isMoving())	endPenalty();
 					break;
 				case PENALTY_ATK:
-					System.out.println("********* Start Attack Penalty *********");
 					penaltyAtkMode();
-					if (penaltyTimeUp() || !ball.robotHasBall(ourRobot)) {
-						robotMode = RobotMode.PLAY;
-					}
-					System.out.println("********* End Attack Penalty *********");
+					if (penaltyTimeUp() || !ball.robotHasBall(ourRobot)) endPenalty();
 					break;
 				default:
 	        		System.err.println("ERROR: unhandled mode");
@@ -76,6 +68,7 @@ public class SimpleFriendlyScript extends AbstractBaseScript {
 	}
 
 	static void penaltyDefMode() {
+		// TODO: probably get rid of 90% and use planMoveStraight
 		Position frontOfUs = ourRobot.getCoors().projectPoint(ourRobot.getAngle(), 30);
 		Position defendCoors = theirRobot.getCoors().projectPoint(theirRobot.getAngle(),
 		    (int) ourRobot.getCoors().euclidDistTo(theirRobot.getCoors()));

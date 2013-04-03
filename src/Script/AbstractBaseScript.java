@@ -19,7 +19,7 @@ public abstract class AbstractBaseScript extends Thread {
 	public final static int KICK_ALLOWANCE = 1500;
     public final static int PENALTY_ALLOWANCE = 20000;
 
-	static volatile RobotMode robotMode = RobotMode.PLAY;
+	static volatile RobotMode robotMode;
 
 	static volatile VisionReader vision;
 
@@ -34,7 +34,7 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile Ball ball;
 
 	static volatile long kickTimeOut = System.currentTimeMillis();
-    static volatile long penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
+    static volatile long penaltyTimeOut = -1;
 
     static volatile long startTime = System.currentTimeMillis();
     static volatile boolean started = false;
@@ -69,8 +69,8 @@ public abstract class AbstractBaseScript extends Thread {
 		ball = vision.getBall();
 		started = vision.getStarted();
 		robotMode = vision.getRobotMode();
-		// ourRobot.setWantsToRotate(false);
-		// ourRobot.setWantsToStop(false);
+		maybeStartPenalty();
+		System.out.println(robotMode);
 	}
 
 	/**
@@ -296,6 +296,19 @@ public abstract class AbstractBaseScript extends Thread {
 
 	public static boolean penaltyTimeUp() {
 		return System.currentTimeMillis() > penaltyTimeOut;
+	}
+
+	private static void maybeStartPenalty() {
+		if (penaltyTimeOut < 0 && (robotMode == RobotMode.PENALTY_ATK || 
+				robotMode == RobotMode.PENALTY_DEF) && started) {
+			penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;;
+		}
+	}
+
+	public static void endPenalty() {
+		penaltyTimeOut = -1;
+		// TODO: replace w/ setter method for vision/worldstate
+		robotMode = RobotMode.PLAY;
 	}
 
 	static boolean timeOut(long startTime, int allowance) {
