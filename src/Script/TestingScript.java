@@ -4,6 +4,7 @@ package Script;
 import PitchObject.Position;
 
 public class TestingScript extends AbstractBaseScript {
+	static volatile long startTime = System.currentTimeMillis();
 	public static final int STOP_TIME = 200000;
 	public static final TestCase DEFAULT_TESTCASE = TestCase.VISION;
 	public static enum TestCase {

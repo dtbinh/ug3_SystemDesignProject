@@ -17,9 +17,9 @@ public abstract class AbstractBaseScript extends Thread {
     public final static int DRIBBLE_DIST = 60;
     public final static int BEHIND_BALL_DIST = 50;
 	public final static int KICK_ALLOWANCE = 1500;
-    public final static int PENALTY_ALLOWANCE = 20000;
+    
 
-	static volatile RobotMode robotMode = RobotMode.PLAY;
+	static volatile RobotMode robotMode;
 
 	static volatile VisionReader vision;
 
@@ -34,9 +34,7 @@ public abstract class AbstractBaseScript extends Thread {
 	static volatile Ball ball;
 
 	static volatile long kickTimeOut = System.currentTimeMillis();
-    static volatile long penaltyTimeOut = System.currentTimeMillis() + PENALTY_ALLOWANCE;
 
-    static volatile long startTime = System.currentTimeMillis();
     static volatile boolean started = false;
 
 	static volatile CommandStack plannedCommands;
@@ -69,8 +67,7 @@ public abstract class AbstractBaseScript extends Thread {
 		ball = vision.getBall();
 		started = vision.getStarted();
 		robotMode = vision.getRobotMode();
-		// ourRobot.setWantsToRotate(false);
-		// ourRobot.setWantsToStop(false);
+		System.out.println(robotMode);
 	}
 
 	/**
@@ -295,7 +292,11 @@ public abstract class AbstractBaseScript extends Thread {
 	}
 
 	public static boolean penaltyTimeUp() {
-		return System.currentTimeMillis() > penaltyTimeOut;
+		return vision.penaltyTimeUp();
+	}
+
+	public static void endPenalty() {
+		vision.setRobotMode(RobotMode.PLAY);
 	}
 
 	static boolean timeOut(long startTime, int allowance) {

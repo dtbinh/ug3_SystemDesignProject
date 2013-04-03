@@ -34,3 +34,9 @@
 **/**/**/**/**/*~
 
 bin/
+
+.classpath
+g9_2012/source/.metadata/
+g9_2012/source/PC/.classpath
+g9_2012/source/PC/.project
+

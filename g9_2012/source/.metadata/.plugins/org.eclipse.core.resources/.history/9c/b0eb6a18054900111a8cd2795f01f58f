@@ -27,7 +27,7 @@ import com.sun.jna.Native;
 
 public class Vision {
 	// This should be set to "", but I can't figure out where Eclipse puts its working directory
-	private static String dirRoot = "/afs/inf.ed.ac.uk/user/s10/s1039442/SDP/code";
+	private static String dirRoot = "/afs/inf.ed.ac.uk/user/s10/s1047194/SDP/code";
 	
 	public static int RED    = 0;
 	public static int YELLOW = 1;

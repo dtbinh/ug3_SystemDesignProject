@@ -16,7 +16,7 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 
 public class Vision {
 	// FIXME: This should be set to "", but I can't figure out where Eclipse puts its working directory
-	private static String dirRoot    = "/afs/inf.ed.ac.uk/user/s10/s1039442/SDP";
+	private static String dirRoot    = "/afs/inf.ed.ac.uk/user/s10/s1047194/SDP";
 	private static String dataFolder = dirRoot + "/data";
 	
 	private static final int CROPPED_ONE_CHANNEL_IMAGES = 16;

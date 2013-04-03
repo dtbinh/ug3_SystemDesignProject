@@ -13,14 +13,14 @@
 	<item value="444" key="UpdateDialog.size.y"/>
 	<item value="125" key="CommitDialog.location.y"/>
 	<item value="380" key="CommitDialog.location.x"/>
-	<item value="6" key="ResolveConflictDialog.lastChoice"/>
 	<item value="613" key="RevertDialog.size.x"/>
-	<item value="613" key="MarkResolvedDialog.size.x"/>
+	<item value="6" key="ResolveConflictDialog.lastChoice"/>
 	<item value="444" key="RevertDialog.size.y"/>
+	<item value="613" key="MarkResolvedDialog.size.x"/>
 	<item value="444" key="MarkResolvedDialog.size.y"/>
 	<item value="162" key="HistoryTableProvider.SVNHistoryPage.Date"/>
-	<item value="747" key="CommitDialog.size.x"/>
 	<item value="883" key="HistoryTableProvider.SVNHistoryPage.Comment"/>
+	<item value="747" key="CommitDialog.size.x"/>
 	<item value="810" key="CommitDialog.size.y"/>
 	<item value="45" key="HistoryTableProvider.SVNHistoryPage.Revision"/>
 	<section name="CommitWizard">
