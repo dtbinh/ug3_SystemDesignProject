@@ -6,6 +6,7 @@ import au.edu.jcu.v4l4j.exceptions.V4L4JException;
 import PitchObject.Ball;
 import PitchObject.Position;
 import PitchObject.Robot;
+import Script.RobotMode;
 
 public class VisionReader extends Thread {
 	private static final int YELLOW = 0;
@@ -106,9 +107,7 @@ public class VisionReader extends Thread {
 		
 		return state.getStarted();
 	}
-	
-<<<<<<< HEAD
-=======
+
 	public RobotMode getRobotMode() {
 		if (state == null) {
 			return RobotMode.PLAY;
@@ -124,8 +123,7 @@ public class VisionReader extends Thread {
 	public boolean penaltyTimeUp() {
 		return state.penaltyTimeUp();
 	}
->>>>>>> 7281fd5ade917cc77cb25e5d0a35c5ed6bdbfa8e
-		
+	
 	public int getMinX() { return vision.getMinX(); }
 	public int getMaxX() { return vision.getMaxX(); }
 	public int getMinY() { return vision.getMinY(); }
