@@ -159,16 +159,17 @@ public class Vision extends WindowAdapter {
 			return;
 		}
 		
-		socket.send("E", 0);
-		String data = socket.recvStr();
-		//System.out.println("Data  = " + data);
-		
-		String[] tokens = split(data, " ");
+		String[] tokens;
+		long time;
+		do {
+			socket.send("E", 0);
+			String data = socket.recvStr();
+			//System.out.println("Data  = " + data);
+			
+			tokens = split(data, " ");
 
-		long time = Long.parseLong(tokens[8]);
-		if (time <= this.last_update) {
-			return;
-		}
+			time = Long.parseLong(tokens[8]);
+		} while (time <= this.last_update);
 
 		this.last_update = time;
 
@@ -209,9 +210,8 @@ public class Vision extends WindowAdapter {
 			yellow = new Position(worldState.getYellowX(), worldState.getYellowY());
 		}
 
-
-		worldState.setBlueOrientation((float)blueAngle);
-		worldState.setYellowOrientation((float)yellowAngle);
+		worldState.setBlueOrientation((float) Math.toRadians(360 - blueAngle));
+		worldState.setYellowOrientation((float) Math.toRadians(360 - blueAngle));
 
 		worldState.setBallX(ball.getX());
 		worldState.setBallY(ball.getY());
