@@ -1,7 +1,0 @@
-1330773256198	Move compilation unit
-1330777323432	Rename local variable 'motorSpeeds'
-1330777465559	Rename type 'RobotController'
-1330778434688	Rename method 'getRobotController'
-1330889653104	Rename local variable 'buffImage'
-1330890886794	Rename local variable 'slowDownFactor'
-1330891628260	Rename local variable 'rotationSpeedFactor'
